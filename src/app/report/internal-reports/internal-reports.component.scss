@@ -1,0 +1,241 @@
+// Variables
+$green: #3aaa73;
+$green-dark: #2d8a5e;
+$green-light: #e8f7f0;
+$body-bg: #f4f6f8;
+$card-bg: #fff;
+$border: #e5e8ec;
+$text-primary: #1a1f2e;
+$text-secondary: #6b7280;
+$text-muted: #9ca3af;
+$radius: 12px;
+$radius-sm: 8px;
+
+.page-wrap {
+  padding: 20px 24px;
+  height: 100%;
+}
+
+// ─── Breadcrumb ────────────────────────────────────────────
+.breadcrumb {
+  font-size: 12.5px;
+  color: $text-muted;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.bc-link {
+  color: $text-secondary;
+  cursor: pointer;
+  &:hover { color: $green; }
+}
+.bc-sep { color: $text-muted; }
+
+// ─── Layout ────────────────────────────────────────────────
+.reports-layout {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+// ─── Left Card ─────────────────────────────────────────────
+.reports-list-card {
+  flex: 1;
+  background: $card-bg;
+  border-radius: $radius;
+  border: 1px solid $border;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.search-wrap {
+  position: relative;
+  padding: 14px 16px;
+  border-bottom: 1px solid $border;
+
+  input {
+    width: 100%;
+    height: 36px;
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    padding: 0 12px 0 36px;
+    font-size: 13.5px;
+    color: $text-primary;
+    font-family: inherit;
+    outline: none;
+    background: $body-bg;
+
+    &::placeholder { color: $text-muted; }
+    &:focus { border-color: $green; background: #fff; }
+  }
+}
+
+.search-icon {
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: $text-muted;
+}
+
+.report-items {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.report-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba($border, 0.5);
+  transition: background 0.12s;
+
+  &:last-child { border-bottom: none; }
+
+  &:hover { background: #fafafa; }
+
+  &.active {
+    background: $green-light;
+    .report-name { color: $green; font-weight: 500; }
+  }
+}
+
+.report-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg { width: 16px; height: 16px; }
+
+  &.file svg { color: $text-muted; }
+  &.folder svg { color: #f59e0b; }
+}
+
+.report-name {
+  font-size: 13px;
+  color: $text-primary;
+  line-height: 1.4;
+}
+
+// ─── Right Card ────────────────────────────────────────────
+.status-card {
+  width: 560px;
+  flex-shrink: 0;
+  background: $card-bg;
+  border-radius: $radius;
+  border: 1px solid $border;
+  padding: 20px;
+}
+
+.status-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.status-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: $green;
+}
+
+// ─── Status Table ──────────────────────────────────────────
+.status-table-wrap {
+  overflow-x: auto;
+}
+
+.status-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+
+  thead tr { background: #fff; }
+
+  thead th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 500;
+    color: $text-secondary;
+    padding: 8px 10px;
+    border-bottom: 1px solid $border;
+    white-space: nowrap;
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid $border;
+      background: #fff;
+      transition: background 0.1s;
+
+      &.row-alt { background: #f9fafb; }
+      &:last-child { border-bottom: none; }
+      &:hover { background: $green-light; }
+    }
+
+    td {
+      padding: 10px 10px;
+      color: $text-primary;
+      vertical-align: middle;
+    }
+  }
+}
+
+.date-col {
+  white-space: nowrap;
+  color: $text-secondary !important;
+  font-size: 12px !important;
+}
+
+.status-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg { width: 16px; height: 16px; }
+
+  &.error svg { color: #ef4444; }
+  &.ok svg { color: $green; }
+}
+
+.status-text {
+  font-size: 12px;
+  font-weight: 500;
+
+  &.red { color: #ef4444; }
+  &.green-text { color: $green; }
+}
+
+.btn-delete-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: $radius-sm;
+  border: 1px solid $border;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.12s;
+
+  svg { width: 14px; height: 14px; color: #ef4444; }
+
+  &:hover { background: #fef2f2; border-color: #fca5a5; }
+}

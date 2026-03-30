@@ -1,0 +1,346 @@
+@use '../../styles/variables' as *;
+
+.page-wrap {
+  padding: 20px 24px;
+}
+
+// ─── Breadcrumb ────────────────────────────────────────────
+.breadcrumb {
+  font-size: 12.5px;
+  color: $text-muted;
+  margin-bottom: 20px;
+}
+
+// ─── Top Row ───────────────────────────────────────────────
+.top-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: stretch;
+}
+
+// Banner
+.banner-card {
+  flex: 1.2;
+  background: linear-gradient(135deg, #3aaa73 0%, #2d8a5e 100%);
+  border-radius: $radius;
+  padding: 24px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.banner-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.banner-desc {
+  font-size: 12.5px;
+  opacity: 0.85;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.banner-btn {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 18px;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: $radius-sm;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+  &:hover { background: rgba(255,255,255,0.3); }
+}
+
+.banner-dots {
+  display: flex;
+  gap: 6px;
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    &.active { background: #fff; width: 18px; border-radius: 3px; }
+  }
+}
+
+.banner-megaphone {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.5;
+  svg { width: 80px; height: 80px; }
+}
+
+// Donut card
+.stat-donut-card {
+  flex: 1;
+  background: $card-bg;
+  border-radius: $radius;
+  border: 1px solid $border;
+  padding: 20px;
+}
+
+.stat-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: 8px;
+}
+
+.stat-value-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: $text-primary;
+}
+
+.stat-badge {
+  font-size: 12px;
+  font-weight: 500;
+  color: $green;
+  background: $green-light;
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+
+.donut-area {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.donut-svg { width: 80px; height: 80px; flex-shrink: 0; }
+
+.donut-legend { font-size: 12px; color: $text-secondary; display: flex; flex-direction: column; gap: 6px; }
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+// Bar card
+.stat-bar-card {
+  flex: 1;
+  background: $card-bg;
+  border-radius: $radius;
+  border: 1px solid $border;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chart-area {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  min-height: 80px;
+}
+
+.bar-group {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 80px;
+}
+
+.bar {
+  flex: 1;
+  border-radius: 3px 3px 0 0;
+  min-height: 4px;
+}
+
+.bar-labels {
+  display: flex;
+  gap: 8px;
+}
+
+.bar-label {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  color: $text-muted;
+}
+
+// ─── Mid Row ───────────────────────────────────────────────
+.mid-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.quick-card {
+  flex: 1;
+  background: $card-bg;
+  border-radius: $radius;
+  border: 1px solid $border;
+  padding: 20px;
+}
+
+.card-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: 16px;
+}
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.quick-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 10px;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  font-size: 12px;
+  color: $text-secondary;
+  text-align: center;
+  transition: all 0.15s;
+  svg { width: 22px; height: 22px; color: $green; }
+  &:hover { background: $green-light; border-color: $green; color: $green; }
+}
+
+.widgets-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.widget-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+}
+
+.widget-icon {
+  width: 36px; height: 36px;
+  border-radius: $radius-sm;
+  background: $green-light;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  svg { width: 18px; height: 18px; color: $green; }
+}
+
+.widget-title { font-size: 13px; font-weight: 500; color: $text-primary; }
+.widget-sub { font-size: 11.5px; color: $text-muted; margin-top: 2px; }
+
+// ─── Bottom Row ────────────────────────────────────────────
+.bot-row {
+  display: flex;
+  gap: 16px;
+}
+
+.table-card {
+  flex: 1.6;
+  background: $card-bg;
+  border-radius: $radius;
+  border: 1px solid $border;
+  padding: 20px;
+  overflow: hidden;
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  thead th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 500;
+    color: $text-secondary;
+    padding: 8px 10px;
+    border-bottom: 1px solid $border;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid $border;
+    &:last-child { border-bottom: none; }
+    &:hover { background: $green-light; }
+    td { padding: 9px 10px; color: $text-primary; }
+  }
+}
+
+.row-link {
+  width: 28px; height: 28px;
+  border-radius: $radius-sm;
+  border: 1px solid $border;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  svg { width: 14px; height: 14px; color: $text-muted; }
+  &:hover { background: $green-light; border-color: $green; svg { color: $green; } }
+}
+
+.reports-card {
+  flex: 1;
+  background: $card-bg;
+  border-radius: $radius;
+  border: 1px solid $border;
+  padding: 20px;
+}
+
+.report-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid $border;
+  cursor: pointer;
+  &:last-child { border-bottom: none; }
+  &:hover .report-name { color: $green; }
+}
+
+.report-icon {
+  width: 32px; height: 32px;
+  border-radius: $radius-sm;
+  background: $green-light;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  svg { width: 16px; height: 16px; color: $green; }
+}
+
+.report-name {
+  font-size: 13px;
+  color: $text-primary;
+  line-height: 1.4;
+  transition: color 0.12s;
+}

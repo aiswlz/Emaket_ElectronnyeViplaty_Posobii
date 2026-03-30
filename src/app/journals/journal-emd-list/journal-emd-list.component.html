@@ -1,0 +1,127 @@
+<div class="page-wrap">
+  <div class="breadcrumb">
+    <span class="bc-link">Журналы</span>
+    <span class="bc-sep">/</span>
+    <span>Журнал ЭМД</span>
+  </div>
+
+  <div class="title-row">
+    <h1 class="page-title">Журнал ЭМД</h1>
+    <button class="btn-add-client" (click)="addClient()">+ Добавить клиента</button>
+  </div>
+
+
+  <!-- Фильтр -->
+  <div class="filter-section">
+    <div class="filter-label">Фильтр</div>
+
+    <!-- Первый filter-row — добавь поле ИИН или ФИО: -->
+    <div class="filter-row">
+      <div class="filter-field">
+        <label>Дата обращения с</label>
+        <input type="text" placeholder="дд.мм.гггг" [(ngModel)]="filterDateObr" />
+      </div>
+      <div class="filter-field">
+        <label>Дата статуса с</label>
+        <input type="text" placeholder="-" [(ngModel)]="filterDateStatus" />
+      </div>
+      <div class="filter-field">
+        <label>Выплата</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="filterViplata">
+            <option value="">Выберите</option>
+            <option value="pensiya">Пенсия</option>
+            <option value="posobie">Пособие</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="filter-field">
+        <label>ИИН или ФИО</label>
+        <input type="text" placeholder="Заполнение" [(ngModel)]="filterFio" />
+      </div>
+      <div class="filter-field checkbox-field">
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="filterOsvoe" />
+          <span>Освоение</span>
+        </label>
+        <label class="checkbox-label" style="margin-top:8px">
+          <input type="checkbox" [(ngModel)]="filterEkster" />
+          <span>Заявление по экстерриториальности</span>
+        </label>
+      </div>
+    </div>
+
+
+    <div class="filter-actions">
+      <button class="btn-apply" (click)="applyFilter()">Применить</button>
+      <button class="btn-reset" (click)="resetFilter()">Сбросить</button>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">Загрузка данных...</div>
+
+  <div class="table-wrap" *ngIf="!isLoading">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Дата обращения</th>
+          <th>Дата статуса</th>
+          <th>Статус</th>
+          <th>Код отделения</th>
+          <th>ИИН</th>
+          <th>ФИО</th>
+          <th>Дата рождения</th>
+          <th>Источник</th>
+          <th>Дата назначения</th>
+          <th>Дата окончания</th>
+          <th>Назначенный размер</th>
+          <th>Срок оказания услуги</th>   <!-- ← добавь -->
+          <th>Выплата</th>                 <!-- ← добавь -->
+          <th>Дата риска</th>
+          <th>Специалист</th>
+          <th>Подписант</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="pagedRecords.length === 0">
+          <td colspan="14" class="empty-row">Нет данных</td>
+        </tr>
+        <tr *ngFor="let row of pagedRecords; let i = index"
+            [class.row-alt]="i % 2 === 1"
+            (click)="openCard(row.iin)"
+            style="cursor:pointer">
+          <td>{{ row.dateObr }}</td>
+          <td>{{ row.dateStatus }}</td>
+          <td>{{ row.status }}</td>
+          <td>{{ row.kodOtd }}</td>
+          <td>{{ row.iin }}</td>
+          <td>{{ row.fio }}</td>
+          <td>{{ row.dateBirth }}</td>
+          <td>{{ row.istochnik }}</td>
+          <td>{{ row.dateNazn }}</td>
+          <td>{{ row.dateOkon }}</td>
+          <td>{{ row.naznRazmer }}</td>
+          <td>{{ row.srokOkazaniya }}</td>  
+          <td>{{ row.viplata }}</td> 
+          <td>{{ row.dateRiska }}</td>
+          <td>{{ row.specialist }}</td>
+          <td>{{ row.podpisant }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination-row" *ngIf="!isLoading">
+    <div class="pagination">
+      <button class="pag-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button *ngFor="let p of pages" class="pag-btn" [class.active]="p === currentPage" (click)="goToPage(p)">{{ p }}</button>
+      <button class="pag-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+    <div class="total-label">кол-во записей: {{ filteredRecords.length }}</div>
+  </div>
+</div>

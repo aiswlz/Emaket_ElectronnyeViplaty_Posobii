@@ -1,0 +1,256 @@
+@use '../../../styles/variables' as *;
+
+.page-wrap {
+  padding: 24px 32px;
+  background: $body-bg;
+  min-height: 100vh;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: $text-secondary;
+  margin-bottom: 16px;
+  .bc-link { color: $green; cursor: pointer; &:hover { text-decoration: underline; } }
+  .bc-sep  { color: $text-muted; }
+}
+
+.card-header-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  .client-name { font-size: 20px; font-weight: 600; color: $text-primary; flex: 1; }
+  .header-actions { display: flex; gap: 12px; }
+}
+
+.btn-kartochka {
+  background: #333; color: #fff; border: none; border-radius: $radius-sm;
+  padding: 8px 16px; cursor: pointer; font-size: 13px;
+}
+.btn-register {
+  background: $green; color: #fff; border: none; border-radius: $radius-sm;
+  padding: 8px 20px; cursor: pointer; font-size: 13px; font-weight: 500;
+  &:hover { background: $green-dark; }
+}
+.btn-delete {
+  background: #e53935; color: #fff; border: none; border-radius: $radius-sm;
+  padding: 8px 16px; cursor: pointer; font-size: 13px;
+}
+
+.client-info-bar {
+  display: flex;
+  gap: 32px;
+  background: $card-bg;
+  border: 1px solid $border;
+  border-radius: $radius;
+  padding: 12px 20px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  .info-item { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+  .info-label { color: $text-secondary; font-size: 11px; }
+}
+
+.tab-bar {
+  display: flex;
+  border-bottom: 2px solid $border;
+  margin-bottom: 20px;
+  .tab-btn {
+    background: none; border: none; padding: 10px 20px;
+    font-size: 14px; color: $text-secondary; cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -2px;
+    &.active { color: $green; border-bottom-color: $green; font-weight: 600; }
+  }
+}
+
+.form-section {
+  background: $card-bg;
+  border: 1px solid $border;
+  border-radius: $radius;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  .check-icon { color: $green; font-size: 16px; }
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  align-items: flex-start;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 160px;
+  flex: 1;
+  &.wide { flex: 2; }
+  &.full-width { flex: 1 1 100%; }
+
+  label { font-size: 12px; color: $text-secondary; }
+
+  input[type="text"] {
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: $text-primary;
+    background: #fff;
+    outline: none;
+    &:focus { border-color: $green; }
+  }
+}
+
+.select-wrap {
+  position: relative;
+  select {
+    width: 100%;
+    appearance: none;
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    padding: 8px 32px 8px 12px;
+    font-size: 13px;
+    color: $text-primary;
+    background: #fff;
+    cursor: pointer;
+    outline: none;
+    &:focus { border-color: $green; }
+  }
+  svg {
+    position: absolute; right: 10px; top: 50%;
+    transform: translateY(-50%);
+    width: 16px; height: 16px;
+    color: $text-muted; pointer-events: none;
+  }
+}
+
+.field-error { font-size: 11px; color: #e53935; }
+
+.radio-group {
+  display: flex;
+  gap: 16px;
+  padding: 8px 0;
+  .radio-label { display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; }
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  color: $text-primary;
+}
+
+.btn-add {
+  background: $green-light; color: $green; border: 1px solid $green;
+  border-radius: $radius-sm; padding: 7px 16px;
+  font-size: 13px; font-weight: 500; cursor: pointer; margin-bottom: 12px;
+  &:hover { background: $green; color: #fff; }
+}
+
+.izhdiv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  th { text-align: left; padding: 8px 12px; color: $text-secondary; font-weight: 500; border-bottom: 1px solid $border; }
+  td { padding: 8px 12px; border-bottom: 1px solid $border; }
+  input[type="text"] {
+    border: 1px solid $border; border-radius: 6px;
+    padding: 6px 10px; font-size: 13px; width: 100%; outline: none;
+  }
+}
+
+.btn-remove {
+  background: none; border: none; color: #e53935; cursor: pointer; font-size: 16px;
+}
+
+.doc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.doc-item {
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: $text-primary;
+  &.attached { background: $green-light; border-color: $green; }
+  &.btn-doc { cursor: pointer; color: $text-secondary; &:hover { border-color: $green; color: $green; } }
+}
+
+.req { color: #e53935; margin-left: 2px; }
+
+input.error {
+  border-color: #e53935 !important;
+  background: #fff5f5;
+}
+.doc-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.upload-btn {
+  background: $green-light;
+  color: $green;
+  border: 1px solid $green;
+  border-radius: $radius-sm;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  &:hover { background: $green; color: #fff; }
+}
+
+.view-btn {
+  margin-top: 8px;
+  background: $green;
+  color: #fff;
+  border: none;
+  border-radius: $radius-sm;
+  padding: 5px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  &:hover { background: $green-dark; }
+}
+
+.doc-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.delete-doc-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid #e53935;
+  color: #e53935;
+  background: none;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover { background: #fff5f5; }
+}

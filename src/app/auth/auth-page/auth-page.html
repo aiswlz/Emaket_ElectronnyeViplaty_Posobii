@@ -1,0 +1,72 @@
+<main class="auth-container">
+
+  <!-- Левая часть -->
+  <section class="left-section">
+    <div class="wave-background"></div>
+    <header class="main-header">
+      <div class="logo-wrapper">
+      <img src="/VectorEmaket_transparent.png" alt="e-maket" class="main-logo">     
+        <div class="logo-text-block">
+          <span class="logo-title">e-maket</span>
+          <span class="logo-subtitle">Электронное назначение пенсионных выплат и пособий</span>
+        </div>
+      </div>
+    </header>
+    <div class="hero-text">
+      <h1>Цифровой сервис для<br>назначения пенсионных и<br>социальных выплат</h1>
+    </div>
+  </section>
+
+  <!-- Правая часть - форма -->
+  <section class="right-section">
+    <div class="form-card">
+      <p class="form-subtitle">Электронное назначение пенсионных выплат и пособий МТСЗН РК</p>
+      <h2 class="form-title">Личный кабинет</h2>
+
+      <form [formGroup]="authForm" (ngSubmit)="onSubmit()" class="auth-form" novalidate>
+
+        <!-- Поле Логин -->
+        <div class="form-group">
+          <label for="login">Логин</label>
+          <div class="input-wrapper">
+            <input type="text" id="login" formControlName="login" placeholder="Введите логин">
+          </div>
+        </div>
+
+        <!-- Поле Пароль -->
+        <div class="form-group">
+          <label for="password">Пароль</label>
+          <div class="input-wrapper">
+            <input [type]="showPassword() ? 'text' : 'password'" id="password" formControlName="password" placeholder="Введите пароль">
+            <button type="button" (click)="togglePasswordVisibility()" class="toggle-btn">
+              @if (showPassword()) {
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              }
+            </button>
+          </div>
+        </div>
+
+        <!-- Чекбокс -->
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="agreement">
+          <span>Я принимаю условия <a href="#" class="link">Пользовательского соглашения</a></span>
+        </label>
+
+        <!-- Кнопка Войти -->
+        <button type="submit" [disabled]="!isFormValid()" class="submit-btn">
+          {{ isLoading() ? 'Загрузка...' : 'Войти' }}
+        </button>
+
+      </form>
+    </div>
+  </section>
+
+</main>

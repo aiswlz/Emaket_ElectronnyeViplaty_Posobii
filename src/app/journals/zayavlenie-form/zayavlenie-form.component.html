@@ -1,0 +1,285 @@
+<div class="page-wrap">
+  <div class="breadcrumb">
+    <span class="bc-link" (click)="goToList()" style="cursor:pointer">Журналы</span>
+    <span class="bc-sep">/</span>
+    <span class="bc-link" (click)="goToList()" style="cursor:pointer">Журналы ЭМД</span>
+    <span class="bc-sep">/</span>
+    <span class="bc-link" (click)="cancel()" style="cursor:pointer">Карточка</span>
+    <span class="bc-sep">/</span>
+    <span>Заявление</span>
+  </div>
+
+  <!-- Шапка -->
+  <div class="card-header-row">
+    <h2 class="client-name">{{ fio }}</h2>
+    <div class="header-actions">
+      <button class="btn-register" (click)="save()">Зарегистрировать</button>
+      <button class="btn-delete" (click)="delete()">Удалить</button>
+    </div>
+  </div>
+
+  <!-- Краткая инфо -->
+  <div class="client-info-bar">
+    <div class="info-item"><span class="info-label">ИИН</span><span>{{ iin }}</span></div>
+    <div class="info-item"><span class="info-label">Дата рождения</span><span>{{ dateBirth }}</span></div>
+    <div class="info-item"><span class="info-label">Отделение</span><span>0000</span></div>
+    <div class="info-item"><span class="info-label">Адрес</span><span>{{ address }}</span></div>
+    <div class="info-item"><span class="info-label">Удостоверение РК №</span><span>{{ nomerDoc }}</span></div>
+  </div>
+
+  <!-- Вкладка -->
+  <div class="tab-bar">
+    <button class="tab-btn active">Заявление</button>
+  </div>
+
+  <!-- Блок: шапка заявления -->
+  <div class="form-section">
+    <div class="form-row">
+      <div class="form-field">
+        <label>Номер заявления</label>
+        <input type="text" [(ngModel)]="nomerZayavleniya" />
+      </div>
+      <div class="form-field">
+        <label>Источник *</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="istochnik">
+            <option value="Цон">Цон</option>
+            <option value="Онлайн">Онлайн</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="form-field wide">
+        <label>Основание *</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="osnova">
+            <option value="Соц. выплаты из ГФСС - по беременности и родам">Соц. выплаты из ГФСС - по беременности и родам</option>
+            <option value="Пенсия базовая">Пенсия базовая</option>
+            <option value="Дети - многодетные">Дети - многодетные</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Вид заявления *</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="vidZayavleniya">
+            <option value="Новое назначение">Новое назначение</option>
+            <option value="Перерасчет">Перерасчет</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Блок: Информация о заявителе -->
+  <div class="form-section">
+    <h3 class="section-title">Информация о заявителе <span class="check-icon">✔</span></h3>
+    <div class="form-row">
+      <div class="form-field">
+        <label>ИИН <span class="req">*</span></label>
+        <input type="text" [(ngModel)]="iin" placeholder="ИИН"
+              [class.error]="!iin.trim() && submitted" />
+      </div>
+      <div class="form-field">
+        <label>ФИО <span class="req">*</span></label>
+        <input type="text" [(ngModel)]="fio"
+              [class.error]="!fio.trim() && submitted" />
+      </div>
+      <div class="form-field">
+        <label>Дата рождения <span class="req">*</span></label>
+        <input type="text" [(ngModel)]="dateBirth" placeholder="дд.мм.гггг"
+              maxlength="10" (input)="formatDate($event, 'dateBirth')"
+              [class.error]="!dateBirth.trim() && submitted" />
+      </div>
+      <div class="form-field">
+        <label>№ документа, удост. личность <span class="req">*</span></label>
+        <input type="text" [(ngModel)]="nomerDoc"
+              [class.error]="!nomerDoc.trim() && submitted" />
+      </div>
+      <div class="form-field">
+        <label>Кем выдано <span class="req">*</span></label>
+        <input type="text" [(ngModel)]="kemVidano" 
+              placeholder="Министерство внутренних дел РК"
+              [class.error]="!kemVidano.trim() && submitted" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field"><label>Дата обращения</label><input type="text" [(ngModel)]="dateObr" /></div>
+      <div class="form-field"><label>Дата приема документов</label><input type="text" [(ngModel)]="datePriem" /></div>
+      <div class="form-field">
+        <label>Язык заявления</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="yazykZayavl">
+            <option value="Русский">Русский</option>
+            <option value="Казахский">Казахский</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="form-field"><label>Домашний телефон</label><input type="text" [(ngModel)]="domTel" /></div>
+      <div class="form-field"><label>Электронный адрес</label><input type="text" [(ngModel)]="email" placeholder="-" /></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field full-width"><label>Адрес</label><input type="text" [(ngModel)]="address" /></div>
+      <div class="form-field"><label>Мобильный телефон</label><input type="text" [(ngModel)]="mobTel" placeholder="+7 (700) 000-00-00" maxlength="18" (input)="formatPhone($event)"/></div>
+      <div class="form-field"><label>Источник моб. телефона</label><input type="text" [(ngModel)]="istMobTel" placeholder="Заполнение" /></div>
+    </div>
+    <div class="form-row">
+      <label class="checkbox-label">
+        <input type="checkbox" [(ngModel)]="pribyl" />
+        <span>Прибывший из пределов РК</span>
+      </label>
+    </div>
+    <div class="form-row" *ngIf="pribyl">
+      <div class="form-field">
+        <label>Страна прибытия/выбытия</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="stranaPrib">
+            <option value="">Выберите</option>
+            <option value="Россия">Россия</option>
+            <option value="Беларусь">Беларусь</option>
+            <option value="Другое">Другое</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Блок: Банковские реквизиты -->
+  <div class="form-section">
+    <h3 class="section-title">Банковские реквизиты <span class="check-icon">✔</span></h3>
+    <div class="form-row">
+      <div class="form-field wide">
+        <label>Способ выплаты</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="sposobViplaty">
+            <option value="">-</option>
+            <option value="bank">Банковский счёт</option>
+            <option value="cash">Наличными</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <span class="field-error" *ngIf="!sposobViplaty">заполните поле</span>
+      </div>
+      <div class="form-field">
+        <label>Место проживания</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="mestoProj">
+            <option value="01-Собственное жильё">01-Собственное жильё</option>
+            <option value="02-Аренда">02-Аренда</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Тип счета</label>
+        <div class="radio-group">
+          <label class="radio-label"><input type="radio" [(ngModel)]="tipScheta" value="litsevoy" /> Лицевой счет</label>
+          <label class="radio-label"><input type="radio" [(ngModel)]="tipScheta" value="kart" /> Карт счет</label>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>IBAN *</label>
+        <input type="text" [(ngModel)]="iban" placeholder="-" />
+        <span class="field-error" *ngIf="!iban">заполните поле</span>
+      </div>
+      <div class="form-field">
+        <label>Банк</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="bank">
+            <option value="">Выберите</option>
+            <option value="Kaspi">Kaspi Bank</option>
+            <option value="Halyk">Halyk Bank</option>
+            <option value="BCC">БЦК</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Блок: Дополнительные сведения -->
+  <div class="form-section">
+    <h3 class="section-title">Дополнительные сведения <span class="check-icon">✔</span></h3>
+    <div class="form-row">
+      <label class="checkbox-label"><input type="checkbox" [(ngModel)]="mnogodetMat" /> <span>Многодетная мать</span></label>
+      <label class="checkbox-label" style="margin-left:24px"><input type="checkbox" [(ngModel)]="pensionerSIYAP" /> <span>Пенсионер по СИЯП</span></label>
+    </div>
+  </div>
+
+  <!-- Блок: Иждивенцы -->
+  <div class="form-section">
+    <h3 class="section-title">Иждивенцы <span class="check-icon">✔</span></h3>
+    <button class="btn-add" (click)="addIzhdivents()">+ Добавить иждивенца</button>
+    <table class="izhdiv-table" *ngIf="izhdivency.length > 0">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Отношение</th>
+          <th>ИИН</th>
+          <th>ФИО</th>
+          <th>Дата рождения</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let iz of izhdivency; let i = index">
+          <td><input type="checkbox" /></td>
+          <td>
+            <div class="select-wrap">
+              <select [(ngModel)]="iz.otnoshenie">
+                <option value="Сын/дочь">Сын/дочь</option>
+                <option value="Супруг(а)">Супруг(а)</option>
+                <option value="Родитель">Родитель</option>
+              </select>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </td>
+          <td><input type="text" [(ngModel)]="iz.iin" placeholder="-" /></td>
+          <td><input type="text" [(ngModel)]="iz.fio" placeholder="-" /></td>
+          <td><input type="text" [(ngModel)]="iz.dateBirth" placeholder="-" /></td>
+          <td><button class="btn-remove" (click)="removeIzhdivents(i)">🗑</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Блок: Прикладываемые документы -->
+  <div class="form-section">
+    <h3 class="section-title">Прикладываемые документы <span class="check-icon"></span></h3>
+
+   <div class="doc-grid">
+    <ng-container *ngFor="let doc of allDocs">
+      <div class="doc-item" [class.attached]="isUploaded(doc.key)">
+        <div class="doc-item-top">
+          <span>{{ doc.label }}</span>
+          <div class="doc-item-actions">
+            <button *ngIf="isUploaded(doc.key)" class="delete-doc-btn" (click)="deleteFile(doc.key)">−</button>
+            <label class="upload-btn">
+              <input type="file" (change)="onFileUpload($event, doc.key)" hidden />
+              {{ isUploaded(doc.key) ? 'Загружен' : '+' }}
+            </label>
+          </div>
+        </div>
+        <button *ngIf="isUploaded(doc.key)" class="view-btn"
+                (click)="openFile(getFile(doc.key).url, getFile(doc.key).type)">
+          Открыть
+        </button>
+      </div>
+    </ng-container>
+  </div>
+  </div>
+
+  <!-- Блок: Шаблон заявления -->
+  <div class="form-section">
+    <h3 class="section-title">Шаблон заявления <span class="check-icon">✔</span></h3>
+    <button class="btn-add">+ Открыть</button>
+  </div>
+
+</div>

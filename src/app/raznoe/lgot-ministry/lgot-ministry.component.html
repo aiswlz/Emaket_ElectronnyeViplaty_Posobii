@@ -1,0 +1,79 @@
+<div class="page-wrap">
+  <div class="breadcrumb">
+    <span class="bc-link" routerLink="/home">Разное</span>
+    <span class="bc-sep">/</span>
+    <span>Данные по льготной категории граждан, Министерство Обороны</span>
+  </div>
+
+  <div class="page-card">
+    <h1 class="page-title">Данные по льготной категории граждан, Министерство Обороны</h1>
+
+    <div class="filter-section">
+      <div class="filter-label">Фильтр</div>
+      <div class="filter-row">
+        <div class="filter-field">
+          <label>ИИН</label>
+          <input type="text" placeholder="Введите" [(ngModel)]="iinFilter" />
+        </div>
+      </div>
+      <div class="filter-actions">
+        <button class="btn-apply" (click)="applyFilter()">Применить</button>
+        <button class="btn-reset" (click)="resetFilter()">Сбросить</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Системная дата</th>
+            <th>ИИН</th>
+            <th>ФИО</th>
+            <th>Дата рождения</th>
+            <th>МОБУ</th>
+            <th>Воинское звание</th>
+            <th>Вид льготы</th>
+            <th>Номер ЛУ</th>
+            <th>Дата выдачи ЛУ</th>
+            <th>Кем выдано ЛУ</th>
+            <th>Дата ЛУ с</th>
+            <th>Дата ЛУ по</th>
+            <th>Страна</th>
+            <th>Номер письма</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of pagedRecords; let i = index" [class.row-alt]="i % 2 === 1">
+            <td>{{ row.systemDate }}</td>
+            <td>{{ row.iin }}</td>
+            <td>{{ row.fio }}</td>
+            <td>{{ row.birthDate }}</td>
+            <td>{{ row.mobu }}</td>
+            <td>{{ row.rank }}</td>
+            <td>{{ row.benefitType }}</td>
+            <td>{{ row.luNumber }}</td>
+            <td>{{ row.luIssueDate }}</td>
+            <td>{{ row.issuedBy }}</td>
+            <td>{{ row.luFrom }}</td>
+            <td>{{ row.luTo }}</td>
+            <td>{{ row.country }}</td>
+            <td>{{ row.letterNumber }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-row">
+      <div class="pagination">
+        <button class="pag-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button *ngFor="let p of pages" class="pag-btn" [class.active]="p === currentPage" (click)="goToPage(p)">{{ p }}</button>
+        <button class="pag-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+      <div class="total-label">кол-во записей: {{ totalRecords }}</div>
+    </div>
+  </div>
+</div>

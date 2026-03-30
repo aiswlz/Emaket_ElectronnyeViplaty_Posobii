@@ -1,0 +1,303 @@
+// Variables
+$green: #3aaa73;
+$green-dark: #2d8a5e;
+$green-light: #e8f7f0;
+$body-bg: #f4f6f8;
+$card-bg: #fff;
+$border: #e5e8ec;
+$text-primary: #1a1f2e;
+$text-secondary: #6b7280;
+$text-muted: #9ca3af;
+$radius: 12px;
+$radius-sm: 8px;
+
+.page-wrap {
+  padding: 20px 24px;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  .page-title { margin-bottom: 0; }
+}
+
+.btn-add-client {
+  background: $green;
+  color: #fff;
+  border: none;
+  border-radius: $radius-sm;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  &:hover { background: $green-dark; }
+}
+
+// ─── Breadcrumb ────────────────────────────────────────────
+.breadcrumb {
+  font-size: 12.5px;
+  color: $text-muted;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.bc-link {
+  color: $text-secondary;
+  cursor: pointer;
+  &:hover { color: $green; }
+}
+.bc-sep { color: $text-muted; }
+
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: 20px;
+}
+
+// ─── Filter ────────────────────────────────────────────────
+.filter-section {
+  background: $card-bg;
+  border-radius: $radius;
+  border: 1px solid $border;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.filter-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: 14px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 12px;
+    font-weight: 500;
+    color: $text-secondary;
+  }
+
+  input[type="text"] {
+    height: 36px;
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    padding: 0 12px;
+    font-size: 13px;
+    color: $text-primary;
+    font-family: inherit;
+    outline: none;
+    width: 180px;
+    background: #fff;
+
+    &::placeholder { color: $text-muted; }
+    &:focus { border-color: $green; }
+  }
+}
+
+.select-wrap {
+  position: relative;
+  width: 180px;
+
+  select {
+    width: 100%;
+    height: 36px;
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    padding: 0 32px 0 12px;
+    font-size: 13px;
+    color: $text-primary;
+    font-family: inherit;
+    outline: none;
+    appearance: none;
+    background: #fff;
+    cursor: pointer;
+
+    &:focus { border-color: $green; }
+  }
+
+  svg {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    color: $text-muted;
+    pointer-events: none;
+  }
+}
+
+.checkbox-field {
+  justify-content: flex-end;
+  padding-bottom: 4px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: $text-primary;
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: $green;
+    cursor: pointer;
+  }
+}
+
+.filter-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.btn-apply {
+  height: 36px;
+  padding: 0 24px;
+  background: $green;
+  color: #fff;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+  &:hover { background: $green-dark; }
+}
+
+.btn-reset {
+  height: 36px;
+  padding: 0 24px;
+  background: #fff;
+  color: $text-secondary;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+  &:hover { background: $body-bg; }
+}
+
+// ─── Table ─────────────────────────────────────────────────
+.table-wrap {
+  overflow-x: auto;
+  border-radius: $radius;
+  border: 1px solid $border;
+  background: $card-bg;
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  min-width: 1600px;
+
+  thead tr { background: #fff; }
+
+  thead th {
+    text-align: left;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: $text-secondary;
+    padding: 10px 12px;
+    border-bottom: 1px solid $border;
+    white-space: normal;
+    line-height: 1.3;
+    vertical-align: top;
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid $border;
+      background: #fff;
+      transition: background 0.1s;
+      cursor: pointer;
+
+      &.row-alt { background: #f9fafb; }
+      &:last-child { border-bottom: none; }
+      &:hover { background: $green-light !important; }
+    }
+
+    td {
+      padding: 10px 12px;
+      color: $text-primary;
+      vertical-align: middle;
+      line-height: 1.4;
+    }
+  }
+}
+
+// ─── Pagination ────────────────────────────────────────────
+.pagination-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pag-btn {
+  min-width: 32px;
+  height: 32px;
+  border-radius: $radius-sm;
+  border: 1px solid $border;
+  background: #fff;
+  color: $text-secondary;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  transition: all 0.12s;
+
+  svg { width: 14px; height: 14px; }
+
+  &:hover:not([disabled]) {
+    background: $green-light;
+    border-color: $green;
+    color: $green;
+  }
+
+  &.active {
+    background: $green;
+    border-color: $green;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  &[disabled] { opacity: 0.4; cursor: default; }
+}
+
+.total-label {
+  font-size: 12.5px;
+  color: $text-muted;
+}

@@ -1,0 +1,79 @@
+<div class="page-wrap">
+  <div class="breadcrumb">
+    <span class="bc-link">Отчеты</span>
+    <span class="bc-sep">/</span>
+    <span>Внутренние отчеты</span>
+  </div>
+
+  <div class="reports-layout">
+
+    <!-- Left: Report list -->
+    <div class="reports-list-card">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Наименование отчета" [(ngModel)]="searchQuery" />
+      </div>
+
+      <div class="report-items">
+        <div
+          class="report-item"
+          *ngFor="let item of filteredReports"
+          [class.active]="selectedReport?.id === item.id"
+          (click)="selectReport(item)">
+          <div class="report-icon" [ngClass]="item.iconType">
+            <svg *ngIf="item.iconType === 'file'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <svg *ngIf="item.iconType === 'folder'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <span class="report-name">{{ item.name }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Report status -->
+    <div class="status-card">
+      <div class="status-header">
+        <span class="status-title">Статус отчета</span>
+        <div class="status-dot"></div>
+      </div>
+
+      <div class="status-table-wrap">
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Имя отчета</th>
+              <th>Дата создания</th>
+              <th>Статус</th>
+              <th>№</th>
+              <th>Действие</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of statusRows; let i = index" [class.row-alt]="i % 2 === 1">
+              <td>
+                <div class="status-icon" [class.error]="s.statusType === 'error'" [class.ok]="s.statusType === 'ok'">
+                  <svg *ngIf="s.statusType === 'error'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  <svg *ngIf="s.statusType === 'ok'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+                </div>
+              </td>
+              <td>{{ s.name }}</td>
+              <td class="date-col">{{ s.date }}</td>
+              <td>
+                <span class="status-text" [class.red]="s.statusLabel === 'Отчет не сформирован'" [class.green-text]="s.statusLabel === 'Отчет сформирован'">
+                  {{ s.statusLabel }}
+                </span>
+              </td>
+              <td>{{ s.number }}</td>
+              <td>
+                <button class="btn-delete-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6m4-6v6"/><path d="M9 6V4h6v2"/></svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

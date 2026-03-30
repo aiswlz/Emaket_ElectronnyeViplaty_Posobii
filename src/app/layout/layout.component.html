@@ -1,0 +1,110 @@
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">
+      <img src="/logo-icon.png" alt="e-maket" style="width:36px;height:36px;object-fit:contain;border-radius:50%;">
+    </div>
+    <div class="logo-text-block">
+      <span class="logo-title">e-maket</span>
+      <span class="logo-subtitle">Электронное назначение пенсионных выплат и пособий</span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="nav-item" routerLink="/home" routerLinkActive="active-parent">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M3 12h2m14 0h2M12 3v2m0 14v2m-6.36-2.64 1.42-1.42m8.48 0 1.42 1.42M5.64 5.64l1.42 1.42m8.48 0 1.42-1.42"/></svg>
+      Главная
+    </a>
+
+   <!--Отчеты-->
+    <a class="nav-item" (click)="toggleMenu('reports')" [class.active-parent]="openMenu === 'reports'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 0 1 0 10h-2m-7-5h8"/></svg>
+      Отчеты
+      <svg class="chevron" [class.open]="openMenu === 'reports'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+
+    <div class="sub-menu" *ngIf="openMenu === 'reports'">
+      <a class="sub-item" href="#">Солидарные выплаты</a>
+      <a class="sub-item" href="#">Социальные выплаты из ГФСС</a>
+      <a class="sub-item" href="#">Отчеты Е-макет</a>
+      <a class="sub-item" routerLink="/reports/internal" routerLinkActive="active">Внутренние отчеты</a>
+      <a class="sub-item" href="#">Отчеты МТСЗН</a>
+      <a class="sub-item" href="#">Отчеты ЦЕНТР</a>
+      <a class="sub-item" href="#">Отчеты Call ЦЕНТР</a>
+      <a class="sub-item" href="#">Отчеты для проверки</a>
+    </div>
+
+    <!-- Журналы -->
+    <a class="nav-item" (click)="toggleMenu('journals')" [class.active-parent]="openMenu === 'journals'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Журналы
+      <svg class="chevron" [class.open]="openMenu === 'journals'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+
+    <div class="sub-menu" *ngIf="openMenu === 'journals'">
+      <a class="sub-item" routerLink="/journals/zayavleniy" routerLinkActive="active">Журнал заявлений</a>
+      <a class="sub-item" routerLink="/journals/emd" routerLinkActive="active">Журнал ЭМД</a>
+      <a class="sub-item" href="#">Журнал электронных заявок и уведомлений</a>
+      <a class="sub-item" href="#">Журнал электронных заявок и Контакт центр</a>
+      <a class="sub-item" href="#">Журнал sms-оповещений</a>
+      <a class="sub-item" href="#">Журнал гос гарантия</a>
+      <a class="sub-item" href="#">Журнал оцифрованных дел</a>
+      <a class="sub-item" href="#">Журнал автоматического подписания</a>
+    </div>
+
+    <!-- Разное -->
+    <a class="nav-item" (click)="toggleMenu('raznoe')" [class.active-parent]="openMenu === 'raznoe'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      Разное
+      <svg class="chevron" [class.open]="openMenu === 'raznoe'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+
+    <div class="sub-menu" *ngIf="openMenu === 'raznoe'">
+      <a class="sub-item" href="#">На приостановление по данным ГБДФЛ</a>
+      <a class="sub-item" href="#">На приостановление выплат по 10% ОПФ</a>
+      <a class="sub-item" href="#">Инфляция</a>
+      <a class="sub-item" href="#">Повышение</a>
+      <a class="sub-item" routerLink="/raznoe/lgot-ministry" routerLinkActive="active">Данные по льготной категории граждан, Министерство Обороны</a>
+      <a class="sub-item" href="#">Сведения о доходах ИП и наемных работников с КГД</a>
+      <a class="sub-item" href="#">Журнал формуляра ЕАЭС</a>
+      <a class="sub-item" href="#">Блокировка соц.взносов</a>
+      <a class="sub-item" href="#">Редактирование социальных взносов участника СС</a>
+      <a class="sub-item" href="#">Реестр плательщиков СВ</a>
+      <a class="sub-item" href="#">Снять контроль</a>
+      <a class="sub-item" href="#">Календарь выходных и праздничных дней</a>
+      <a class="sub-item" href="#">Календарь внесения индекса потребительских цен</a>
+      <a class="sub-item" href="#">Помощь</a>
+    </div>
+  </nav>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Поиск" />
+    </div>
+    <div class="topbar-right">
+      <div class="notif-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <button class="lang-btn">
+        Ру
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="notif-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-badge">123</span>
+      </div>
+      <div class="user-btn">
+        <div class="user-avatar">А</div>
+        <span class="user-name">Админ</span>
+        <svg class="user-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <div class="content">
+    <!-- Все дочерние страницы рендерятся здесь -->
+    <router-outlet></router-outlet>
+  </div>
+</div>

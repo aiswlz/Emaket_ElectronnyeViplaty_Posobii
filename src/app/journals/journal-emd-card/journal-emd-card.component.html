@@ -1,0 +1,222 @@
+<div class="page-wrap">
+
+  <ng-container *ngIf="client">
+
+    <div class="breadcrumb">
+      <span class="bc-link">Журналы</span>
+      <span class="bc-sep">/</span>
+      <span class="bc-link" (click)="cancel()" style="cursor:pointer">Журналы ЭМД</span>
+      <span class="bc-sep">/</span>
+      <span>Карточка</span>
+    </div>
+
+    <!-- Client Card -->
+    <div class="client-card">
+    <div class="client-header">
+
+      <!-- Режим просмотра -->
+      <ng-container *ngIf="!isEditing">
+        <h1 class="client-name">
+          {{ client.fio }}
+          <span class="client-dob">{{ client.dob }} г.р.</span>
+        </h1>
+      </ng-container>
+
+      <!-- Режим редактирования -->
+      <ng-container *ngIf="isEditing">
+        <div class="edit-row">
+          <div class="edit-field">
+            <label>ФИО</label>
+            <input type="text" [(ngModel)]="editFio" />
+          </div>
+          <div class="edit-field">
+            <label>Дата рождения</label>
+            <input type="text" [(ngModel)]="editDob" placeholder="дд.мм.гггг" />
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Кнопки -->
+      <div class="header-actions">
+        <ng-container *ngIf="!isEditing">
+          <button class="btn-edit" (click)="startEdit()">✏ Редактировать</button>
+          <button class="btn-register" (click)="openZayavlenie()">+ Регистрировать заявление</button>
+        </ng-container>
+        <ng-container *ngIf="isEditing">
+          <button class="btn-register" (click)="saveEdit()">✔ Сохранить</button>
+          <button class="btn-cancel-edit" (click)="cancelEdit()">Отмена</button>
+        </ng-container>
+      </div>
+
+    </div>
+
+    <div class="client-info-row">
+
+      <!-- Режим просмотра -->
+      <ng-container *ngIf="!isEditing">
+        <div class="client-info-col">
+          <div class="info-label">ИИН</div>
+          <div class="info-value">{{ client.iin }}</div>
+        </div>
+        <div class="client-info-col">
+          <div class="info-label">Адрес</div>
+          <div class="info-value">{{ client.address }}</div>
+        </div>
+        <div class="client-info-col">
+          <div class="info-label">Удостоверение РК №:</div>
+          <div class="info-value">{{ client.udostoverenie }}</div>
+        </div>
+        <div class="client-info-col">
+          <div class="info-label">Дата наст. пенсионного возраста в 2025:</div>
+          <div class="info-value">{{ client.pensionAge2025 }}</div>
+        </div>
+        <div class="client-info-col">
+          <div class="info-label">Дата наст. пенсионного возраста в 2026:</div>
+          <div class="info-value">{{ client.pensionAge2026 }}</div>
+        </div>
+      </ng-container>
+
+      <!-- Режим редактирования -->
+      <ng-container *ngIf="isEditing">
+        <div class="edit-row">
+          <div class="edit-field wide">
+            <label>Адрес</label>
+            <input type="text" [(ngModel)]="editAddress" />
+          </div>
+          <div class="edit-field wide">
+            <label>Удостоверение РК №</label>
+            <input type="text" [(ngModel)]="editUdost" />
+          </div>
+          <div class="edit-field wide">
+            <label>Дата наст. пенсионного возраста в 2025</label>
+            <input type="text" [(ngModel)]="editPension2025" placeholder="дд.мм.гггг" />
+          </div>
+          <div class="edit-field wide">
+            <label>Дата наст. пенсионного возраста в 2026</label>
+            <input type="text" [(ngModel)]="editPension2026" placeholder="дд.мм.гггг" />
+          </div>
+        </div>
+      </ng-container>
+
+    </div>
+  </div>
+
+    <!-- Tabs -->
+    <div class="tabs-wrap">
+      <button class="tab" [class.active]="activeTab === 'makety'"  (click)="activeTab = 'makety'">Макеты</button>
+      <button class="tab" [class.active]="activeTab === 'history'" (click)="activeTab = 'history'">История</button>
+      <button class="tab" [class.active]="activeTab === 'requests'"(click)="activeTab = 'requests'">Запросы</button>
+      <button class="tab" [class.active]="activeTab === 'scan'"    (click)="activeTab = 'scan'">Оцифровка</button>
+    </div>
+
+    <!-- Макеты -->
+    <div *ngIf="activeTab === 'makety'" class="tab-content">
+      <h2 class="tab-title">Макеты</h2>
+      <div class="sort-row">
+        <span class="sort-label">Сортировка: Новое назначение</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+
+      <div class="maket-list">
+        <div class="maket-row" *ngFor="let maket of client.makets" [class.expanded]="maket.expanded">
+
+          <!-- Row header -->
+          <div class="maket-header" (click)="toggleMaket(maket)">
+            <div class="maket-toggle" [class.open]="maket.expanded">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14">
+                <polyline *ngIf="maket.expanded"  points="18 15 12 9 6 15"/>
+                <polyline *ngIf="!maket.expanded" points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
+            <div class="maket-col">
+              <div class="col-label">Основание</div>
+              <div class="col-value">{{ maket.osnova }}</div>
+            </div>
+            <div class="maket-col">
+              <div class="col-label">Дата регистрации</div>
+              <div class="col-value">{{ maket.dateReg }}</div>
+            </div>
+            <div class="maket-col">
+              <div class="col-label">Тип</div>
+              <div class="col-value green">{{ maket.tip }}</div>
+            </div>
+            <div class="maket-col">
+              <div class="col-label">ID</div>
+              <div class="col-value">{{ maket.recordId }}</div>
+            </div>
+            <div class="maket-col wide">
+              <div class="col-label">ФИО</div>
+              <div class="col-value">{{ maket.fio }}</div>
+            </div>
+            <div class="maket-col">
+              <div class="col-label">Номер заявления</div>
+              <div class="col-value">{{ maket.nomerZayavleniya }}</div>
+            </div>
+            <div class="maket-col">
+              <div class="col-label">Отделение</div>
+              <div class="col-value">{{ maket.otdelenie }}</div>
+            </div>
+          </div>
+
+          <!-- Expanded detail -->
+          <div class="maket-detail" *ngIf="maket.expanded">
+            <div class="detail-title">Макет дела</div>
+            <div class="detail-grid">
+              <div class="detail-col">
+                <div class="col-label">Сумма</div>
+                <div class="detail-sum">{{ maket.detail.summa }} ₸</div>
+              </div>
+              <div class="detail-col">
+                <div class="col-label">Выплата</div>
+                <div class="col-value">{{ maket.detail.viplata }}</div>
+              </div>
+              <div class="detail-col">
+                <div class="col-label">Дата обращения</div>
+                <div class="col-value bold">{{ maket.detail.dateObr }}</div>
+              </div>
+              <div class="detail-col">
+                <div class="col-label">Дата назначения</div>
+                <div class="col-value bold">{{ maket.detail.dateNazn }}</div>
+              </div>
+              <div class="detail-col">
+                <div class="col-label">Номер дела</div>
+                <div class="col-value bold">{{ maket.detail.nomerDela }}</div>
+              </div>
+              <div class="detail-col">
+                <div class="col-label">Статус</div>
+                <div class="col-value bold">{{ maket.detail.status }}</div>
+              </div>
+            </div>
+            <div class="detail-actions">
+              <button class="btn-open">Открыть</button>
+              <button class="btn-delete-maket" (click)="deleteMaket(maket)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6m4-6v6"/><path d="M9 6V4h6v2"/></svg>
+                Удалить
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- История -->
+    <div *ngIf="activeTab === 'history'" class="tab-content">
+      <h2 class="tab-title">История</h2>
+      <p class="empty-state" *ngIf="client.history.length === 0">Нет данных для отображения</p>
+    </div>
+
+    <!-- Запросы -->
+    <div *ngIf="activeTab === 'requests'" class="tab-content">
+      <h2 class="tab-title">Запросы</h2>
+      <p class="empty-state" *ngIf="client.requests.length === 0">Нет данных для отображения</p>
+    </div>
+
+    <!-- Оцифровка -->
+    <div *ngIf="activeTab === 'scan'" class="tab-content">
+      <h2 class="tab-title">Оцифровка</h2>
+      <p class="empty-state" *ngIf="client.scan.length === 0">Нет данных для отображения</p>
+    </div>
+
+  </ng-container>
+</div>
