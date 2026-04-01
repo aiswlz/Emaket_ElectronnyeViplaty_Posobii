@@ -1,0 +1,117 @@
+<div class="page-wrap">
+  <div class="breadcrumb">
+    <span class="bc-link">Журналы</span>
+    <span class="bc-sep">/</span>
+    <span>Журнал Гос гарантия</span>
+  </div>
+
+  <h1 class="page-title">Журнал Гос гарантия</h1>
+
+  <!-- Фильтр -->
+  <div class="filter-section">
+    <div class="filter-label">Фильтр</div>
+
+    <div class="filter-row">
+      <!-- Дата отправки с -->
+      <div class="filter-field">
+        <label>Дата отправки с</label>
+        <input type="text" placeholder="дд.мм.гггг" [(ngModel)]="filterDataOtpravkiFrom" />
+      </div>
+
+      <!-- Дата отправки по -->
+      <div class="filter-field">
+        <label>Дата отправки по</label>
+        <input type="text" placeholder="-" [(ngModel)]="filterDataOtpravkiTo" />
+      </div>
+
+      <!-- Отделение -->
+      <div class="filter-field">
+        <label>Отделение</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="filterOtdelenie">
+            <option value="">Выберите</option>
+            <option *ngFor="let o of otdeleniyaList" [value]="o">{{ o }}</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+
+      <!-- ИИН -->
+      <div class="filter-field">
+        <label>ИИН</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="filterIin">
+            <option value="">Выберите</option>
+            <option *ngFor="let o of otdeleniyaList" [value]="o">{{ o }}</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+
+      <!-- Уведомление (чекбокс) -->
+      <div class="filter-field filter-field-check">
+        <label>Уведомление</label>
+        <input type="checkbox" [(ngModel)]="filterUvedomlenie" />
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <button class="btn-apply" (click)="applyFilter()">Применить</button>
+      <button class="btn-reset" (click)="resetFilter()">Сбросить</button>
+    </div>
+  </div>
+
+  <!-- Загрузка -->
+  <div class="loading" *ngIf="isLoading">Загрузка...</div>
+
+  <!-- Таблица -->
+  <div class="table-wrap" *ngIf="!isLoading">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>ИИН</th>
+          <th>ФИО</th>
+          <th>Дата приема</th>
+          <th>Момент</th>
+          <th>Код отделения</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let record of pagedRecords; let i = index" [class.row-alt]="i % 2 === 1">
+          <td>{{ record.nomer }}</td>
+          <td>{{ record.iin }}</td>
+          <td>{{ record.fio }}</td>
+          <td>{{ record.dataPriema }}</td>
+          <td>{{ record.moment }}</td>
+          <td>{{ record.kodOtdeleniya }}</td>
+        </tr>
+
+        <tr *ngIf="pagedRecords.length === 0">
+          <td colspan="6" class="td-empty">Нет данных</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Пагинация -->
+  <div class="pagination" *ngIf="!isLoading && totalPages > 1">
+    <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+
+    <button
+      class="page-btn"
+      *ngFor="let p of pages"
+      [class.active]="p === currentPage"
+      (click)="goToPage(p)">
+      {{ p }}
+    </button>
+
+    <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+
+    <span class="total-records">кол-во записей: {{ totalRecords }}</span>
+  </div>
+</div>

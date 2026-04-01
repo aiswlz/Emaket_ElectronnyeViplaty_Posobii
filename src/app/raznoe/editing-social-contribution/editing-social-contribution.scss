@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 $green:          #3aaa73;
 $green-dark:     #2d8a5e;
 $green-light:    #e8f7f0;
@@ -154,7 +156,7 @@ $radius-sm:      8px;
 
   svg { width: 15px; height: 15px; }
 
-  &:hover:not(:disabled) { background: #f3f4f6; border-color: darken($border, 6%); }
+  &:hover:not(:disabled) { background: #f3f4f6; border-color: color.adjust($border, $lightness: -6%); }
 
   &:disabled {
     opacity: 0.45;
@@ -163,7 +165,7 @@ $radius-sm:      8px;
 
   &.cancel {
     color: $orange;
-    border-color: lighten($orange, 25%);
+    border-color: color.adjust($orange, $lightness: 25%);
     &:hover:not(:disabled) { background: #fffbeb; }
   }
 
@@ -456,7 +458,7 @@ $radius-sm:      8px;
   font-family: inherit;
   cursor: pointer;
   transition: background 0.12s;
-  &:hover { background: darken($red, 8%); }
+  &:hover { background: color.adjust($red, $lightness: -8%); }
 }
 
 .btn-warning {
@@ -471,5 +473,5 @@ $radius-sm:      8px;
   font-family: inherit;
   cursor: pointer;
   transition: background 0.12s;
-  &:hover { background: darken($orange, 8%); }
+  &:hover { background: color.adjust($orange, $lightness: -8%); }
 }

@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 // ─── Variables ────────────────────────────────────────────
 $green:          #3aaa73;
 $green-dark:     #2d8a5e;
@@ -379,7 +381,7 @@ $red:            #ef4444;
     transition: border-color 0.12s;
 
     &:focus  { border-color: $green; background: #fff; }
-    &:hover  { border-color: darken($border, 8%); }
+    &:hover  { border-color: color.adjust($border, $lightness: -8%); }
   }
 }
 

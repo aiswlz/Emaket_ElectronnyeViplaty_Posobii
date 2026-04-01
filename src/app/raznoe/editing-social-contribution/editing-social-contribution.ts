@@ -2,7 +2,7 @@ import { Component, OnInit,ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-// ─── Интерфейс одной строки таблицы ──────────────────────
+// ─── Интерфейс одной строки таблицы
 export interface SocialContribution {
   id: number;
   period: string;
@@ -17,7 +17,7 @@ export interface SocialContribution {
   comment: string;
 }
 
-// ─── Интерфейс фильтра ────────────────────────────────────
+// ─── Интерфейс фильтра 
 export interface FilterForm {
   iin: string;
   bin: string;

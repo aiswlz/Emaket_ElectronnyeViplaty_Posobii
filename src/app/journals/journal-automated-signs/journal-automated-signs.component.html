@@ -1,0 +1,153 @@
+<div class="page-wrap">
+  <div class="breadcrumb">
+    <span class="bc-link">Журналы</span>
+    <span class="bc-sep">/</span>
+    <span>Журнал автоматического подписания</span>
+  </div>
+
+  <h1 class="page-title">Журнал автоматического подписания</h1>
+
+  <!-- Фильтр -->
+  <div class="filter-section">
+    <div class="filter-label">Фильтр</div>
+
+    <div class="filter-row">
+      <!-- Отделение -->
+      <div class="filter-field">
+        <label>Отделение</label>
+        <input type="text" placeholder="24.04.2025" [(ngModel)]="filterOtdelenie" />
+      </div>
+
+      <!-- Основание -->
+      <div class="filter-field">
+        <label>Основание</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="filterOsnova">
+            <option value="">Выберите</option>
+            <option>Соц. выплаты из ГФСС по беременности и родам</option>
+            <option>Соц. выплаты по потере работы</option>
+            <option>Соц. выплаты по инвалидности</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+
+      <!-- Статус -->
+      <div class="filter-field">
+        <label>Статус</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="filterStatus">
+            <option value="">Выберите</option>
+            <option>Принято</option>
+            <option>Отклонено</option>
+            <option>На рассмотрении</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+
+      <!-- Дата обращения -->
+      <div class="filter-field">
+        <label>Дата обращения</label>
+        <input type="text" placeholder="дд.мм.гггг" [(ngModel)]="filterDataObr" />
+      </div>
+
+      <!-- Количество -->
+      <div class="filter-field">
+        <label>Количество</label>
+        <input type="text" placeholder="Введите" [(ngModel)]="filterKolichestvo" />
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <!-- ИИН -->
+      <div class="filter-field">
+        <label>ИИН</label>
+        <input type="text" placeholder="Введите" [(ngModel)]="filterIin" />
+      </div>
+
+      <!-- Тип заявления -->
+      <div class="filter-field">
+        <label>Тип заявления</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="filterTipZayavleniya">
+            <option value="">Выберите</option>
+            <option>Новое</option>
+            <option>Продление</option>
+            <option>Изменение</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <button class="btn-apply" (click)="applyFilter()">Применить</button>
+      <button class="btn-reset" (click)="resetFilter()">Сбросить</button>
+    </div>
+  </div>
+
+  <!-- Загрузка -->
+  <div class="loading" *ngIf="isLoading">Загрузка...</div>
+
+  <!-- Таблица -->
+  <div class="table-wrap" *ngIf="!isLoading">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>ИИН</th>
+          <th>СТ</th>
+          <th>ФИО</th>
+          <th>Отделение</th>
+          <th>Выплата</th>
+          <th>Дата обращения</th>
+          <th>Дата назначения</th>
+          <th>Дата окончания</th>
+          <th>Сумма</th>
+          <th>Тип источника заявления</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let record of pagedRecords; let i = index" [class.row-alt]="i % 2 === 1">
+          <td>{{ record.nomer }}</td>
+          <td>{{ record.iin }}</td>
+          <td>{{ record.st }}</td>
+          <td>{{ record.fio }}</td>
+          <td>{{ record.otdelenie }}</td>
+          <td>{{ record.viplata }}</td>
+          <td>{{ record.dataObrasheniya }}</td>
+          <td>{{ record.dataNaznaniya }}</td>
+          <td>{{ record.dataOkonchaniya }}</td>
+          <td>{{ record.summa }}</td>
+          <td>{{ record.tipIstochnika }}</td>
+        </tr>
+
+        <tr *ngIf="pagedRecords.length === 0">
+          <td colspan="11" class="td-empty">Нет данных</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Пагинация -->
+  <div class="pagination" *ngIf="!isLoading && totalPages > 1">
+    <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+
+    <button
+      class="page-btn"
+      *ngFor="let p of pages"
+      [class.active]="p === currentPage"
+      (click)="goToPage(p)">
+      {{ p }}
+    </button>
+
+    <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+
+    <span class="total-records">кол-во записей: {{ totalRecords }}</span>
+  </div>
+</div>

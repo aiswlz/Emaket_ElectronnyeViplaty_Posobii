@@ -1,0 +1,17 @@
+[
+  { "id": 1,  "nomer": 1,  "iin": "870123456789", "fio": "Ахметова А.А.", "dataPriema": "16.06.2025", "moment": "-", "kodOtdeleniya": "246" },
+  { "id": 2,  "nomer": 2,  "iin": "880234567890", "fio": "Исенов Б.Б.",   "dataPriema": "08.05.2025", "moment": "-", "kodOtdeleniya": "753" },
+  { "id": 3,  "nomer": 3,  "iin": "890345678901", "fio": "Садыкова С.С.", "dataPriema": "08.05.2025", "moment": "-", "kodOtdeleniya": "087" },
+  { "id": 4,  "nomer": 4,  "iin": "870123456789", "fio": "Ахметова А.А.", "dataPriema": "17.06.2025", "moment": "-", "kodOtdeleniya": "875" },
+  { "id": 5,  "nomer": 5,  "iin": "870123456789", "fio": "Ахметова А.А.", "dataPriema": "23.05.2025", "moment": "-", "kodOtdeleniya": "958" },
+  { "id": 6,  "nomer": 6,  "iin": "870123456789", "fio": "Ахметова А.А.", "dataPriema": "10.11.2024", "moment": "-", "kodOtdeleniya": "357" },
+  { "id": 7,  "nomer": 7,  "iin": "870123456789", "fio": "Ахметова А.А.", "dataPriema": "24.04.2025", "moment": "-", "kodOtdeleniya": "846" },
+  { "id": 8,  "nomer": 8,  "iin": "870123456789", "fio": "Ахметова А.А.", "dataPriema": "25.10.2024", "moment": "-", "kodOtdeleniya": "575" },
+  { "id": 9,  "nomer": 9,  "iin": "870123456789", "fio": "Ахметова А.А.", "dataPriema": "12.01.2025", "moment": "-", "kodOtdeleniya": "968" },
+  { "id": 10, "nomer": 10, "iin": "870123456789", "fio": "Ахметова А.А.", "dataPriema": "25.06.2025", "moment": "-", "kodOtdeleniya": "257" },
+  { "id": 11, "nomer": 11, "iin": "851111200011", "fio": "Асанов В.Т.",   "dataPriema": "03.03.2025", "moment": "-", "kodOtdeleniya": "112" },
+  { "id": 12, "nomer": 12, "iin": "910705400077", "fio": "Омарова Г.С.",  "dataPriema": "18.02.2025", "moment": "-", "kodOtdeleniya": "321" },
+  { "id": 13, "nomer": 13, "iin": "780822100099", "fio": "Сейткали М.А.", "dataPriema": "07.04.2025", "moment": "-", "kodOtdeleniya": "654" },
+  { "id": 14, "nomer": 14, "iin": "950313600042", "fio": "Жумабекова Р.Н.", "dataPriema": "22.05.2025", "moment": "-", "kodOtdeleniya": "789" },
+  { "id": 15, "nomer": 15, "iin": "871228500061", "fio": "Карибаев Г.О.", "dataPriema": "14.03.2025", "moment": "-", "kodOtdeleniya": "202" }
+]

@@ -81,6 +81,34 @@ export const routes: Routes = [
           import('./journals/journal-zayavleniy/journal-zayavleniy.component')
             .then(m => m.JournalZayavleniyComponent)
       },
+      //Журнал электронных заявок и уведомлений
+      {
+        path: 'journals/electronic-applications',
+        loadComponent: () =>
+          import('./journals/journal-electronic-applications/journal-electronic-applications')
+            .then(m => m.JournalElectronicApplications)
+      },
+      //Журнал оцифрованных дел
+      {
+        path: 'journals/digitized-cases',
+        loadComponent: () =>
+          import('./journals/journal-digitized-cases/journal-digitized-cases.component')
+            .then(m => m.JournalDigitizedCasesComponent)
+      },
+      //Журнал автоматического подписания
+      {
+        path: 'journals/auto-signing',
+        loadComponent: () =>
+          import('./journals/journal-automated-signs/journal-automated-signs.component')
+            .then(m => m.JournalAutomatedSignsComponent)
+      },
+      //Журнал гос гарантия
+      {
+        path: 'journals/gos-guarantee',
+        loadComponent: () =>
+          import('./journals/journal-gos-guarantee/journal-gos-guarantee')
+            .then(m => m.JournalGosGuaranteeComponent)
+      },
 
     ]
   },
