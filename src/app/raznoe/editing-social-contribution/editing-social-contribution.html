@@ -1,0 +1,320 @@
+<div class="page-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <span class="bc-link">Разное</span>
+    <span class="bc-sep">/</span>
+    <span>Редактирование социальных взносов участника СС</span>
+  </div>
+
+  <h1 class="page-title">Редактирование социальных взносов участника СС</h1>
+
+  <!-- ── Фильтр ── -->
+  <div class="filter-card">
+    <div class="filter-title">Фильтр</div>
+    <div class="filter-row">
+      <div class="filter-field">
+        <label>ИИН</label>
+        <input type="text" placeholder="Введите" [(ngModel)]="filter.iin" />
+      </div>
+      <div class="filter-field">
+        <label>БИН организация</label>
+        <input type="text" placeholder="Введите" [(ngModel)]="filter.bin" />
+      </div>
+      <div class="filter-field">
+        <label>Период с</label>
+        <input type="date" [(ngModel)]="filter.periodFrom" />
+      </div>
+      <div class="filter-field">
+        <label>Период по</label>
+        <input type="date" [(ngModel)]="filter.periodTo" />
+      </div>
+    </div>
+    <div class="filter-actions">
+      <button class="btn-apply" (click)="applyFilter()">Применить</button>
+      <button class="btn-reset" (click)="resetFilter()">Сбросить</button>
+    </div>
+  </div>
+
+  <!-- ── Панель действий ── -->
+  <div class="toolbar">
+    <button class="tool-btn" (click)="refresh()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="23 4 23 10 17 10"/>
+        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+      </svg>
+      Обновить
+    </button>
+    <button class="tool-btn" (click)="openAddModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Добавить
+    </button>
+    <button class="tool-btn" [disabled]="!selectedRow" (click)="openEditModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+      </svg>
+      Изменить
+    </button>
+    <button class="tool-btn protocol" (click)="openProtocolModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+      </svg>
+      Протокол изменений
+    </button>
+    <button class="tool-btn cancel" [disabled]="!selectedRow" (click)="openCancelModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+      </svg>
+      Отменить операцию
+    </button>
+    <button class="tool-btn delete" [disabled]="!selectedRow" (click)="openDeleteModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6l-1 14H6L5 6"/>
+        <path d="M10 11v6m4-6v6"/><path d="M9 6V4h6v2"/>
+      </svg>
+      Удалить
+    </button>
+  </div>
+
+  <!-- ── Таблица ── -->
+  <div class="table-card">
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Период</th>
+            <th>Дата поступления</th>
+            <th>Сумма</th>
+            <th>РНН предприятия</th>
+            <th>Наименование предприятия</th>
+            <th>Тип</th>
+            <th>Дата операции</th>
+            <th>Получатель</th>
+            <th>ИИН получателя</th>
+            <th>Комментарий</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="pagedData.length === 0">
+            <td colspan="9" class="empty-state">Нет данных</td>
+          </tr>
+          <tr
+            *ngFor="let row of pagedData; let i = index"
+            [class.row-selected]="isSelected(row)"
+            [class.row-alt]="i % 2 === 1"
+            (click)="selectRow(row)">
+            <td>{{ row.period }}</td>
+            <td>{{ row.dateReceipt }}</td>
+            <td>{{ row.amount }} т</td>
+            <td>{{ row.rnnEnterprise }}</td>
+            <td>{{ row.nameEnterprise }}</td>
+            <td>{{ row.type || '-' }}</td>
+            <td>{{ row.dateOperation }}</td>
+            <td>{{ row.recipient }}</td>
+            <td>{{ row.iin }}</td>
+            <td>{{ row.comment || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Пагинация -->
+    <div class="pagination-row">
+      <div class="pagination">
+        <button class="page-btn arrow" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+        <button
+          *ngFor="let p of pages"
+          class="page-btn"
+          [class.active]="p === currentPage"
+          (click)="goToPage(p)">
+          {{ p }}
+        </button>
+        <button class="page-btn arrow" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+      </div>
+      <span class="total-label">кол-во записей: {{ totalRecords }}</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     MODAL: Добавить
+══════════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showAddModal" (click)="showAddModal = false">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Добавить запись</h3>
+      <button class="modal-close" (click)="showAddModal = false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <ng-container *ngTemplateOutlet="formTemplate"></ng-container>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="showAddModal = false">Отмена</button>
+      <button class="btn-save" (click)="saveAdd()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     MODAL: Изменить
+══════════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showEditModal" (click)="showEditModal = false">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Изменить запись</h3>
+      <button class="modal-close" (click)="showEditModal = false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <ng-container *ngTemplateOutlet="formTemplate"></ng-container>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="showEditModal = false">Отмена</button>
+      <button class="btn-save" (click)="saveEdit()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     MODAL: Удалить
+══════════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showDeleteModal" (click)="showDeleteModal = false">
+  <div class="modal-box modal-sm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Удалить запись</h3>
+      <button class="modal-close" (click)="showDeleteModal = false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="confirm-text">Вы уверены что хотите удалить запись <strong>{{ selectedRow?.nameEnterprise }}</strong>?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="showDeleteModal = false">Отмена</button>
+      <button class="btn-delete" (click)="confirmDelete()">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     MODAL: Отменить операцию
+══════════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showCancelModal" (click)="showCancelModal = false">
+  <div class="modal-box modal-sm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Отменить операцию</h3>
+      <button class="modal-close" (click)="showCancelModal = false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="confirm-text">Отменить операцию по записи <strong>{{ selectedRow?.nameEnterprise }}</strong>?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="showCancelModal = false">Нет</button>
+      <button class="btn-warning" (click)="confirmCancel()">Да, отменить</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     MODAL: Протокол изменений
+══════════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showProtocolModal" (click)="showProtocolModal = false">
+  <div class="modal-box modal-lg" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Протокол изменений</h3>
+      <button class="modal-close" (click)="showProtocolModal = false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="empty-state">История изменений будет доступна после подключения базы данных.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="showProtocolModal = false">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Переиспользуемая форма ── -->
+<ng-template #formTemplate>
+  <div class="form-grid">
+    <div class="form-field">
+      <label>Период</label>
+      <input type="text" placeholder="01.01.2024 - 31.01.2024" [(ngModel)]="formData.period" />
+    </div>
+    <div class="form-field">
+      <label>Дата поступления</label>
+      <input type="date" [(ngModel)]="formData.dateReceipt" />
+    </div>
+    <div class="form-field">
+      <label>Сумма</label>
+      <input type="text" placeholder="0" [(ngModel)]="formData.amount" />
+    </div>
+    <div class="form-field">
+      <label>РНН предприятия</label>
+      <input type="text" placeholder="000000000000" [(ngModel)]="formData.rnnEnterprise" />
+    </div>
+    <div class="form-field full">
+      <label>Наименование предприятия</label>
+      <input type="text" placeholder="ТОО / АО / ИП" [(ngModel)]="formData.nameEnterprise" />
+    </div>
+    <div class="form-field">
+      <label>Тип</label>
+      <select [(ngModel)]="formData.type">
+        <option value="">—</option>
+        <option value="Начисление">Начисление</option>
+        <option value="Корректировка">Корректировка</option>
+        <option value="Возврат">Возврат</option>
+        <option value="Доначисление">Доначисление</option>
+        <option value="Аннулирование">Аннулирование</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label>Дата операции</label>
+      <input type="date" [(ngModel)]="formData.dateOperation" />
+    </div>
+    <div class="form-field">
+      <label>ИИН получателя</label>
+      <input type="text" placeholder="000000000000" [(ngModel)]="formData.iin" />
+    </div>
+    <div class="form-field full">
+      <label>Получатель</label>
+      <input type="text" placeholder="ФИО" [(ngModel)]="formData.recipient" />
+    </div>
+    <div class="form-field full">
+      <label>Комментарий</label>
+      <input type="text" placeholder="-" [(ngModel)]="formData.comment" />
+    </div>
+  </div>
+</ng-template>

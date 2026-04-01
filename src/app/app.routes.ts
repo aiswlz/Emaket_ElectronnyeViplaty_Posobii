@@ -36,6 +36,12 @@ export const routes: Routes = [
           import('./raznoe/lgot-ministry/lgot-ministry')
             .then(m => m.LgotMinistryComponent)
       },
+      {
+        path: 'raznoe/editing-social-contribution',
+        loadComponent: () =>
+          import('./raznoe/editing-social-contribution/editing-social-contribution')
+            .then(m => m.EditingSocialContribution)
+      },
       // Отчеты
       {
         path: 'reports/internal',
@@ -75,6 +81,7 @@ export const routes: Routes = [
           import('./journals/journal-zayavleniy/journal-zayavleniy.component')
             .then(m => m.JournalZayavleniyComponent)
       },
+
     ]
   },
 

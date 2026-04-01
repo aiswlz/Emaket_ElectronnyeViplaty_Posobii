@@ -1,0 +1,475 @@
+$green:          #3aaa73;
+$green-dark:     #2d8a5e;
+$green-light:    #e8f7f0;
+$body-bg:        #f4f6f8;
+$card-bg:        #fff;
+$border:         #e5e8ec;
+$text-primary:   #1a1f2e;
+$text-secondary: #6b7280;
+$text-muted:     #9ca3af;
+$red:            #ef4444;
+$orange:         #f59e0b;
+$radius:         12px;
+$radius-sm:      8px;
+
+// ─── Page ─────────────────────────────────────────────────
+.page-wrap {
+  padding: 20px 24px;
+}
+
+// ─── Breadcrumb ───────────────────────────────────────────
+.breadcrumb {
+  font-size: 12.5px;
+  color: $text-muted;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.bc-link {
+  color: $text-secondary;
+  cursor: pointer;
+  &:hover { color: $green; }
+}
+.bc-sep { color: $text-muted; }
+
+.page-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0 0 20px;
+}
+
+// ─── Filter ───────────────────────────────────────────────
+.filter-card {
+  background: $card-bg;
+  border: 1px solid $border;
+  border-radius: $radius;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.filter-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: 12px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.filter-field {
+  flex: 1;
+  min-width: 160px;
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: $text-secondary;
+    margin-bottom: 5px;
+  }
+
+  input {
+    width: 100%;
+    height: 36px;
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    padding: 0 10px;
+    font-size: 13px;
+    color: $text-primary;
+    font-family: inherit;
+    outline: none;
+    background: $body-bg;
+    box-sizing: border-box;
+    transition: border-color 0.12s;
+
+    &::placeholder { color: $text-muted; }
+    &:focus { border-color: $green; background: #fff; }
+  }
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-apply {
+  height: 34px;
+  padding: 0 20px;
+  border: none;
+  border-radius: $radius-sm;
+  background: $green;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.12s;
+  &:hover { background: $green-dark; }
+}
+
+.btn-reset {
+  height: 34px;
+  padding: 0 20px;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  background: #fff;
+  color: $text-secondary;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.12s;
+  &:hover { background: #f3f4f6; }
+}
+
+// ─── Toolbar ──────────────────────────────────────────────
+.toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.tool-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  background: #fff;
+  font-size: 13px;
+  color: $text-primary;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.12s;
+  white-space: nowrap;
+
+  svg { width: 15px; height: 15px; }
+
+  &:hover:not(:disabled) { background: #f3f4f6; border-color: darken($border, 6%); }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &.cancel {
+    color: $orange;
+    border-color: lighten($orange, 25%);
+    &:hover:not(:disabled) { background: #fffbeb; }
+  }
+
+  &.delete {
+    color: $red;
+    border-color: #fca5a5;
+    &:hover:not(:disabled) { background: #fef2f2; }
+  }
+
+  &.protocol {
+    color: #6366f1;
+    border-color: #c7d2fe;
+    &:hover:not(:disabled) { background: #eef2ff; }
+  }
+}
+
+// ─── Table Card ───────────────────────────────────────────
+.table-card {
+  background: $card-bg;
+  border: 1px solid $border;
+  border-radius: $radius;
+  overflow: hidden;
+}
+
+.table-wrap { overflow-x: auto; }
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  thead tr { background: #fff; }
+
+  thead th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 500;
+    color: $text-secondary;
+    padding: 10px 12px;
+    border-bottom: 1px solid $border;
+    white-space: nowrap;
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid $border;
+      cursor: pointer;
+      transition: background 0.1s;
+
+      &:last-child { border-bottom: none; }
+      &.row-alt    { background: #f9fafb; }
+      &:hover      { background: $green-light; }
+
+      &.row-selected {
+        background: $green-light !important;
+        td { color: $green-dark; font-weight: 500; }
+      }
+    }
+
+    td {
+      padding: 10px 12px;
+      color: $text-primary;
+      vertical-align: middle;
+    }
+  }
+}
+
+.empty-state {
+  text-align: center;
+  color: $text-muted;
+  font-size: 13px;
+  padding: 32px 0;
+}
+
+// ─── Pagination ───────────────────────────────────────────
+.pagination-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-top: 1px solid $border;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.page-btn {
+  min-width: 30px;
+  height: 30px;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  background: #fff;
+  font-size: 13px;
+  color: $text-primary;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s;
+  padding: 0 6px;
+
+  svg { width: 14px; height: 14px; }
+
+  &:hover:not(:disabled) { background: $green-light; border-color: $green; color: $green; }
+  &.active { background: $green; color: #fff; border-color: $green; }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  &.arrow { padding: 0 8px; }
+}
+
+.total-label {
+  font-size: 12px;
+  color: $text-secondary;
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════════════════
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal-box {
+  background: $card-bg;
+  border-radius: $radius;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  width: 560px;
+  max-height: 90vh;
+  overflow: hidden;
+  animation: slideUp 0.2s ease;
+
+  &.modal-sm { width: 400px; }
+  &.modal-lg { width: 720px; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid $border;
+}
+
+.modal-title {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.modal-close {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  color: $text-muted;
+  transition: all 0.12s;
+
+  svg { width: 16px; height: 16px; }
+  &:hover { background: #f3f4f6; color: $text-primary; }
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 20px;
+  border-top: 1px solid $border;
+}
+
+.confirm-text {
+  font-size: 14px;
+  color: $text-primary;
+  line-height: 1.6;
+  margin: 0;
+}
+
+// ─── Form ─────────────────────────────────────────────────
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  &.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 12px;
+    font-weight: 500;
+    color: $text-secondary;
+  }
+
+  input {
+    height: 36px;
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    padding: 0 10px;
+    font-size: 13px;
+    color: $text-primary;
+    font-family: inherit;
+    outline: none;
+    background: $body-bg;
+    transition: border-color 0.12s;
+
+    &::placeholder { color: $text-muted; }
+    &:focus { border-color: $green; background: #fff; }
+  }
+}
+
+// ─── Footer Buttons ───────────────────────────────────────
+.btn-cancel {
+  height: 36px;
+  padding: 0 18px;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  background: #fff;
+  font-size: 13px;
+  color: $text-secondary;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.12s;
+  &:hover { background: #f3f4f6; }
+}
+
+.btn-save {
+  height: 36px;
+  padding: 0 20px;
+  border: none;
+  border-radius: $radius-sm;
+  background: $green;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.12s;
+  &:hover { background: $green-dark; }
+}
+
+.btn-delete {
+  height: 36px;
+  padding: 0 20px;
+  border: none;
+  border-radius: $radius-sm;
+  background: $red;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.12s;
+  &:hover { background: darken($red, 8%); }
+}
+
+.btn-warning {
+  height: 36px;
+  padding: 0 20px;
+  border: none;
+  border-radius: $radius-sm;
+  background: $orange;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.12s;
+  &:hover { background: darken($orange, 8%); }
+}
