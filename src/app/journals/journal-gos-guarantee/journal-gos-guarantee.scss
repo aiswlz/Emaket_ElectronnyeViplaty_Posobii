@@ -1,3 +1,5 @@
+@use '../../../styles/variables' as *;
+
 .page-wrap {
   padding: 24px;
   font-family: 'Segoe UI', sans-serif;
@@ -8,7 +10,8 @@
   font-size: 13px;
   color: #888;
   margin-bottom: 12px;
-  .bc-link { color: #3dbc6b; cursor: pointer; &:hover { text-decoration: underline; } }
+  .bc-link { color: $green ; cursor: pointer; 
+    &:hover { text-decoration: underline; } }
   .bc-sep  { margin: 0 6px; }
 }
 
@@ -114,7 +117,7 @@
 }
 
 .btn-apply {
-  background: #3dbc6b;
+  background: $green;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -122,7 +125,7 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  &:hover { background: #34a85e; }
+  &:hover { background: $green-dark; }
 }
 
 .btn-reset {

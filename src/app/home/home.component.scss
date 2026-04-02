@@ -1,17 +1,17 @@
-@use '../../styles/variables' as *;
+﻿@use '../../styles/variables' as *;
 
 .page-wrap {
   padding: 20px 24px;
 }
 
-// ─── Breadcrumb ────────────────────────────────────────────
+// в”Ђв”Ђв”Ђ Breadcrumb в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 .breadcrumb {
   font-size: 12.5px;
   color: $text-muted;
   margin-bottom: 20px;
 }
 
-// ─── Top Row ───────────────────────────────────────────────
+// в”Ђв”Ђв”Ђ Top Row в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 .top-row {
   display: flex;
   gap: 16px;
@@ -22,7 +22,7 @@
 // Banner
 .banner-card {
   flex: 1.2;
-  background: linear-gradient(135deg, #3aaa73 0%, #2d8a5e 100%);
+  background: linear-gradient(135deg, $green 0%, #2d8a5e 100%);
   border-radius: $radius;
   padding: 24px;
   color: #fff;
@@ -190,7 +190,7 @@
   color: $text-muted;
 }
 
-// ─── Mid Row ───────────────────────────────────────────────
+// в”Ђв”Ђв”Ђ Mid Row в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 .mid-row {
   display: flex;
   gap: 16px;
@@ -263,7 +263,7 @@
 .widget-title { font-size: 13px; font-weight: 500; color: $text-primary; }
 .widget-sub { font-size: 11.5px; color: $text-muted; margin-top: 2px; }
 
-// ─── Bottom Row ────────────────────────────────────────────
+// в”Ђв”Ђв”Ђ Bottom Row в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 .bot-row {
   display: flex;
   gap: 16px;

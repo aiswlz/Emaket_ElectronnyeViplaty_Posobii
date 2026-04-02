@@ -1,4 +1,4 @@
-@use '../../styles/variables' as *;
+﻿@use '../../styles/variables' as *;
 
 :host {
   display: flex;
@@ -12,34 +12,10 @@
   padding: 0;
 }
 
-.logo-subtitle {
-  font-size: 0.65rem;
-  color: rgba(255,255,255,0.8);
-  max-width: 150px;
-  line-height: 1.3;
-}
-.logo-text {
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: white;
-  letter-spacing: 1px;
-}
-
-.logo-text-block {
-  display: flex;
-  flex-direction: column;
-}
-
-.logo-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: white;
-}
-
-// ─── Sidebar ───────────────────────────────────────────────
+// в”Ђв”Ђв”Ђ Sidebar в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 .sidebar {
-  width: 210px;
-  min-height: 100vh;
+  width: 290px;
+  min-height: 240px;
   background: $sidebar-bg;
   display: flex;
   flex-direction: column;
@@ -64,38 +40,68 @@
   img { width: 100%; height: 100%; object-fit: contain; }
 }
 
-.logo-text {
-  font-size: 18px;
-  font-weight: 600;
-  color: #fff;
-  letter-spacing: -0.3px;
+.logo-text-block {
+  display: flex;
+  flex-direction: column;
 }
 
-.sidebar-nav { flex: 1; padding: 8px 0; }
+.logo-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+}
 
+.logo-subtitle {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.8);
+  max-width: 150px;
+  line-height: 1.3;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 8px 0;
+}
+
+// в”Ђв”Ђв”Ђ Nav item base в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 .nav-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 11px 18px;
+  padding: 11px 10px;
+  margin: 2px 8px;
   color: $sidebar-text;
   font-size: 14px;
   font-weight: 400;
   cursor: pointer;
   text-decoration: none;
   transition: background 0.15s;
+  border-radius: 8px;
+  background: transparent; // UPDATED: СЏРІРЅРѕ РїСЂРѕР·СЂР°С‡РЅС‹Р№ С‡С‚РѕР±С‹ РЅРµ Р±С‹Р»Рѕ Р»РёС€РЅРµРіРѕ С„РѕРЅР°
 
-  svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.85; }
-
-  &:hover { background: rgba(255,255,255,0.08); }
-
-  &.active-parent {
-    background: rgba(255,255,255,0.12);
-    color: #fff;
-    font-weight: 500;
-    svg { opacity: 1; }
+  &:hover {
+    background: rgba(255,255,255,0.08);
   }
 
+  // РРєРѕРЅРєР°-РєСЂСѓР¶РѕРє вЂ” РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ Р±РµР»С‹Р№ РїРѕР»СѓРїСЂРѕР·СЂР°С‡РЅС‹Р№
+  .nav-icon-wrap {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    svg {
+      width: 15px;
+      height: 15px;
+      stroke: #fff;
+      opacity: 1;
+    }
+  }
+
+  // РЎС‚СЂРµР»РєР° chevron
   .chevron {
     margin-left: auto;
     width: 14px;
@@ -104,39 +110,73 @@
     transition: transform 0.2s;
     &.open { transform: rotate(180deg); }
   }
-}
 
-// Sub-menu
-.sub-menu {
-  background: rgba(0,0,0,0.12);
-  padding: 4px 0;
-}
-
-.sub-item {
-  display: block;
-  padding: 9px 18px 9px 46px;
-  font-size: 13px;
-  color: rgba(255,255,255,0.75);
-  text-decoration: none;
-  cursor: pointer;
-  line-height: 1.4;
-  transition: background 0.12s, color 0.12s;
-
-  &:hover {
-    background: rgba(255,255,255,0.08);
-    color: #fff;
-  }
-
-  &.active {
-    background: rgba(255,255,255,0.15);
-    color: #fff;
+  // UPDATED: Р°РєС‚РёРІРЅС‹Р№ РїСѓРЅРєС‚ РЎ РїРѕРґРјРµРЅСЋ вЂ” Р±РµР»С‹Р№ С„РѕРЅ, СЃРєСЂСѓРіР»РµРЅРёРµ С‚РѕР»СЊРєРѕ СЃРІРµСЂС…Сѓ
+  &.active-parent {
+    background: #fff;
+    color: #000000;
     font-weight: 500;
-    border-left: 3px solid rgba(255,255,255,0.6);
-    padding-left: 43px;
+    border-radius: 8px 8px 0 0; // С‚РѕР»СЊРєРѕ РІРµСЂС…РЅРёРµ СѓРіР»С‹ СЃРєСЂСѓРіР»РµРЅС‹
+    margin-bottom: 0;
+
+    .nav-icon-wrap {
+      background: #7cbd7f; // РёРєРѕРЅРєР° Р·РµР»С‘РЅР°СЏ
+      svg { stroke: #fff; }
+    }
+
+    .chevron {
+      opacity: 1;
+      stroke: #7cbd7f;
+    }
   }
 }
 
-// ─── Main ──────────────────────────────────────────────────
+// UPDATED: Р“Р»Р°РІРЅР°СЏ вЂ” РѕРґРёРЅРѕС‡РЅС‹Р№ РїСѓРЅРєС‚, РІСЃРµ СѓРіР»С‹ СЃРєСЂСѓРіР»РµРЅС‹ РєРѕРіРґР° Р°РєС‚РёРІРµРЅ
+.nav-item.nav-item-single {
+  &.active-parent {
+    background: #fff;
+    color: #000000;
+    font-weight: 500;
+    border-radius: 8px; // РІСЃРµ СѓРіР»С‹ вЂ” РЅРµС‚ РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ РїРѕРґРјРµРЅСЋ РІРЅРёР·
+
+    .nav-icon-wrap {
+      background: #7cbd7f;
+      svg { stroke: #fff; }
+    }
+  }
+}
+
+// в”Ђв”Ђв”Ђ РџРѕРґРјРµРЅСЋ СЃР°Р№РґР±Р°СЂР° в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// UPDATED: СѓР±СЂР°РЅ position:absolute, box-shadow вЂ” СЌС‚Рѕ РќР• РґСЂРѕРїРґР°СѓРЅ Р° СЂР°СЃРєСЂС‹РІР°СЋС‰РёР№СЃСЏ Р±Р»РѕРє
+.sidebar-sub-menu {
+  background: #fff;
+  border-radius: 0 0 8px 8px; // С‚РѕР»СЊРєРѕ РЅРёР¶РЅРёРµ СѓРіР»С‹
+  margin: 0 8px 4px 8px;      // РѕС‚СЃС‚СѓРї СЃРѕРІРїР°РґР°РµС‚ СЃ nav-item
+  overflow: hidden;
+
+  .sub-item {
+    display: block;
+    padding: 10px 16px;
+    font-size: 13px;
+    color: #7b7a7a;
+    text-decoration: none;
+    transition: background 0.15s;
+    line-height: 1.4;
+
+    &:hover {
+      background: #fff;
+      color: #000000;
+    }
+
+    &.active {
+      background: #fff;
+      color: #000000;
+      font-weight: 500;
+    }
+  }
+}
+
+// в”Ђв”Ђв”Ђ Main в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 .main {
   flex: 1;
   display: flex;
@@ -145,7 +185,7 @@
   min-width: 0;
 }
 
-// Topbar
+// в”Ђв”Ђв”Ђ Topbar в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 .topbar {
   background: $top-bg;
   border-bottom: 1px solid $border;
@@ -236,11 +276,23 @@
   border: 2px solid #fff;
 }
 
+// в”Ђв”Ђв”Ђ РџСЂРѕС„РёР»СЊ РґСЂРѕРїРґР°СѓРЅ в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+.user-section {
+  position: relative; // UPDATED: РЅСѓР¶РµРЅ РґР»СЏ position:absolute Сѓ profile-dropdown
+}
+
 .user-btn {
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background 0.2s;
+
+  &:hover, &.active-parent {
+    background: rgba(0,0,0,0.06);
+  }
 }
 
 .user-avatar {
@@ -259,7 +311,42 @@
 .user-name { font-size: 13.5px; font-weight: 500; color: $text-primary; }
 .user-chevron { width: 14px; height: 14px; color: $text-muted; }
 
-// ─── Content (страницы рендерятся внутри) ──────────────────
+// UPDATED: profile-dropdown вЂ” СЌС‚Рѕ РІС‹РїР°РґР°С€РєР° Р’РќРР— РѕС‚ РєРЅРѕРїРєРё РђРґРјРёРЅ РІ С‚РѕРїР±Р°СЂРµ
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 160px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  padding: 6px 0;
+  z-index: 999;
+
+  .sub-item {
+    display: block;
+    padding: 10px 16px;
+    font-size: 13px;
+    color: #333;
+    text-decoration: none;
+    transition: background 0.2s;
+
+    &:hover {
+      background: $green-light;
+      color: $green;
+    }
+
+    &.active {
+      background: $green-light;
+      color: $green;
+      font-weight: 600;
+      border-left: 3px solid $green;
+      padding-left: 13px;
+    }
+  }
+}
+
+// в”Ђв”Ђв”Ђ Content в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 .content {
   flex: 1;
   overflow-y: auto;

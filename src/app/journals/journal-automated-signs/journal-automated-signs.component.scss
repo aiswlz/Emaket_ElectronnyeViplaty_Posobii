@@ -1,3 +1,5 @@
+﻿@use '../../../styles/variables' as *;
+
 .page-wrap {
   padding: 24px;
   font-family: 'Segoe UI', sans-serif;
@@ -8,7 +10,7 @@
   font-size: 13px;
   color: #888;
   margin-bottom: 12px;
-  .bc-link { color: #3dbc6b; cursor: pointer; &:hover { text-decoration: underline; } }
+  .bc-link { color: $green; cursor: pointer; &:hover { text-decoration: underline; } }
   .bc-sep  { margin: 0 6px; }
 }
 
@@ -59,7 +61,7 @@
     padding: 0 10px;
     font-size: 13px;
     outline: none;
-    &:focus { border-color: #3dbc6b; }
+    &:focus { border-color: $green; }
   }
 }
 
@@ -76,7 +78,7 @@
     background: #fff;
     outline: none;
     cursor: pointer;
-    &:focus { border-color: #3dbc6b; }
+    &:focus { border-color: $green; }
   }
   svg {
     position: absolute;
@@ -97,7 +99,7 @@
 }
 
 .btn-apply {
-  background: #3dbc6b;
+  background: $green;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -105,7 +107,7 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  &:hover { background: #34a85e; }
+  &:hover { background: $green-dark; }
 }
 
 .btn-reset {
@@ -151,7 +153,7 @@
   }
 
   tbody tr {
-    &:hover { background: #f0faf4; }
+    &:hover { background: $green-light; }
     &.row-alt { background: #fafafa; }
 
     td {
@@ -193,8 +195,8 @@
 
   svg { width: 16px; height: 16px; }
 
-  &:hover:not(:disabled) { background: #f0faf4; border-color: #3dbc6b; }
-  &.active { background: #3dbc6b; color: #fff; border-color: #3dbc6b; font-weight: 700; }
+  &:hover:not(:disabled) { background: $green-light; border-color: $green; }
+  &.active { background: $green; color: #fff; border-color: $green; font-weight: 700; }
   &:disabled { opacity: 0.4; cursor: default; }
 }
 

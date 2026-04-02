@@ -1,0 +1,163 @@
+<div class="page-wrap">
+  <div class="breadcrumb">
+    <span class="bc-link">Разное</span>
+    <span class="bc-sep">/</span>
+    <span>Журнал формуляра ЕАЭС</span>
+  </div>
+
+  <h1 class="page-title">Журнал формуляра ЕАЭС</h1>
+
+  <!-- Фильтр -->
+  <div class="filter-section">
+    <div class="filter-label">Фильтр</div>
+
+    <div class="filter-row">
+      <!-- Дата регистрации с -->
+      <div class="filter-field">
+        <label>Дата регистрации с</label>
+        <input type="text" placeholder="Введите" [(ngModel)]="filterDataRegFrom" />
+      </div>
+
+      <!-- Дата регистрации по -->
+      <div class="filter-field">
+        <label>Дата регистрации по</label>
+        <input type="text" placeholder="Введите" [(ngModel)]="filterDataRegTo" />
+      </div>
+
+      <!-- ФИО -->
+      <div class="filter-field">
+        <label>ФИО</label>
+        <input type="text" placeholder="Введите" [(ngModel)]="filterFio" />
+      </div>
+
+      <!-- Статус -->
+      <div class="filter-field">
+        <label>Статус</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="filterStatus">
+            <option value="">Выбрать</option>
+            <option>Принято</option>
+            <option>Отклонено</option>
+            <option>На рассмотрении</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+
+      <!-- Регион -->
+      <div class="filter-field">
+        <label>Регион</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="filterRegion">
+            <option value="">Выбрать</option>
+            <option *ngFor="let r of regionList" [value]="r">{{ r }}</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <!-- Дата запроса с -->
+      <div class="filter-field">
+        <label>Дата запроса с</label>
+        <input type="text" placeholder="Введите" [(ngModel)]="filterDataZaprFrom" />
+      </div>
+
+      <!-- Дата запроса по -->
+      <div class="filter-field">
+        <label>Дата запроса по</label>
+        <input type="text" placeholder="Введите" [(ngModel)]="filterDataZaprTo" />
+      </div>
+
+      <!-- Номер запроса -->
+      <div class="filter-field">
+        <label>Номер запроса</label>
+        <input type="text" placeholder="Введите" [(ngModel)]="filterNomerZapr" />
+      </div>
+
+      <!-- Государство -->
+      <div class="filter-field">
+        <label>Государство</label>
+        <div class="select-wrap">
+          <select [(ngModel)]="filterGosudarstvo">
+            <option value="">Выбрать</option>
+            <option *ngFor="let g of gosudarstvoList" [value]="g">{{ g }}</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <button class="btn-apply" (click)="applyFilter()">Применить</button>
+      <button class="btn-reset" (click)="resetFilter()">Сбросить</button>
+    </div>
+  </div>
+
+  <!-- Загрузка -->
+  <div class="loading" *ngIf="isLoading">Загрузка...</div>
+
+  <!-- Таблица -->
+  <div class="table-wrap" *ngIf="!isLoading">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID регистрации</th>
+          <th>Дата регистрации</th>
+          <th>Дата запроса</th>
+          <th>Номер запроса</th>
+          <th>Наименование области</th>
+          <th>ФИО</th>
+          <th>Дата рождения</th>
+          <th>Специалист</th>
+          <th>Государство</th>
+          <th>Статус</th>
+          <th>Подписант</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let record of pagedRecords; let i = index" [class.row-alt]="i % 2 === 1">
+          <td>{{ record.idRegistracii }}</td>
+          <td>{{ record.dataRegistracii }}</td>
+          <td>{{ record.dataZaprosa }}</td>
+          <td>{{ record.nomerZaprosa }}</td>
+          <td>{{ record.naimenovanieOblasti }}</td>
+          <td>{{ record.fio }}</td>
+          <td>{{ record.dataRozhdeniya }}</td>
+          <td>{{ record.specialist }}</td>
+          <td>{{ record.gosudarstvo }}</td>
+          <td>
+            <span class="status-badge status-accepted">{{ record.status }}</span>
+          </td>
+          <td>{{ record.podpisant }}</td>
+        </tr>
+
+        <tr *ngIf="pagedRecords.length === 0">
+          <td colspan="11" class="td-empty">Нет данных</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Пагинация -->
+  <div class="pagination" *ngIf="!isLoading && totalPages > 1">
+    <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+
+    <button
+      class="page-btn"
+      *ngFor="let p of pages"
+      [class.active]="p === currentPage"
+      (click)="goToPage(p)">
+      {{ p }}
+    </button>
+
+    <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+
+    <span class="total-records">кол-во записей: {{ totalRecords }}</span>
+  </div>
+</div>

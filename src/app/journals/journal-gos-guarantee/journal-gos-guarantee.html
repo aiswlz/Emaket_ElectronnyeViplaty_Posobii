@@ -35,17 +35,12 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
-
+      
       <!-- ИИН -->
+
       <div class="filter-field">
         <label>ИИН</label>
-        <div class="select-wrap">
-          <select [(ngModel)]="filterIin">
-            <option value="">Выберите</option>
-            <option *ngFor="let o of otdeleniyaList" [value]="o">{{ o }}</option>
-          </select>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
+        <input type="text" placeholder="Заполнение" [(ngModel)]="filterIin" />
       </div>
 
       <!-- Уведомление (чекбокс) -->

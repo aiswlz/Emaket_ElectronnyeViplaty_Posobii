@@ -1,48 +1,40 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout.component';
+import { authGuard, loginGuard } from './core/auth.guard';
 
 export const routes: Routes = [
-  // Страница логина — БЕЗ layout (без sidebar)
+
+  // Страница логина — если уже залогинен, редирект на /home
   {
     path: 'login',
+    canActivate: [loginGuard],
     loadComponent: () =>
-      import('./auth/auth-page/auth-page')
-        .then(m => m.AuthPage)
+      import('./auth/auth-page/auth-page').then(m => m.AuthPage)
   },
 
-  // Все остальные страницы — ЧЕРЕЗ layout (sidebar всегда виден)
+  // Все страницы через Layout — только для залогиненных
   {
     path: '',
     component: LayoutComponent,
+    canActivate: [authGuard],
     children: [
-      {
-        path: '',
-        redirectTo: 'home',
-        pathMatch: 'full'
-      },
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
 
-      // Главная страница
+      // Главная
       {
         path: 'home',
         loadComponent: () =>
-          import('./home/home.component')
-            .then(m => m.HomeComponent)
+          import('./home/home.component').then(m => m.HomeComponent)
       },
 
-      // Разное
+      // Профиль
       {
-        path: 'raznoe/lgot-ministry',
+        path: 'profile',
         loadComponent: () =>
-          import('./raznoe/lgot-ministry/lgot-ministry')
-            .then(m => m.LgotMinistryComponent)
+          import('./profile/profile').then(m => m.ProfileComponent)
       },
-      {
-        path: 'raznoe/editing-social-contribution',
-        loadComponent: () =>
-          import('./raznoe/editing-social-contribution/editing-social-contribution')
-            .then(m => m.EditingSocialContribution)
-      },
-      // Отчеты
+
+      // ── Отчеты ──────────────────────────────────────────
       {
         path: 'reports/internal',
         loadComponent: () =>
@@ -50,59 +42,55 @@ export const routes: Routes = [
             .then(m => m.InternalReportsComponent)
       },
 
-      // Журналы
-      //Журнал ЭМD
+      // ── Журналы ─────────────────────────────────────────
       {
         path: 'journals/emd',
         loadComponent: () =>
           import('./journals/journal-emd-list/journal-emd-list.component')
-            .then(m => m.JournalEmdListComponent)   // ← новый список
-      },
-      { path: 'journals/emd/new/zayavlenie', 
-        loadComponent: () => 
-          import('./journals/zayavlenie-form/zayavlenie-form.component')
-            .then(m => m.ZayavlenieFormComponent) },
-      {
-        path: 'journals/emd/:id',
-        loadComponent: () =>
-          import('./journals/journal-emd-card/journal-emd-card.component')
-            .then(m => m.JournalEmdCardComponent)   // ← карточка
+            .then(m => m.JournalEmdListComponent)
       },
       {
-        path: 'journals/emd/:id/zayavlenie',   
+        path: 'journals/emd/new/zayavlenie',
         loadComponent: () =>
           import('./journals/zayavlenie-form/zayavlenie-form.component')
             .then(m => m.ZayavlenieFormComponent)
       },
-      //Журнал заявлений
+      {
+        path: 'journals/emd/:id',
+        loadComponent: () =>
+          import('./journals/journal-emd-card/journal-emd-card.component')
+            .then(m => m.JournalEmdCardComponent)
+      },
+      {
+        path: 'journals/emd/:id/zayavlenie',
+        loadComponent: () =>
+          import('./journals/zayavlenie-form/zayavlenie-form.component')
+            .then(m => m.ZayavlenieFormComponent)
+      },
       {
         path: 'journals/zayavleniy',
         loadComponent: () =>
           import('./journals/journal-zayavleniy/journal-zayavleniy.component')
             .then(m => m.JournalZayavleniyComponent)
       },
-      //Журнал электронных заявок и уведомлений
       {
         path: 'journals/electronic-applications',
         loadComponent: () =>
           import('./journals/journal-electronic-applications/journal-electronic-applications')
             .then(m => m.JournalElectronicApplications)
       },
-      //Журнал оцифрованных дел
       {
         path: 'journals/digitized-cases',
         loadComponent: () =>
           import('./journals/journal-digitized-cases/journal-digitized-cases.component')
             .then(m => m.JournalDigitizedCasesComponent)
       },
-      //Журнал автоматического подписания
       {
         path: 'journals/auto-signing',
         loadComponent: () =>
           import('./journals/journal-automated-signs/journal-automated-signs.component')
             .then(m => m.JournalAutomatedSignsComponent)
       },
-      //Журнал гос гарантия
       {
         path: 'journals/gos-guarantee',
         loadComponent: () =>
@@ -110,12 +98,40 @@ export const routes: Routes = [
             .then(m => m.JournalGosGuaranteeComponent)
       },
 
+      // ── Разное ──────────────────────────────────────────
+      {
+        path: 'raznoe/lgot-ministry',
+        loadComponent: () =>
+          import('./raznoe/lgot-ministry/lgot-ministry').then(m => m.LgotMinistryComponent)
+      },
+      {
+        path: 'raznoe/editing-social-contribution',
+        loadComponent: () =>
+          import('./raznoe/editing-social-contribution/editing-social-contribution')
+            .then(m => m.EditingSocialContribution)
+      },
+      {
+        path: 'raznoe/eaes-journal',
+        loadComponent: () =>
+          import('./raznoe/eaes-journal/eaes-journal').then(m => m.EaesJournalComponent)
+      },
+      {
+        path: 'raznoe/sv-payers-registry',
+        loadComponent: () =>
+          import('./raznoe/sv-payers-registry/sv-payers-registry')
+            .then(m => m.SvPayersRegistryComponent)
+      },
+      {
+        path: 'raznoe/kgd-income',
+        loadComponent: () =>
+          import('./raznoe/kgd-income/kgd-income').then(m => m.KgdIncomeComponent)
+      },
+
+      // Все неизвестные пути → home (не на логин!)
+      { path: '**', redirectTo: 'home' }
     ]
   },
 
-  // Редирект неизвестных путей на главную
-  {
-    path: '**',
-    redirectTo: 'home'
-  }
+  // Корневой редирект
+  { path: '**', redirectTo: 'login' }
 ];

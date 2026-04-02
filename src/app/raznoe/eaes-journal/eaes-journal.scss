@@ -10,7 +10,7 @@
   font-size: 13px;
   color: #888;
   margin-bottom: 12px;
-  .bc-link { color: $green; cursor: pointer; &:hover { text-decoration: underline; } }
+  .bc-link { color:#7cbd7f; cursor: pointer; &:hover { text-decoration: underline; } }
   .bc-sep  { margin: 0 6px; }
 }
 
@@ -99,7 +99,7 @@
 }
 
 .btn-apply {
-  background: $green;
+  background: #7cbd7f;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -179,9 +179,9 @@
   font-size: 12px;
   font-weight: 500;
   white-space: nowrap;
-
   &.status-accepted { background: $green-light; color: $green-dark; }
-  &.status-removed  { background: #fde8e8; color: #c0392b; }
+  &.status-rejected { background: #fde8e8; color: #c0392b; }
+  &.status-pending  { background: #fff8e1; color: #b07a00; }
 }
 
 .pagination {

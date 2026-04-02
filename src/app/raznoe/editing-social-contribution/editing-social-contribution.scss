@@ -1,8 +1,7 @@
+﻿@use '../../../styles/variables' as *;
 @use 'sass:color';
 
-$green:          #3aaa73;
 $green-dark:     #2d8a5e;
-$green-light:    #e8f7f0;
 $body-bg:        #f4f6f8;
 $card-bg:        #fff;
 $border:         #e5e8ec;
@@ -14,12 +13,12 @@ $orange:         #f59e0b;
 $radius:         12px;
 $radius-sm:      8px;
 
-// ─── Page ─────────────────────────────────────────────────
+// ─── Page ──────────────────────────────────────────────────
 .page-wrap {
   padding: 20px 24px;
 }
 
-// ─── Breadcrumb ───────────────────────────────────────────
+// ─── Breadcrumb ────────────────────────────────────────────
 .breadcrumb {
   font-size: 12.5px;
   color: $text-muted;
@@ -42,7 +41,7 @@ $radius-sm:      8px;
   margin: 0 0 20px;
 }
 
-// ─── Filter ───────────────────────────────────────────────
+// ─── Filter ────────────────────────────────────────────────
 .filter-card {
   background: $card-bg;
   border: 1px solid $border;
@@ -130,7 +129,7 @@ $radius-sm:      8px;
   &:hover { background: #f3f4f6; }
 }
 
-// ─── Toolbar ──────────────────────────────────────────────
+// ─── Toolbar ───────────────────────────────────────────────
 .toolbar {
   display: flex;
   gap: 8px;
@@ -144,11 +143,11 @@ $radius-sm:      8px;
   gap: 6px;
   height: 34px;
   padding: 0 14px;
-  border: 1px solid $border;
+  border: 1px solid #3d3d3d;
   border-radius: $radius-sm;
-  background: #fff;
+  background: #3d3d3d;
   font-size: 13px;
-  color: $text-primary;
+  color: #fff;
   font-family: inherit;
   cursor: pointer;
   transition: all 0.12s;
@@ -156,33 +155,51 @@ $radius-sm:      8px;
 
   svg { width: 15px; height: 15px; }
 
-  &:hover:not(:disabled) { background: #f3f4f6; border-color: color.adjust($border, $lightness: -6%); }
+  &:hover:not(:disabled) {
+    background: #2a2a2a;
+    border-color: #2a2a2a;
+  }
 
   &:disabled {
     opacity: 0.45;
     cursor: not-allowed;
   }
 
+  // Отменить операцию — оранжевый
   &.cancel {
+    background: #fff9e6;
     color: $orange;
     border-color: color.adjust($orange, $lightness: 25%);
-    &:hover:not(:disabled) { background: #fffbeb; }
+    &:hover:not(:disabled) {
+      background: #fffbeb;
+      border-color: $orange;
+    }
   }
 
+  // Удалить — красный
   &.delete {
+    background: #fff0f0;
     color: $red;
     border-color: #fca5a5;
-    &:hover:not(:disabled) { background: #fef2f2; }
+    &:hover:not(:disabled) {
+      background: #fef2f2;
+      border-color: $red;
+    }
   }
 
+  // Протокол — синий
   &.protocol {
+    background: #eef2ff;
     color: #6366f1;
     border-color: #c7d2fe;
-    &:hover:not(:disabled) { background: #eef2ff; }
+    &:hover:not(:disabled) {
+      background: #e0e7ff;
+      border-color: #6366f1;
+    }
   }
 }
 
-// ─── Table Card ───────────────────────────────────────────
+// ─── Table Card ────────────────────────────────────────────
 .table-card {
   background: $card-bg;
   border: 1px solid $border;
@@ -240,7 +257,7 @@ $radius-sm:      8px;
   padding: 32px 0;
 }
 
-// ─── Pagination ───────────────────────────────────────────
+// ─── Pagination ────────────────────────────────────────────
 .pagination-row {
   display: flex;
   align-items: center;
@@ -276,7 +293,6 @@ $radius-sm:      8px;
   &:hover:not(:disabled) { background: $green-light; border-color: $green; color: $green; }
   &.active { background: $green; color: #fff; border-color: $green; }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
-
   &.arrow { padding: 0 8px; }
 }
 
@@ -285,9 +301,7 @@ $radius-sm:      8px;
   color: $text-secondary;
 }
 
-// ═══════════════════════════════════════════════════════════
-// MODALS
-// ═══════════════════════════════════════════════════════════
+// ─── Modals ────────────────────────────────────────────────
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -379,7 +393,7 @@ $radius-sm:      8px;
   margin: 0;
 }
 
-// ─── Form ─────────────────────────────────────────────────
+// ─── Form ──────────────────────────────────────────────────
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -416,7 +430,7 @@ $radius-sm:      8px;
   }
 }
 
-// ─── Footer Buttons ───────────────────────────────────────
+// ─── Footer Buttons ────────────────────────────────────────
 .btn-cancel {
   height: 36px;
   padding: 0 18px;

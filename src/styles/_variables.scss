@@ -1,14 +1,19 @@
-$green: #3aaa73;
-$green-dark: #2d8a5e;
+$green: #7cbd7f;
+$green-dark: #7cbd7f;
 $green-light: #e8f7f0;
-$sidebar-bg: #4a8c6a;
-$sidebar-text: #c9eedd;
+$sidebar-bg: #7cbd7f;
+$sidebar-text: #ffffff;
 $top-bg: #ffffff;
 $body-bg: #f4f6f8;
 $card-bg: #fff;
 $border: #e5e8ec;
-$text-primary: #1a1f2e;
+$text-primary: #2c2f39;
 $text-secondary: #6b7280;
 $text-muted: #9ca3af;
 $radius: 12px;
 $radius-sm: 8px;
+
+:root {
+  --color-primary: #7cbd7f;
+  --color-green: #7cbd7f;
+}

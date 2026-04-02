@@ -1,6 +1,8 @@
+// Обновлённый layout.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../core/auth.service';
 
 @Component({
   selector: 'app-layout',
@@ -10,9 +12,19 @@ import { RouterModule } from '@angular/router';
   styleUrl: './layout.component.scss'
 })
 export class LayoutComponent {
-  openMenu: string | null = 'home'; // по умолчанию открыто "Главная"
+  openMenu: string | null = null;
 
-  toggleMenu(menu: string) {
+  constructor(private authService: AuthService) {}
+
+  toggleMenu(menu: string): void {
     this.openMenu = this.openMenu === menu ? null : menu;
+  }
+
+  logout(): void {
+    this.authService.logout(); // сам редиректит на /login
+  }
+
+  get username(): string {
+    return this.authService.getUsername();
   }
 }

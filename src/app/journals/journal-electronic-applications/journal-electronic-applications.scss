@@ -1,16 +1,22 @@
+﻿@use '../../../styles/variables' as *;
+
 .page-wrap {
   padding: 24px;
   font-family: 'Segoe UI', sans-serif;
   color: #1c1c1c;
 }
 
-// Хлебные крошки
 .breadcrumb {
   font-size: 13px;
   color: #888;
   margin-bottom: 12px;
-  .bc-link { color: #3dbc6b; cursor: pointer; &:hover { text-decoration: underline; } }
-  .bc-sep  { margin: 0 6px; }
+
+  .bc-link { 
+    color: $green; 
+    cursor: pointer; 
+    &:hover { text-decoration: underline; } 
+  }
+  .bc-sep { margin: 0 6px; }
 }
 
 .page-title {
@@ -19,7 +25,7 @@
   margin-bottom: 20px;
 }
 
-// Фильтр
+// Р¤РёР»СЊС‚СЂ
 .filter-section {
   background: #fff;
   border: 1px solid #e8e8e8;
@@ -40,6 +46,7 @@
   flex-wrap: wrap;
   gap: 14px;
   margin-bottom: 12px;
+  align-items: flex-end;
 }
 
 .filter-field {
@@ -48,10 +55,10 @@
   gap: 5px;
   min-width: 160px;
 
-  label {
-    font-size: 12px;
-    color: #666;
-    white-space: nowrap;
+  label { 
+    font-size: 12px; 
+    color: #666; 
+    white-space: nowrap; 
   }
 
   input[type="text"] {
@@ -61,21 +68,20 @@
     padding: 0 10px;
     font-size: 13px;
     outline: none;
-    &:focus { border-color: #3dbc6b; }
+    &:focus { border-color: $green; }
   }
 
   &.filter-field-check {
     flex-direction: row;
     align-items: center;
     gap: 8px;
-    margin-top: 18px;
+    padding-bottom: 4px;
 
     label { font-size: 12px; color: #444; }
-
     input[type="checkbox"] {
       width: 16px;
       height: 16px;
-      accent-color: #3dbc6b;
+      accent-color: $green;
       cursor: pointer;
     }
   }
@@ -83,6 +89,7 @@
 
 .select-wrap {
   position: relative;
+
   select {
     width: 100%;
     height: 36px;
@@ -94,8 +101,9 @@
     background: #fff;
     outline: none;
     cursor: pointer;
-    &:focus { border-color: #3dbc6b; }
+    &:focus { border-color: $green; }
   }
+
   svg {
     position: absolute;
     right: 8px;
@@ -115,7 +123,7 @@
 }
 
 .btn-apply {
-  background: #3dbc6b;
+  background: $green;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -123,7 +131,7 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  &:hover { background: #34a85e; }
+  &:hover { background: $green-dark; }
 }
 
 .btn-reset {
@@ -137,7 +145,6 @@
   &:hover { background: #f5f5f5; }
 }
 
-// Загрузка
 .loading {
   text-align: center;
   padding: 40px;
@@ -145,21 +152,142 @@
   font-size: 14px;
 }
 
-// Таблица
-.table-wrap {
-  background: #fff;
+// в”Ђв”Ђ РћСЃРЅРѕРІРЅР°СЏ СЂР°СЃРєР»Р°РґРєР° в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+.content-layout {
+  display: flex;
+  gap: 0;
   border: 1px solid #e8e8e8;
   border-radius: 10px;
-  overflow-x: auto;
+  overflow: hidden;
+  background: #fff;
+
+  // РђРґР°РїС‚РёРІРЅР°СЏ РІС‹СЃРѕС‚Р°
+  height: calc(100vh - 320px);     // РћСЃРЅРѕРІРЅР°СЏ РІС‹СЃРѕС‚Р°
+  min-height: 480px;               // Р—Р°С‰РёС‚Р° РѕС‚ СЃР»РёС€РєРѕРј РјР°Р»РµРЅСЊРєРёС… СЌРєСЂР°РЅРѕРІ
+  max-height: 780px;               // РњР°РєСЃРёРјР°Р»СЊРЅР°СЏ РІС‹СЃРѕС‚Р° (РїРѕ Р¶РµР»Р°РЅРёСЋ РјРѕР¶РЅРѕ СѓР±СЂР°С‚СЊ)
+}
+
+// Р›РµРІР°СЏ РїР°РЅРµР»СЊ СЃ РґР°С‚Р°РјРё вЂ” СѓР»СѓС‡С€РµРЅРЅС‹Р№ СЃРєСЂРѕР»Р»РёРЅРі
+.date-panel {
+  width: 180px;
+  min-width: 180px;
+  border-right: 1px solid #e8e8e8;
+  background: #fff;
+  overflow-y: auto;
+  padding-right: 4px;              // РјРµСЃС‚Рѕ РїРѕРґ СЃРєСЂРѕР»Р»Р±Р°СЂ
+
+  // РљСЂР°СЃРёРІС‹Р№ Рё СѓРґРѕР±РЅС‹Р№ СЃРєСЂРѕР»Р»Р±Р°СЂ
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 10px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c0c4c8;
+    border-radius: 10px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: #a8aeb5;
+  }
+
+  // Firefox
+  scrollbar-width: thin;
+  scrollbar-color: #c0c4c8 #f8f9fa;
+}
+
+// Р­Р»РµРјРµРЅС‚С‹ РґР°С‚
+.date-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.12s ease;
+  user-select: none;
+
+  &:hover { 
+    background: $green-light; 
+  }
+
+  &.active {
+    background: $green-light;
+    border-left: 3px solid $green;
+    padding-left: 11px;
+
+    .date-text  { 
+      color: $green-dark; 
+      font-weight: 600; 
+    }
+    .date-badge { 
+      background: $green; 
+      color: #fff; 
+    }
+  }
+}
+
+.date-text {
+  font-size: 13px;
+  color: #333;
+  white-space: nowrap;
+}
+
+.date-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  background: #e8e8e8;
+  color: #555;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0 6px;
+}
+
+// РџСЂР°РІР°СЏ С‡Р°СЃС‚СЊ вЂ” С‚Р°Р±Р»РёС†Р°
+.table-wrap {
+  flex: 1;
+  overflow: auto;           // СЃРєСЂРѕР»Р» РІ РѕР±Рµ СЃС‚РѕСЂРѕРЅС‹
+  position: relative;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f8f9fa;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c0c4c8;
+    border-radius: 10px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: #a8aeb5;
+  }
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
+  min-width: 1100px;        // С‡С‚РѕР±С‹ Р±С‹Р» РіРѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅС‹Р№ СЃРєСЂРѕР»Р» РїСЂРё СѓР·РєРѕРј СЌРєСЂР°РЅРµ
 
   thead tr {
     background: #f7f8fa;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+
     th {
       padding: 10px 12px;
       text-align: left;
@@ -167,11 +295,12 @@
       color: #444;
       border-bottom: 1px solid #e8e8e8;
       white-space: nowrap;
+      background: #f7f8fa;
     }
   }
 
   tbody tr {
-    &:hover { background: #f0faf4; }
+    &:hover { background: $green-light; }
     &.row-alt { background: #fafafa; }
 
     td {
@@ -183,23 +312,6 @@
   }
 }
 
-.td-date {
-  font-weight: 600;
-  color: #222;
-  white-space: nowrap;
-  vertical-align: top !important;
-  padding-top: 14px !important;
-}
-
-.td-count {
-  font-weight: 700;
-  font-size: 16px;
-  color: #3dbc6b;
-  text-align: center;
-  vertical-align: top !important;
-  padding-top: 14px !important;
-}
-
 .td-osnova {
   max-width: 180px;
   font-size: 12px;
@@ -207,14 +319,21 @@
   line-height: 1.4;
 }
 
-.td-empty {
-  text-align: center;
-  padding: 40px !important;
-  color: #aaa;
+.empty-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #bbb;
+  gap: 12px;
   font-size: 14px;
+
+  svg { opacity: 0.4; }
+  p { margin: 0; }
 }
 
-// Статусы
+// РЎС‚Р°С‚СѓСЃС‹
 .status-badge {
   display: inline-block;
   padding: 3px 10px;
@@ -223,14 +342,13 @@
   font-weight: 500;
   white-space: nowrap;
 
-  &.status-checked  { background: #e6f9ee; color: #2d8a52; }
+  &.status-checked  { background: $green-light; color: $green-dark; }
   &.status-pending  { background: #fff8e1; color: #b07a00; }
   &.status-rejected { background: #fde8e8; color: #c0392b; }
 }
 
-// Кнопка действия
 .btn-action {
-  background: #3dbc6b;
+  background: $green;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -239,10 +357,10 @@
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  &:hover { background: #34a85e; }
+  &:hover { background: $green-dark; }
 }
 
-// Пагинация
+// РџР°РіРёРЅР°С†РёСЏ
 .pagination {
   display: flex;
   align-items: center;
@@ -266,9 +384,20 @@
 
   svg { width: 16px; height: 16px; }
 
-  &:hover:not(:disabled) { background: #f0faf4; border-color: #3dbc6b; }
-  &.active { background: #3dbc6b; color: #fff; border-color: #3dbc6b; font-weight: 700; }
-  &:disabled { opacity: 0.4; cursor: default; }
+  &:hover:not(:disabled) { 
+    background: $green-light; 
+    border-color: $green; 
+  }
+  &.active { 
+    background: $green; 
+    color: #fff; 
+    border-color: $green; 
+    font-weight: 700; 
+  }
+  &:disabled { 
+    opacity: 0.4; 
+    cursor: default; 
+  }
 }
 
 .total-records {

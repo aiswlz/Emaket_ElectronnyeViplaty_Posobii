@@ -1,0 +1,133 @@
+<div class="page-wrap">
+  <div class="breadcrumb">
+    <span class="bc-link">Разное</span>
+    <span class="bc-sep">/</span>
+    <span>Реестр плательщиков СВ</span>
+  </div>
+
+  <h1 class="page-title">Реестр плательщиков СВ</h1>
+
+  <!-- Фильтр -->
+  <div class="filter-section">
+    <div class="filter-label">Фильтр</div>
+    <div class="filter-row">
+      <div class="filter-field">
+        <label>Тип</label>
+        <select [(ngModel)]="filterType">
+          <option value="">Выбрать</option>
+          <option *ngFor="let t of orgTypes" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label>Дата добавления</label>
+        <input type="text" [(ngModel)]="filterAddDate" placeholder="Введите" />
+      </div>
+      <div class="filter-field">
+        <label>БИН организации</label>
+        <input type="text" [(ngModel)]="filterBin" placeholder="Введите"  />
+      </div>
+    </div>
+    <div class="filter-actions">
+      <button class="btn-apply" (click)="applyFilter()">Применить</button>
+      <button class="btn-reset" (click)="resetFilter()">Сбросить</button>
+    </div>
+  </div>
+
+  <!-- Кнопка добавления -->
+  <div class="top-actions">
+    <button class="btn-add" (click)="openAddModal()">
+      <span>+</span> Добавить запись в реестр плательщиков
+    </button>
+  </div>
+
+  <!-- Таблица -->
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Код отделения</th>
+          <th>ФИО</th>
+          <th>ИИН</th>
+          <th>Вид выплаты</th>
+          <th>Дата утверждения</th>
+          <th>Наименование плательщика</th>
+          <th>БИН плательщика</th>
+          <th>Статус ЭМД</th>
+          <th>ФИО инспектора</th>
+          <th>Дата добавления</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of paginatedRecords">
+          <td>{{ row.divisionCode }}</td>
+          <td>{{ row.fullName }}</td>
+          <td>{{ row.iin }}</td>
+          <td>{{ row.paymentType }}</td>
+          <td>{{ row.approvalDate }}</td>
+          <td>{{ row.companyName }}</td>
+          <td>{{ row.binPayer }}</td>
+          <td><span class="status-badge accepted">{{ row.emdStatus }}</span></td>
+          <td>{{ row.inspectorName }}</td>
+          <td>{{ row.addDate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Пагинация -->
+  <div class="pagination-wrap">
+    <div class="pagination">
+      <button class="page-btn arrow" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">&#8249;</button>
+      <button *ngFor="let p of pages" class="page-btn" [class.active]="p === currentPage" (click)="goToPage(p)">{{ p }}</button>
+      <button class="page-btn arrow" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">&#8250;</button>
+    </div>
+    <span class="total-label">кол-во записей: {{ totalRecords }}</span>
+  </div>
+</div>
+
+<!-- Модалка добавления -->
+<div class="modal-overlay" *ngIf="showAddModal" (click)="showAddModal = false">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <span>Добавить запись в реестр плательщиков</span>
+      <button class="modal-close" (click)="showAddModal = false">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-field">
+        <label>ФИО</label>
+        <input type="text" [(ngModel)]="newRecord.fullName" placeholder="Введите ФИО" />
+      </div>
+      <div class="modal-field">
+        <label>ИИН</label>
+        <input type="text" [(ngModel)]="newRecord.iin" placeholder="Введите ИИН" />
+      </div>
+      <div class="modal-field">
+        <label>Вид выплаты</label>
+        <select [(ngModel)]="newRecord.paymentType">
+          <option value="">Выбрать</option>
+          <option *ngFor="let t of paymentTypes" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Дата утверждения</label>
+        <input type="date" [(ngModel)]="newRecord.approvalDate" />
+      </div>
+      <div class="modal-field">
+        <label>Наименование плательщика</label>
+        <input type="text" [(ngModel)]="newRecord.companyName" placeholder="Введите наименование" />
+      </div>
+      <div class="modal-field">
+        <label>БИН плательщика</label>
+        <input type="text" [(ngModel)]="newRecord.binPayer" placeholder="Введите БИН" />
+      </div>
+      <div class="modal-field">
+        <label>ФИО инспектора</label>
+        <input type="text" [(ngModel)]="newRecord.inspectorName" placeholder="Введите ФИО инспектора" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-reset" (click)="showAddModal = false">Отмена</button>
+      <button class="btn-apply" (click)="saveNewRecord()">Сохранить</button>
+    </div>
+  </div>
+</div>

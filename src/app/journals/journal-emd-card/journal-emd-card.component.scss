@@ -1,7 +1,9 @@
+﻿@use '../../../styles/variables' as *;
+
 // Variables
-$green: #3aaa73;
+$green: $green;
 $green-dark: #2d8a5e;
-$green-light: #e8f7f0;
+$green-light: $green-light;
 $body-bg: #f4f6f8;
 $card-bg: #fff;
 $border: #e5e8ec;
@@ -15,7 +17,7 @@ $radius-sm: 8px;
   padding: 20px 24px;
 }
 
-// ─── Breadcrumb ────────────────────────────────────────────
+// в”Ђв”Ђв”Ђ Breadcrumb в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 .breadcrumb {
   font-size: 12.5px;
   color: $text-muted;
@@ -32,7 +34,7 @@ $radius-sm: 8px;
 }
 .bc-sep { color: $text-muted; }
 
-// ─── Client Card ───────────────────────────────────────────
+// в”Ђв”Ђв”Ђ Client Card в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 .client-card {
   background: $card-bg;
   border-radius: $radius;
@@ -103,7 +105,7 @@ $radius-sm: 8px;
   line-height: 1.4;
 }
 
-// ─── Tabs ──────────────────────────────────────────────────
+// в”Ђв”Ђв”Ђ Tabs в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 .tabs-wrap {
   display: flex;
   gap: 4px;
@@ -133,7 +135,7 @@ $radius-sm: 8px;
   }
 }
 
-// ─── Tab Content ───────────────────────────────────────────
+// в”Ђв”Ђв”Ђ Tab Content в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 .tab-content {
   background: $card-bg;
   border-radius: $radius;
@@ -167,7 +169,7 @@ $radius-sm: 8px;
   text-align: center;
 }
 
-// ─── Maket List ────────────────────────────────────────────
+// в”Ђв”Ђв”Ђ Maket List в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 .maket-list {
   display: flex;
   flex-direction: column;
@@ -241,7 +243,7 @@ $radius-sm: 8px;
   &.bold { font-weight: 600; }
 }
 
-// ─── Expanded Detail ───────────────────────────────────────
+// в”Ђв”Ђв”Ђ Expanded Detail в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 .maket-detail {
   background: #f0faf5;
   border-top: 1px solid $border;
@@ -316,16 +318,16 @@ $radius-sm: 8px;
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 16px;  // ← больше расстояние между кнопками
+  gap: 16px;  // в†ђ Р±РѕР»СЊС€Рµ СЂР°СЃСЃС‚РѕСЏРЅРёРµ РјРµР¶РґСѓ РєРЅРѕРїРєР°РјРё
 }
 
 .btn-edit {
   background: #fff;
-  color: $green;              // ← зелёный текст вместо тёмного
-  border: 1px solid $green;   // ← зелёная рамка
+  color: $green;              // в†ђ Р·РµР»С‘РЅС‹Р№ С‚РµРєСЃС‚ РІРјРµСЃС‚Рѕ С‚С‘РјРЅРѕРіРѕ
+  border: 1px solid $green;   // в†ђ Р·РµР»С‘РЅР°СЏ СЂР°РјРєР°
   border-radius: $radius-sm;
   padding: 9px 20px;
-  font-size: 14px;             // ← чуть крупнее
+  font-size: 14px;             // в†ђ С‡СѓС‚СЊ РєСЂСѓРїРЅРµРµ
   font-weight: 500;
   cursor: pointer;
   display: flex;
@@ -343,7 +345,7 @@ $radius-sm: 8px;
   border: none;
   border-radius: $radius-sm;
   padding: 9px 20px;
-  font-size: 14px;             // ← чуть крупнее
+  font-size: 14px;             // в†ђ С‡СѓС‚СЊ РєСЂСѓРїРЅРµРµ
   font-weight: 500;
   cursor: pointer;
   transition: background 0.15s;

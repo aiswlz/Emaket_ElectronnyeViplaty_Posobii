@@ -1,0 +1,141 @@
+<div class="page-wrap">
+  <div class="breadcrumb">
+    <span class="bc-link">Разное</span>
+    <span class="bc-sep">/</span>
+    <span>Сведения о доходах ИП и наёмных работников с КГД</span>
+  </div>
+
+  <h1 class="page-title">Сведения о доходах ИП и наёмных работников с КГД</h1>
+
+  <!-- Фильтр -->
+  <div class="filter-section">
+    <div class="filter-label">Фильтр</div>
+    <div class="filter-row">
+      <div class="filter-field">
+        <label>ИИН</label>
+        <input type="text" [(ngModel)]="filterIin" placeholder="Введите" />
+      </div>
+      <div class="filter-field">
+        <label>БИН организации</label>
+        <input type="text" [(ngModel)]="filterBin" placeholder="Введите" />
+      </div>
+      <div class="filter-field">
+        <label>Вид персоны</label>
+        <select [(ngModel)]="filterPersonType">
+          <option value="">Выбрать</option>
+          <option *ngFor="let t of personTypes" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label>Период с</label>
+        <input type="text" [(ngModel)]="filterPeriodFrom" placeholder="Введите" />
+      </div>
+      <div class="filter-field">
+        <label>Период по</label>
+        <input type="text" [(ngModel)]="filterPeriodTo" placeholder="Введите" />
+      </div>
+    </div>
+    <div class="filter-actions">
+      <button class="btn-add" (click)="openAddModal()">
+        <span>+</span> Добавить
+      </button>
+      <button class="btn-apply" (click)="applyFilter()">Применить</button>
+      <button class="btn-reset" (click)="resetFilter()">Сбросить</button>
+    </div>
+  </div>
+
+  <!-- Таблица -->
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID запроса</th>
+          <th>Дата запроса</th>
+          <th>БИН организации</th>
+          <th>Вид персоны</th>
+          <th>ИИН</th>
+          <th>ФИО</th>
+          <th>Период с</th>
+          <th>Период по</th>
+          <th>Дата ответа от КГД</th>
+          <th>Пользователь</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of paginatedRecords">
+          <td>{{ row.requestId }}</td>
+          <td>{{ row.requestDate }}</td>
+          <td>{{ row.binOrg }}</td>
+          <td>{{ row.personType }}</td>
+          <td>{{ row.iin }}</td>
+          <td>{{ row.fullName }}</td>
+          <td>{{ row.periodFrom }}</td>
+          <td>{{ row.periodTo }}</td>
+          <td>{{ row.responseDate }}</td>
+          <td>{{ row.user }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Пагинация -->
+  <div class="pagination-wrap">
+    <div class="pagination">
+      <button class="page-btn arrow" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">&#8249;</button>
+      <button
+        *ngFor="let p of pages"
+        class="page-btn"
+        [class.active]="p === currentPage"
+        (click)="goToPage(p)">
+        {{ p }}
+      </button>
+      <button class="page-btn arrow" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">&#8250;</button>
+    </div>
+    <span class="total-label">кол-во записей: {{ totalRecords }}</span>
+  </div>
+</div>
+
+<!-- Модальное окно добавления -->
+<div class="modal-overlay" *ngIf="showAddModal" (click)="closeAddModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <span>Добавить запрос в КГД</span>
+      <button class="modal-close" (click)="closeAddModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-field">
+        <label>ИИН</label>
+        <input type="text" [(ngModel)]="newRecord.iin" placeholder="Введите ИИН" />
+      </div>
+      <div class="modal-field">
+        <label>БИН организации</label>
+        <input type="text" [(ngModel)]="newRecord.binOrg" placeholder="Введите БИН" />
+      </div>
+      <div class="modal-field">
+        <label>Вид персоны</label>
+        <select [(ngModel)]="newRecord.personType">
+          <option value="">Выбрать</option>
+          <option *ngFor="let t of personTypes" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>ФИО</label>
+        <input type="text" [(ngModel)]="newRecord.fullName" placeholder="Введите ФИО" />
+      </div>
+      <div class="modal-row">
+        <div class="modal-field">
+          <label>Период с</label>
+          <input type="date" [(ngModel)]="newRecord.periodFrom" />
+        </div>
+        <div class="modal-field">
+          <label>Период по</label>
+          <input type="date" [(ngModel)]="newRecord.periodTo" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-reset" (click)="closeAddModal()">Отмена</button>
+      <button class="btn-apply" (click)="saveNewRecord()">Сохранить</button>
+    </div>
+  </div>
+</div>

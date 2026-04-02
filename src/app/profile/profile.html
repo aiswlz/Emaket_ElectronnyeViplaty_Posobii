@@ -1,0 +1,178 @@
+<div class="profile-wrap">
+  <div class="breadcrumb">
+    <span>Профиль</span>
+  </div>
+
+  <h1 class="page-title">Профиль</h1>
+
+  <div class="profile-layout">
+
+    <!-- Левое меню -->
+    <div class="profile-sidebar">
+      <button class="sidebar-item" [class.active]="activeTab === 'personal'" (click)="setTab('personal')">
+        Личные данные
+      </button>
+      <button class="sidebar-item" [class.active]="activeTab === 'password'" (click)="setTab('password')">
+        Изменить пароль
+      </button>
+      <button class="sidebar-item" [class.active]="activeTab === 'roles'" (click)="setTab('roles')">
+        Роли
+      </button>
+      <button class="sidebar-item" [class.active]="activeTab === 'ecp'" (click)="setTab('ecp')">
+        ЭЦП
+      </button>
+    </div>
+
+    <!-- Контент -->
+    <div class="profile-content">
+
+      <!-- Личные данные — только просмотр -->
+      <div *ngIf="activeTab === 'personal'" class="tab-content">
+        <h2 class="tab-title">Личные данные</h2>
+
+        <div class="info-grid">
+          <div class="info-field">
+            <span class="info-label">Фамилия</span>
+            <span class="info-value">{{ personalData.lastName }}</span>
+          </div>
+          <div class="info-field">
+            <span class="info-label">Имя</span>
+            <span class="info-value">{{ personalData.firstName }}</span>
+          </div>
+          <div class="info-field">
+            <span class="info-label">Отчество</span>
+            <span class="info-value">{{ personalData.middleName || '—' }}</span>
+          </div>
+          <div class="info-field">
+            <span class="info-label">ИИН</span>
+            <span class="info-value">{{ personalData.iin }}</span>
+          </div>
+          <div class="info-field">
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ personalData.email }}</span>
+          </div>
+          <div class="info-field">
+            <span class="info-label">Телефон</span>
+            <span class="info-value">{{ personalData.phone }}</span>
+          </div>
+          <div class="info-field">
+            <span class="info-label">Должность</span>
+            <span class="info-value">{{ personalData.position }}</span>
+          </div>
+          <div class="info-field">
+            <span class="info-label">Подразделение</span>
+            <span class="info-value">{{ personalData.department }}</span>
+          </div>
+          <div class="info-field">
+            <span class="info-label">Отделение</span>
+            <span class="info-value">{{ personalData.division }}</span>
+          </div>
+          <div class="info-field">
+            <span class="info-label">Регион</span>
+            <span class="info-value">{{ personalData.region }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Изменить пароль — редактируемо -->
+      <div *ngIf="activeTab === 'password'" class="tab-content">
+        <h2 class="tab-title">Изменить пароль</h2>
+        <div class="password-form">
+          <div class="form-field">
+            <label>Текущий пароль</label>
+            <input type="password" [(ngModel)]="passwordData.current" placeholder="Введите текущий пароль" />
+          </div>
+          <div class="form-field">
+            <label>Новый пароль</label>
+            <input type="password" [(ngModel)]="passwordData.newPass" placeholder="Минимум 6 символов" />
+          </div>
+          <div class="form-field">
+            <label>Подтвердите пароль</label>
+            <input type="password" [(ngModel)]="passwordData.confirm" placeholder="Повторите новый пароль" />
+          </div>
+
+          <div class="alert error" *ngIf="passwordError">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            {{ passwordError }}
+          </div>
+
+          <div class="alert success" *ngIf="passwordSuccess">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
+            Пароль успешно изменён
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-save" (click)="changePassword()">Сохранить</button>
+          </div>
+        </div>
+      </div>
+
+
+      <div *ngIf="activeTab === 'roles'" class="tab-content">
+        <h2 class="tab-title">Роли</h2>
+        <div class="table-wrap">
+          <table class="roles-table">
+            <thead>
+              <tr>
+                <th>Код</th>
+                <th>Наименование роли</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let role of roles">
+                <td class="role-code">{{ role.code }}</td>
+                <td class="role-name">{{ role.name }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ЭЦП -->
+      <div *ngIf="activeTab === 'ecp'" class="tab-content">
+        <h2 class="tab-title">ЭЦП</h2>
+        <div class="ecp-card">
+          <div class="ecp-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
+          <div class="ecp-fields">
+            <div class="ecp-row">
+              <span class="ecp-label">Субъект</span>
+              <span class="ecp-value">{{ ecpData.subject }}</span>
+            </div>
+            <div class="ecp-row">
+              <span class="ecp-label">Издатель</span>
+              <span class="ecp-value">{{ ecpData.issuer }}</span>
+            </div>
+            <div class="ecp-row">
+              <span class="ecp-label">Действителен с</span>
+              <span class="ecp-value">{{ ecpData.validFrom }}</span>
+            </div>
+            <div class="ecp-row">
+              <span class="ecp-label">Действителен по</span>
+              <span class="ecp-value">{{ ecpData.validTo }}</span>
+            </div>
+            <div class="ecp-row">
+              <span class="ecp-label">Статус</span>
+              <span class="ecp-value status-ok">{{ ecpData.status }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-save">Обновить ЭЦП</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
