@@ -34,10 +34,13 @@
 .logo-icon {
   width: 36px;
   height: 36px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: none;
-  img { width: 100%; height: 100%; object-fit: contain; }
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 }
 
 .logo-text-block {
@@ -120,13 +123,13 @@
     margin-bottom: 0;
 
     .nav-icon-wrap {
-      background: #7cbd7f; // РёРєРѕРЅРєР° Р·РµР»С‘РЅР°СЏ
+      background: #B4D3B4; // РёРєРѕРЅРєР° Р·РµР»С‘РЅР°СЏ
       svg { stroke: #fff; }
     }
 
     .chevron {
       opacity: 1;
-      stroke: #7cbd7f;
+      stroke:#B4D3B4;
     }
   }
 }
@@ -140,7 +143,7 @@
     border-radius: 8px; // РІСЃРµ СѓРіР»С‹ вЂ” РЅРµС‚ РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ РїРѕРґРјРµРЅСЋ РІРЅРёР·
 
     .nav-icon-wrap {
-      background: #7cbd7f;
+      background: #B4D3B4;
       svg { stroke: #fff; }
     }
   }
