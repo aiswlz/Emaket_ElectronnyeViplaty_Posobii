@@ -9,277 +9,679 @@
     <span>Заявление</span>
   </div>
 
-  <!-- Шапка -->
-  <div class="card-header-row">
-    <h2 class="client-name">{{ fio }}</h2>
-    <div class="header-actions">
-      <button class="btn-register" (click)="save()">Зарегистрировать</button>
-      <button class="btn-delete" (click)="delete()">Удалить</button>
+  <!-- Шапка клиента -->
+  <div class="client-card">
+    <div class="client-header-row">
+      <button class="btn-kartochka" (click)="cancel()">◀ Карточка</button>
+      <h2 class="client-name">{{ fio || 'Ахметова Анар Алмасқызы' }}</h2>
+      <div class="header-actions">
+
+        <!-- НОВОЕ заявление -->
+        <ng-container *ngIf="isNewMode">
+          <button class="btn-register" (click)="save()">Зарегистрировать</button>
+        </ng-container>
+
+        <!-- СУЩЕСТВУЮЩЕЕ заявление -->
+        <ng-container *ngIf="!isNewMode">
+          <button *ngIf="!isPereschet" class="btn-peraschet" (click)="togglePereschet()">Перерасчёт</button>
+          <button *ngIf="isPereschet"  class="btn-cancel-peraschet" (click)="togglePereschet()">Отменить перерасчёт</button>
+        </ng-container>
+
+        <button class="btn-delete" (click)="delete()">🗑 Удалить</button>
+      </div>
+    </div>
+    <div class="client-info-bar">
+      <div class="info-item"><span class="info-label">ИИН</span><span>{{ iin || '880101665544' }}</span></div>
+      <div class="info-item"><span class="info-label">Дата рождения</span><span>{{ dateBirth || '14.12.1988' }}</span></div>
+      <div class="info-item"><span class="info-label">Отделение</span><span>0000</span></div>
+      <div class="info-item"><span class="info-label">Адрес</span><span>{{ address || 'Алматы, Абая 124' }}</span></div>
+      <div class="info-item"><span class="info-label">Удостоверение РК №:</span><span>{{ nomerDoc || '020634394, МИНИСТЕРСТВО ЮСТИЦИИ РК, от 23.01.2008' }}</span></div>
     </div>
   </div>
 
-  <!-- Краткая инфо -->
-  <div class="client-info-bar">
-    <div class="info-item"><span class="info-label">ИИН</span><span>{{ iin }}</span></div>
-    <div class="info-item"><span class="info-label">Дата рождения</span><span>{{ dateBirth }}</span></div>
-    <div class="info-item"><span class="info-label">Отделение</span><span>0000</span></div>
-    <div class="info-item"><span class="info-label">Адрес</span><span>{{ address }}</span></div>
-    <div class="info-item"><span class="info-label">Удостоверение РК №</span><span>{{ nomerDoc }}</span></div>
-  </div>
-
-  <!-- Вкладка -->
+  <!-- Вкладки -->
   <div class="tab-bar">
-    <button class="tab-btn active">Заявление</button>
-  </div>
+    <!-- Всегда видны -->
+    <button class="tab-btn" [class.active]="activeTab === 'zayavlenie'" (click)="activeTab = 'zayavlenie'">Заявление</button>
+    <button class="tab-btn" [class.active]="activeTab === 'maket'"      (click)="activeTab = 'maket'">Макет</button>
 
-  <!-- Блок: шапка заявления -->
-  <div class="form-section">
-    <div class="form-row">
-      <div class="form-field">
-        <label>Номер заявления</label>
-        <input type="text" [(ngModel)]="nomerZayavleniya" />
-      </div>
-      <div class="form-field">
-        <label>Источник *</label>
-        <div class="select-wrap">
-          <select [(ngModel)]="istochnik">
-            <option value="Цон">Цон</option>
-            <option value="Онлайн">Онлайн</option>
-          </select>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-      </div>
-      <div class="form-field wide">
-        <label>Основание *</label>
-        <div class="select-wrap">
-          <select [(ngModel)]="osnova">
-            <option value="Соц. выплаты из ГФСС - по беременности и родам">Соц. выплаты из ГФСС - по беременности и родам</option>
-            <option value="Пенсия базовая">Пенсия базовая</option>
-            <option value="Дети - многодетные">Дети - многодетные</option>
-          </select>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Вид заявления *</label>
-        <div class="select-wrap">
-          <select [(ngModel)]="vidZayavleniya">
-            <option value="Новое назначение">Новое назначение</option>
-            <option value="Перерасчет">Перерасчет</option>
-          </select>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Блок: Информация о заявителе -->
-  <div class="form-section">
-    <h3 class="section-title">Информация о заявителе <span class="check-icon">✔</span></h3>
-    <div class="form-row">
-      <div class="form-field">
-        <label>ИИН <span class="req">*</span></label>
-        <input type="text" [(ngModel)]="iin" placeholder="ИИН"
-              [class.error]="!iin.trim() && submitted" />
-      </div>
-      <div class="form-field">
-        <label>ФИО <span class="req">*</span></label>
-        <input type="text" [(ngModel)]="fio"
-              [class.error]="!fio.trim() && submitted" />
-      </div>
-      <div class="form-field">
-        <label>Дата рождения <span class="req">*</span></label>
-        <input type="text" [(ngModel)]="dateBirth" placeholder="дд.мм.гггг"
-              maxlength="10" (input)="formatDate($event, 'dateBirth')"
-              [class.error]="!dateBirth.trim() && submitted" />
-      </div>
-      <div class="form-field">
-        <label>№ документа, удост. личность <span class="req">*</span></label>
-        <input type="text" [(ngModel)]="nomerDoc"
-              [class.error]="!nomerDoc.trim() && submitted" />
-      </div>
-      <div class="form-field">
-        <label>Кем выдано <span class="req">*</span></label>
-        <input type="text" [(ngModel)]="kemVidano" 
-              placeholder="Министерство внутренних дел РК"
-              [class.error]="!kemVidano.trim() && submitted" />
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-field"><label>Дата обращения</label><input type="text" [(ngModel)]="dateObr" /></div>
-      <div class="form-field"><label>Дата приема документов</label><input type="text" [(ngModel)]="datePriem" /></div>
-      <div class="form-field">
-        <label>Язык заявления</label>
-        <div class="select-wrap">
-          <select [(ngModel)]="yazykZayavl">
-            <option value="Русский">Русский</option>
-            <option value="Казахский">Казахский</option>
-          </select>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-      </div>
-      <div class="form-field"><label>Домашний телефон</label><input type="text" [(ngModel)]="domTel" /></div>
-      <div class="form-field"><label>Электронный адрес</label><input type="text" [(ngModel)]="email" placeholder="-" /></div>
-    </div>
-    <div class="form-row">
-      <div class="form-field full-width"><label>Адрес</label><input type="text" [(ngModel)]="address" /></div>
-      <div class="form-field"><label>Мобильный телефон</label><input type="text" [(ngModel)]="mobTel" placeholder="+7 (700) 000-00-00" maxlength="18" (input)="formatPhone($event)"/></div>
-      <div class="form-field"><label>Источник моб. телефона</label><input type="text" [(ngModel)]="istMobTel" placeholder="Заполнение" /></div>
-    </div>
-    <div class="form-row">
-      <label class="checkbox-label">
-        <input type="checkbox" [(ngModel)]="pribyl" />
-        <span>Прибывший из пределов РК</span>
-      </label>
-    </div>
-    <div class="form-row" *ngIf="pribyl">
-      <div class="form-field">
-        <label>Страна прибытия/выбытия</label>
-        <div class="select-wrap">
-          <select [(ngModel)]="stranaPrib">
-            <option value="">Выберите</option>
-            <option value="Россия">Россия</option>
-            <option value="Беларусь">Беларусь</option>
-            <option value="Другое">Другое</option>
-          </select>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Блок: Банковские реквизиты -->
-  <div class="form-section">
-    <h3 class="section-title">Банковские реквизиты <span class="check-icon">✔</span></h3>
-    <div class="form-row">
-      <div class="form-field wide">
-        <label>Способ выплаты</label>
-        <div class="select-wrap">
-          <select [(ngModel)]="sposobViplaty">
-            <option value="">-</option>
-            <option value="bank">Банковский счёт</option>
-            <option value="cash">Наличными</option>
-          </select>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <span class="field-error" *ngIf="!sposobViplaty">заполните поле</span>
-      </div>
-      <div class="form-field">
-        <label>Место проживания</label>
-        <div class="select-wrap">
-          <select [(ngModel)]="mestoProj">
-            <option value="01-Собственное жильё">01-Собственное жильё</option>
-            <option value="02-Аренда">02-Аренда</option>
-          </select>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Тип счета</label>
-        <div class="radio-group">
-          <label class="radio-label"><input type="radio" [(ngModel)]="tipScheta" value="litsevoy" /> Лицевой счет</label>
-          <label class="radio-label"><input type="radio" [(ngModel)]="tipScheta" value="kart" /> Карт счет</label>
-        </div>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-field">
-        <label>IBAN *</label>
-        <input type="text" [(ngModel)]="iban" placeholder="-" />
-        <span class="field-error" *ngIf="!iban">заполните поле</span>
-      </div>
-      <div class="form-field">
-        <label>Банк</label>
-        <div class="select-wrap">
-          <select [(ngModel)]="bank">
-            <option value="">Выберите</option>
-            <option value="Kaspi">Kaspi Bank</option>
-            <option value="Halyk">Halyk Bank</option>
-            <option value="BCC">БЦК</option>
-          </select>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Блок: Дополнительные сведения -->
-  <div class="form-section">
-    <h3 class="section-title">Дополнительные сведения <span class="check-icon">✔</span></h3>
-    <div class="form-row">
-      <label class="checkbox-label"><input type="checkbox" [(ngModel)]="mnogodetMat" /> <span>Многодетная мать</span></label>
-      <label class="checkbox-label" style="margin-left:24px"><input type="checkbox" [(ngModel)]="pensionerSIYAP" /> <span>Пенсионер по СИЯП</span></label>
-    </div>
-  </div>
-
-  <!-- Блок: Иждивенцы -->
-  <div class="form-section">
-    <h3 class="section-title">Иждивенцы <span class="check-icon">✔</span></h3>
-    <button class="btn-add" (click)="addIzhdivents()">+ Добавить иждивенца</button>
-    <table class="izhdiv-table" *ngIf="izhdivency.length > 0">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Отношение</th>
-          <th>ИИН</th>
-          <th>ФИО</th>
-          <th>Дата рождения</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let iz of izhdivency; let i = index">
-          <td><input type="checkbox" /></td>
-          <td>
-            <div class="select-wrap">
-              <select [(ngModel)]="iz.otnoshenie">
-                <option value="Сын/дочь">Сын/дочь</option>
-                <option value="Супруг(а)">Супруг(а)</option>
-                <option value="Родитель">Родитель</option>
-              </select>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-            </div>
-          </td>
-          <td><input type="text" [(ngModel)]="iz.iin" placeholder="-" /></td>
-          <td><input type="text" [(ngModel)]="iz.fio" placeholder="-" /></td>
-          <td><input type="text" [(ngModel)]="iz.dateBirth" placeholder="-" /></td>
-          <td><button class="btn-remove" (click)="removeIzhdivents(i)">🗑</button></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Блок: Прикладываемые документы -->
-  <div class="form-section">
-    <h3 class="section-title">Прикладываемые документы <span class="check-icon"></span></h3>
-
-   <div class="doc-grid">
-    <ng-container *ngFor="let doc of allDocs">
-      <div class="doc-item" [class.attached]="isUploaded(doc.key)">
-        <div class="doc-item-top">
-          <span>{{ doc.label }}</span>
-          <div class="doc-item-actions">
-            <button *ngIf="isUploaded(doc.key)" class="delete-doc-btn" (click)="deleteFile(doc.key)">−</button>
-            <label class="upload-btn">
-              <input type="file" (change)="onFileUpload($event, doc.key)" hidden />
-              {{ isUploaded(doc.key) ? 'Загружен' : '+' }}
-            </label>
-          </div>
-        </div>
-        <button *ngIf="isUploaded(doc.key)" class="view-btn"
-                (click)="openFile(getFile(doc.key).url, getFile(doc.key).type)">
-          Открыть
-        </button>
-      </div>
+    <!-- Появляются только после сохранения макета в режиме перерасчёта -->
+    <ng-container *ngIf="showAllTabs">
+      <button class="tab-btn" [class.active]="activeTab === 'reshenie'"  (click)="activeTab = 'reshenie'">Решение</button>
+      <button class="tab-btn" [class.active]="activeTab === 'karta'"     (click)="activeTab = 'karta'">Карта размеров</button>
+      <button class="tab-btn" [class.active]="activeTab === 'protokol'"  (click)="activeTab = 'protokol'">Протокол</button>
+      <button class="tab-btn history-tab" [class.active]="activeTab === 'history'" (click)="activeTab = 'history'; historyUnread = false">
+        История изменения данных <span class="tab-dot" *ngIf="historyUnread"></span>
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'raschety'"  (click)="activeTab = 'raschety'">Расчёты</button>
+      <button class="tab-btn" [class.active]="activeTab === 'kgd'"       (click)="activeTab = 'kgd'">Сведения с КГД</button>
     </ng-container>
   </div>
+
+  <!-- Баннер режима перерасчёта в макете -->
+  <div class="peraschet-process-banner" *ngIf="isPereschet && peraschetStep === 'editing'">
+    Процесс перрасчета ЭМД
   </div>
 
-  <!-- Блок: Шаблон заявления -->
-  <div class="form-section">
-    <h3 class="section-title">Шаблон заявления <span class="check-icon">✔</span></h3>
-    <button class="btn-add">+ Открыть</button>
+  <!-- ══════════════════════ ЗАЯВЛЕНИЕ ══════════════════════ -->
+  <div *ngIf="activeTab === 'zayavlenie'">
+
+    <!-- Шапка формы -->
+    <div class="form-section">
+      <div class="form-row">
+        <div class="form-field">
+          <label>Номер заявления</label>
+          <input type="text" [(ngModel)]="nomerZayavleniya" />
+        </div>
+        <div class="form-field">
+          <label>Источник *</label>
+          <div class="select-wrap">
+            <select [(ngModel)]="istochnik">
+              <option value="Цон">Цон</option>
+              <option value="Онлайн">Онлайн</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="form-field wide">
+          <label>Основание *</label>
+          <div class="select-wrap">
+            <select [(ngModel)]="osnova">
+              <option value="Соц. выплаты из ГФСС - по беременности и родам">Соц. выплаты из ГФСС - по беременности и родам</option>
+              <option value="Пенсия базовая">Пенсия базовая</option>
+              <option value="Дети - многодетные">Дети - многодетные</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Вид заявления *</label>
+          <div class="select-wrap">
+            <select [(ngModel)]="vidZayavleniya">
+              <option value="Новое назначение">Новое назначение</option>
+              <option value="Перерасчет">Перерасчет</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Информация о заявителе -->
+    <div class="form-section">
+      <h3 class="section-title">Информация о заявителе <span class="check-icon"></span></h3>
+      <div class="form-row">
+        <div class="form-field">
+          <label>ИИН <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="iin" placeholder="ИИН" [class.error]="!iin.trim() && submitted" />
+        </div>
+        <div class="form-field">
+          <label>ФИО <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="fio" [class.error]="!fio.trim() && submitted" />
+        </div>
+        <div class="form-field">
+          <label>Дата рождения <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="dateBirth" placeholder="дд.мм.гггг" maxlength="10"
+                 (input)="formatDate($event, 'dateBirth')" [class.error]="!dateBirth.trim() && submitted" />
+        </div>
+        <div class="form-field">
+          <label>№ документа, удост. личность <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="nomerDoc" [class.error]="!nomerDoc.trim() && submitted" />
+        </div>
+        <div class="form-field">
+          <label>Кем выдано <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="kemVidano" placeholder="Министерство внутренних дел РК" [class.error]="!kemVidano.trim() && submitted" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field"><label>Дата обращения</label><input type="text" [(ngModel)]="dateObr" /></div>
+        <div class="form-field"><label>Дата приема документов</label><input type="text" [(ngModel)]="datePriem" /></div>
+        <div class="form-field">
+          <label>Язык заявления</label>
+          <div class="select-wrap">
+            <select [(ngModel)]="yazykZayavl">
+              <option value="Русский">Русский</option>
+              <option value="Казахский">Казахский</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="form-field"><label>Домашний телефон</label><input type="text" [(ngModel)]="domTel" /></div>
+        <div class="form-field"><label>Электронный адрес</label><input type="text" [(ngModel)]="email" placeholder="-" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-field full-width"><label>Адрес</label><input type="text" [(ngModel)]="address" /></div>
+        <div class="form-field"><label>Мобильный телефон</label><input type="text" [(ngModel)]="mobTel" placeholder="+7 (700) 000-00-00" maxlength="18" (input)="formatPhone($event)" /></div>
+        <div class="form-field"><label>Источник моб. телефона</label><input type="text" [(ngModel)]="istMobTel" placeholder="Заполнение" /></div>
+      </div>
+      <div class="form-row">
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="pribyl" />
+          <span>Прибывший из пределов РК</span>
+        </label>
+      </div>
+      <div class="form-row" *ngIf="pribyl">
+        <div class="form-field">
+          <label>Страна прибытия/выбытия</label>
+          <div class="select-wrap">
+            <select [(ngModel)]="stranaPrib">
+              <option value="">Выберите</option>
+              <option value="Россия">Россия</option>
+              <option value="Беларусь">Беларусь</option>
+              <option value="Другое">Другое</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Банковские реквизиты -->
+    <div class="form-section">
+      <h3 class="section-title">Банковские реквизиты <span class="check-icon"></span></h3>
+      <div class="form-row">
+        <div class="form-field wide">
+          <label>Способ выплаты</label>
+          <div class="select-wrap">
+            <select [(ngModel)]="sposobViplaty">
+              <option value="">-</option>
+              <option value="bank">Банковский счёт</option>
+              <option value="cash">Наличными</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <span class="field-error" *ngIf="!sposobViplaty">заполните поле</span>
+        </div>
+        <div class="form-field">
+          <label>Место проживания</label>
+          <div class="select-wrap">
+            <select [(ngModel)]="mestoProj">
+              <option value="01-Собственное жильё">01-Собственное жильё</option>
+              <option value="02-Аренда">02-Аренда</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Тип счета</label>
+          <div class="radio-group">
+            <label class="radio-label"><input type="radio" [(ngModel)]="tipScheta" value="litsevoy" /> Лицевой счет</label>
+            <label class="radio-label"><input type="radio" [(ngModel)]="tipScheta" value="kart" /> Карт счет</label>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label>IBAN *</label>
+          <input type="text" [(ngModel)]="iban" placeholder="-" />
+          <span class="field-error" *ngIf="!iban">заполните поле</span>
+        </div>
+        <div class="form-field">
+          <label>Банк</label>
+          <div class="select-wrap">
+            <select [(ngModel)]="bank">
+              <option value="">Выберите</option>
+              <option value="Kaspi">Kaspi Bank</option>
+              <option value="Halyk">Halyk Bank</option>
+              <option value="BCC">БЦК</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Дополнительные сведения -->
+    <div class="form-section">
+      <h3 class="section-title">Дополнительные сведения <span class="check-icon"></span></h3>
+      <div class="form-row">
+        <label class="checkbox-label"><input type="checkbox" [(ngModel)]="mnogodetMat" /> <span>Многодетная мать</span></label>
+        <label class="checkbox-label" style="margin-left:24px"><input type="checkbox" [(ngModel)]="pensionerSIYAP" /> <span>Пенсионер по СИЯП</span></label>
+      </div>
+    </div>
+
+    <!-- Иждивенцы -->
+    <div class="form-section">
+      <h3 class="section-title">Иждивенцы <span class="check-icon"></span></h3>
+      <button class="btn-add" (click)="addIzhdivents()">+ Добавить иждивенца</button>
+      <table class="izhdiv-table" *ngIf="izhdivency.length > 0">
+        <thead>
+          <tr><th></th><th>Отношение</th><th>ИИН</th><th>ФИО</th><th>Дата рождения</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let iz of izhdivency; let i = index">
+            <td><input type="checkbox" /></td>
+            <td>
+              <div class="select-wrap">
+                <select [(ngModel)]="iz.otnoshenie">
+                  <option value="Сын/дочь">Сын/дочь</option>
+                  <option value="Супруг(а)">Супруг(а)</option>
+                  <option value="Родитель">Родитель</option>
+                </select>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </td>
+            <td><input type="text" [(ngModel)]="iz.iin" placeholder="-" /></td>
+            <td><input type="text" [(ngModel)]="iz.fio" placeholder="-" /></td>
+            <td><input type="text" [(ngModel)]="iz.dateBirth" placeholder="-" /></td>
+            <td><button class="btn-remove" (click)="removeIzhdivents(i)">🗑</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Прикладываемые документы -->
+    <div class="form-section">
+      <h3 class="section-title">Прикладываемые документы</h3>
+      <div class="doc-grid">
+        <ng-container *ngFor="let doc of allDocs">
+          <div class="doc-item" [class.attached]="isUploaded(doc.key)">
+            <div class="doc-item-top">
+              <span>{{ doc.label }}</span>
+              <div class="doc-item-actions">
+                <button *ngIf="isUploaded(doc.key)" class="delete-doc-btn" (click)="deleteFile(doc.key)">−</button>
+                <label class="upload-btn">
+                  <input type="file" (change)="onFileUpload($event, doc.key)" hidden />
+                  {{ isUploaded(doc.key) ? 'Загружен' : '+' }}
+                </label>
+              </div>
+            </div>
+            <button *ngIf="isUploaded(doc.key)" class="view-btn" (click)="openFile(getFile(doc.key).url, getFile(doc.key).type)">Открыть</button>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Шаблон заявления -->
+    <div class="form-section">
+      <h3 class="section-title">Шаблон заявления <span class="check-icon"></span></h3>
+      <button class="btn-add">+ Открыть</button>
+    </div>
+
+    <!-- Кнопки внизу формы — только для нового заявления -->
+    <div class="form-actions" *ngIf="isNewMode">
+      <button class="btn-register" (click)="save()">Зарегистрировать</button>
+      <button class="btn-secondary" (click)="cancel()">Отмена</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ МАКЕТ ══════════════════════ -->
+  <div *ngIf="activeTab === 'maket'">
+    <div class="form-section">
+      <div class="maket-top-bar">
+        <button class="btn-save-maket" (click)="saveMaket()">Сохранить макет</button>
+        <span class="maket-status-text" *ngIf="isPereschet">Процесс перрасчета ЭМД</span>
+      </div>
+
+      <h3 class="section-title">Данные для расчёта</h3>
+      <div class="form-row">
+        <div class="form-field wide">
+          <label>Название поля *</label>
+          <div class="select-wrap">
+            <select [(ngModel)]="maketNazvaniePolya">
+              <option value="090101 Пособие матери/отцу">090101 Пособие матери/отцу</option>
+              <option value="090102 Пособие по инвалидности">090102 Пособие по инвалидности</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field"><label>Дата обращения *</label><input type="text" [(ngModel)]="maketDateObr" /></div>
+        <div class="form-field"><label>Дата поступления документов</label><input type="text" [(ngModel)]="maketDatePostupleniya" placeholder="-" /></div>
+        <div class="form-field"><label>Дата назначения *</label><input type="text" [(ngModel)]="maketDateNazn" /></div>
+        <div class="form-field" [class.field-required-highlight]="isPereschet && !maketDateOkon">
+          <label>Дата окончания <span class="req" *ngIf="isPereschet">*</span></label>
+          <input type="text" [(ngModel)]="maketDateOkon" placeholder="дд.мм.гггг" [class.error]="isPereschet && !maketDateOkon" />
+          <span class="field-error" *ngIf="isPereschet && !maketDateOkon">обязательно при перерасчёте</span>
+        </div>
+        <div class="form-field">
+          <label>Ведомство *</label>
+          <div class="select-wrap">
+            <select [(ngModel)]="maketVedomstvo">
+              <option value="МТСЗН">МТСЗН</option>
+              <option value="МФ">МФ</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="checkbox-label"><input type="checkbox" [(ngModel)]="maketKanikulyarnie" /> <span>Каникулярные дни</span></label>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3 class="section-title">Данные об инвалидности</h3>
+      <div class="form-row">
+        <div class="form-field">
+          <label>Номер справки *</label>
+          <div class="select-wrap">
+            <select [(ngModel)]="maketNomerSpravki">
+              <option value="456789">456789</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="form-field wide">
+          <label>Страна установления инвалидности *</label>
+          <div class="select-wrap">
+            <select [(ngModel)]="maketStranaInvalidnosti">
+              <option value="">-</option>
+              <option value="Казахстан">Казахстан</option>
+              <option value="Россия">Россия</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field"><label>Дата установления *</label><input type="text" [(ngModel)]="maketDateUstanov" /></div>
+        <div class="form-field"><label>Дата окончания до *</label><input type="text" [(ngModel)]="maketDateOkonDo" placeholder="-" /></div>
+        <div class="form-field wide">
+          <label>Группа инвалидности *</label>
+          <div class="select-wrap">
+            <select [(ngModel)]="maketGruppaInvalid">
+              <option value="8 ребёнок с инвалидностью третья">8 ребёнок с инвалидностью третья</option>
+              <option value="1 группа">1 группа</option>
+              <option value="2 группа">2 группа</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="form-field wide">
+          <label>Причина инвалидности *</label>
+          <div class="select-wrap">
+            <select [(ngModel)]="maketPrichinaInvalid">
+              <option value="дети-инвалиды">дети-инвалиды</option>
+              <option value="общее заболевание">общее заболевание</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="maket-summa-box">
+        <label>Назначенная сумма (тенге)</label>
+        <input type="text" [(ngModel)]="maketNaznSumma" placeholder="0" />
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3 class="section-title">Данные по выплате из ЦБД</h3>
+      <div class="cbd-row">
+        <div class="cbd-item"><span class="cbd-label">Идентификатор в ЦБД</span><span class="cbd-value">{{ maketIdCbd }}</span></div>
+        <div class="cbd-item"><span class="cbd-label">Идентификатор в Е-макет</span><span class="cbd-value">{{ maketIdEmaket }}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ РЕШЕНИЕ ══════════════════════ -->
+  <div *ngIf="activeTab === 'reshenie'">
+    <div class="form-section reshenie-wrap">
+      <div class="reshenie-left">
+        <div class="tab-bar-inner">
+          <button class="tab-btn-inner" [class.active]="reshenieLang === 'ru'" (click)="reshenieLang = 'ru'">Решение (Рус)</button>
+          <button class="tab-btn-inner" [class.active]="reshenieLang === 'kaz'" (click)="reshenieLang = 'kaz'">Решение (Каз)</button>
+        </div>
+        <div class="pdf-preview">
+          <div class="pdf-toolbar">
+            <span class="pdf-title">getDocu...</span>
+            <span class="pdf-pages">1 / 1</span>
+            <div class="pdf-tools">
+              <button class="pdf-btn">−</button>
+              <span class="pdf-zoom">35%</span>
+              <button class="pdf-btn">+</button>
+              <button class="pdf-btn">↕</button>
+              <button class="pdf-btn">↻</button>
+              <button class="pdf-btn">⬇</button>
+              <button class="pdf-btn">🖨</button>
+              <button class="pdf-btn">⋮</button>
+            </div>
+          </div>
+          <div class="pdf-body">
+            <div class="pdf-page">
+              <div class="pdf-doc-content">
+                <div class="pdf-doc-header">
+                  <p class="pdf-doc-title">РЕШЕНИЕ</p>
+                  <p class="pdf-doc-subtitle">о назначении социальной выплаты</p>
+                  <p class="pdf-doc-meta">№ {{ nomerZayavleniya }} от {{ dateObr || maketDateObr }}</p>
+                </div>
+
+                <div class="pdf-doc-body">
+                  <p>Рассмотрев заявление гражданина(ки) <strong>{{ fio }}</strong>,
+                  ИИН <strong>{{ iin }}</strong>, дата рождения <strong>{{ dateBirth }}</strong>,
+                  проживающего(ей) по адресу: {{ address }},</p>
+
+                  <p>на основании <em>{{ osnova }}</em>,
+                  в соответствии с законодательством Республики Казахстан,</p>
+
+                  <p><strong>РЕШЕНО:</strong></p>
+
+                  <ol>
+                    <li>Назначить социальную выплату <strong>{{ maketNazvaniePolya }}</strong>
+                    в размере <strong>{{ maketNaznSumma | number:'1.0-0' }} тенге</strong> в месяц.</li>
+                    <li>Дата назначения: <strong>{{ maketDateNazn || '-' }}</strong></li>
+                    <li ng-if="maketDateOkon">Дата окончания: <strong>{{ maketDateOkon }}</strong></li>
+                    <li>Ведомство: <strong>{{ maketVedomstvo }}</strong></li>
+                  </ol>
+
+                  <p *ngIf="mnogodetMat">Статус многодетной матери подтверждён.</p>
+                  <p *ngIf="pensionerSIYAP">Пенсионер по СИЯП.</p>
+                </div>
+
+                <div class="pdf-doc-signatures">
+                  <div class="pdf-sig-row">
+                    <span>Руководитель департамента:</span>
+                    <span class="pdf-sig-line-text">___________________</span>
+                  </div>
+                  <div class="pdf-sig-row">
+                    <span>Руководитель управления социальных выплат:</span>
+                    <span class="pdf-sig-line-text">___________________</span>
+                  </div>
+                  <div class="pdf-sig-row">
+                    <span>Специалист:</span>
+                    <span class="pdf-sig-line-text">___________________</span>
+                  </div>
+                  <div class="pdf-sig-row">
+                    <span>Инспектор Государственного центра:</span>
+                    <span class="pdf-sig-line-text">___________________</span>
+                  </div>
+                </div>
+
+                <div class="pdf-doc-status" *ngIf="peraschetStep === 'signed'">
+                  ✅ Подписано ЭЦП
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reshenie-right">
+        <!-- Баннер: нужна подпись после перерасчёта -->
+        <div class="reshenie-needs-sign" *ngIf="reshenieNeedsSign">
+          🔴 Перерасчёт сохранён — необходимо подписать новое решение ЭЦП
+        </div>
+
+        <!-- Успешно подписано -->
+        <div class="reshenie-signed-ok" *ngIf="peraschetStep === 'signed'">
+          ✅ Решение подписано. Перерасчёт завершён.
+        </div>
+
+        <button class="btn-choose-ecp">Выбрать ЭЦП</button>
+        <div class="reshenie-actions">
+          <button class="btn-sign" (click)="signReshenie()">Подписать</button>
+          <button class="btn-sign-refuse">Подписать отказной ЭМД</button>
+        </div>
+        <div class="form-field" style="margin-top: 16px;">
+          <label>Отказать по причине</label>
+          <div class="select-wrap">
+            <select [(ngModel)]="reshenieOtkazPrichina">
+              <option value="">-</option>
+              <option value="1">Причина 1</option>
+              <option value="2">Причина 2</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="form-field" style="margin-top: 12px;">
+          <label>Комментарий</label>
+          <input type="text" [(ngModel)]="reshenieKomment" placeholder="-" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ КАРТА РАЗМЕРОВ ══════════════════════ -->
+  <div *ngIf="activeTab === 'karta'">
+    <div class="form-section no-pad">
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>Номер решения</th>
+              <th>Выплата</th>
+              <th>Дата начала</th>
+              <th>Дата оконч.</th>
+              <th>Тип назначения</th>
+              <th>Сумма</th>
+              <th>ФИО</th>
+              <th>SID</th>
+              <th>PAY_ID</th>
+              <th>PNPT_ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of kartaRows" [class.rec-row]="row.isRec">
+              <td>{{ row.num }}</td>
+              <td>{{ row.nomerResheniya }}</td>
+              <td>{{ row.viplata }}</td>
+              <td>{{ row.dateNachala }}</td>
+              <td>{{ row.dateOkon }}</td>
+              <td>{{ row.tipNaznacheniya }}</td>
+              <td>{{ row.summa | number:'1.0-0' }}</td>
+              <td>{{ row.fio }}</td>
+              <td>{{ row.sid }}</td>
+              <td>{{ row.payId }}</td>
+              <td>{{ row.pnptId }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ ПРОТОКОЛ ══════════════════════ -->
+  <div *ngIf="activeTab === 'protokol'">
+    <div class="form-section">
+      <div class="empty-tab">
+        <svg viewBox="0 0 64 64" fill="none" stroke="#ccc" stroke-width="2" width="64" height="64">
+          <rect x="10" y="8" width="44" height="56" rx="4"/>
+          <line x1="20" y1="22" x2="44" y2="22"/>
+          <line x1="20" y1="30" x2="44" y2="30"/>
+          <line x1="20" y1="38" x2="36" y2="38"/>
+        </svg>
+        <p>Данные протокола недоступны</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ ИСТОРИЯ ИЗМЕНЕНИЯ ДАННЫХ ══════════════════════ -->
+  <div *ngIf="activeTab === 'history'">
+    <div class="form-section no-pad">
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Отд.</th>
+              <th>Дата</th>
+              <th>Изменяемая</th>
+              <th>Действие</th>
+              <th>Изменения</th>
+              <th>Пользователь</th>
+              <th>IP-адрес</th>
+              <th>Хост</th>
+              <th>Имя учетной</th>
+              <th>Инспектор</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of historyRows">
+              <td>{{ row.otd }}</td>
+              <td>{{ row.date }}</td>
+              <td>{{ row.izmenyaemaya }}</td>
+              <td>{{ row.deystvie }}</td>
+              <td class="izmeneniya-cell">
+                Дата обращения:
+                <span class="izm-old">{{ row.izmOld }}</span>
+                →
+                <span class="izm-new">{{ row.izmNew }}</span>
+              </td>
+              <td>{{ row.polzovatel }}</td>
+              <td>{{ row.ipAdres }}</td>
+              <td>{{ row.host }}</td>
+              <td>{{ row.imyaUchetnoy }}</td>
+              <td>{{ row.inspektor }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ РАСЧЁТЫ ══════════════════════ -->
+  <div *ngIf="activeTab === 'raschety'">
+    <div class="form-section">
+      <div class="empty-tab">
+        <svg viewBox="0 0 64 64" fill="none" stroke="#ccc" stroke-width="2" width="64" height="64">
+          <rect x="8" y="8" width="48" height="48" rx="4"/>
+          <line x1="8" y1="24" x2="56" y2="24"/>
+          <line x1="8" y1="40" x2="56" y2="40"/>
+          <line x1="24" y1="8" x2="24" y2="56"/>
+        </svg>
+        <p>Данные расчётов недоступны</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ СВЕДЕНИЯ С КГД ══════════════════════ -->
+  <div *ngIf="activeTab === 'kgd'">
+    <div class="form-section no-pad">
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID запроса</th>
+              <th>Пользователь</th>
+              <th>Дата запроса</th>
+              <th>Дата ответа с КГД</th>
+              <th>БИН организации</th>
+              <th>Вид персоны</th>
+              <th>ИИН</th>
+              <th>ФИО</th>
+              <th>период с</th>
+              <th>период по</th>
+              <th>действие</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of kgdRows">
+              <td>{{ row.idZaprosa }}</td>
+              <td>{{ row.polzovatel }}</td>
+              <td>{{ row.dataZaprosa }}</td>
+              <td>{{ row.dataOtveta }}</td>
+              <td>{{ row.binOrganizacii }}</td>
+              <td>{{ row.vidPersony }}</td>
+              <td>{{ row.iin }}</td>
+              <td>{{ row.fio }}</td>
+              <td>{{ row.periodS }}</td>
+              <td>{{ row.periodPo }}</td>
+              <td><button class="btn-otvet-kgd">Ответ кгд</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
 </div>

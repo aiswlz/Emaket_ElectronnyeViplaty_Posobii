@@ -68,6 +68,12 @@ export const routes: Routes = [
             .then(m => m.ZayavlenieFormComponent)
       },
       {
+        path: 'journals/emd/:id/zayavlenie/:maketId',
+        loadComponent: () =>
+          import('./journals/zayavlenie-form/zayavlenie-form.component')
+            .then(m => m.ZayavlenieFormComponent)
+      },
+      {
         path: 'journals/zayavleniy',
         loadComponent: () =>
           import('./journals/journal-zayavleniy/journal-zayavleniy.component')

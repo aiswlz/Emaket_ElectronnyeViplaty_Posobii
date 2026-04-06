@@ -254,3 +254,487 @@ input.error {
   justify-content: center;
   &:hover { background: #fff5f5; }
 }
+// ── Client card header ─────────────────────────────────────────
+.client-card {
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: $radius;
+  padding: 16px 24px;
+  margin-bottom: 16px;
+}
+
+.client-header-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  .client-name { flex: 1; font-size: 18px; font-weight: 600; color: $text-primary; }
+  .header-actions { display: flex; gap: 10px; }
+}
+
+.btn-kartochka {
+  background: #2c2f39; color: #fff; border: none; border-radius: $radius-sm;
+  padding: 8px 14px; cursor: pointer; font-size: 13px;
+  &:hover { background: #1a1d27; }
+}
+
+.btn-peraschet {
+  background: $green; color: #fff; border: none; border-radius: $radius-sm;
+  padding: 8px 18px; cursor: pointer; font-size: 13px; font-weight: 500;
+  &:hover { background: $green-dark; }
+}
+
+.btn-cancel-peraschet {
+  background: #e97000; color: #fff; border: none; border-radius: $radius-sm;
+  padding: 8px 18px; cursor: pointer; font-size: 13px; font-weight: 500;
+  &:hover { background: #c96000; }
+}
+
+// ── Tab bar ────────────────────────────────────────────────────
+.tab-bar {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 2px solid $border;
+  margin-bottom: 20px;
+  gap: 0;
+}
+
+.tab-btn {
+  background: none; border: none; padding: 10px 18px;
+  font-size: 13.5px; color: $text-secondary; cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+  white-space: nowrap;
+  &.active { color: $green; border-bottom-color: $green; font-weight: 600; }
+  &:hover:not(.active) { color: $text-primary; }
+}
+
+.history-tab { position: relative; }
+.tab-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  background: #e53935;
+  border-radius: 50%;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+// ── Form actions ───────────────────────────────────────────────
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  margin-bottom: 24px;
+}
+.btn-secondary {
+  background: #fff; color: $text-secondary; border: 1px solid $border;
+  border-radius: $radius-sm; padding: 8px 20px; cursor: pointer; font-size: 13px;
+  &:hover { background: $green-light; }
+}
+
+// ── Макет ──────────────────────────────────────────────────────
+.maket-top-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.btn-save-maket {
+  background: $green; color: #fff; border: none; border-radius: $radius-sm;
+  padding: 8px 18px; cursor: pointer; font-size: 13px; font-weight: 500;
+  &:hover { background: $green-dark; }
+}
+.maket-status-text {
+  font-size: 13px; color: $text-secondary;
+}
+.maket-summa-box {
+  margin-top: 16px;
+  background: $green-light;
+  border-radius: $radius-sm;
+  padding: 12px 16px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  label { font-size: 12px; color: $text-secondary; }
+  input { border: none; background: transparent; font-size: 18px; font-weight: 600; color: $text-primary; width: 160px; outline: none; }
+}
+.cbd-row {
+  display: flex;
+  gap: 48px;
+  .cbd-item { display: flex; flex-direction: column; gap: 4px; }
+  .cbd-label { font-size: 12px; color: $text-secondary; }
+  .cbd-value { font-size: 14px; font-weight: 600; color: $text-primary; }
+}
+
+// ── Решение ────────────────────────────────────────────────────
+.reshenie-wrap {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+.reshenie-left {
+  flex: 1;
+  min-width: 0;
+}
+.reshenie-right {
+  width: 300px;
+  flex-shrink: 0;
+}
+.tab-bar-inner {
+  display: flex;
+  border-bottom: 2px solid $border;
+  margin-bottom: 16px;
+}
+.tab-btn-inner {
+  background: none; border: none; padding: 8px 16px;
+  font-size: 13px; color: $text-secondary; cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+  &.active { color: $green; border-bottom-color: $green; font-weight: 600; }
+}
+.pdf-preview {
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+.pdf-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #fff;
+  border-bottom: 1px solid $border;
+  font-size: 12px;
+  .pdf-title { font-weight: 600; flex: 1; color: $text-primary; }
+  .pdf-pages { color: $text-secondary; }
+}
+.pdf-tools { display: flex; gap: 4px; margin-left: auto; }
+.pdf-btn {
+  background: none; border: 1px solid $border; border-radius: 4px;
+  padding: 2px 6px; cursor: pointer; font-size: 11px; color: $text-secondary;
+  &:hover { background: $green-light; }
+}
+.pdf-zoom { font-size: 12px; color: $text-secondary; padding: 0 4px; }
+.pdf-body {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  min-height: 400px;
+  background: #e8e8e8;
+}
+.pdf-page {
+  background: #fff;
+  width: 100%;
+  max-width: 380px;
+  padding: 24px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+.pdf-line-block {
+  width: 120px; height: 80px;
+  background: #ddd;
+  margin-bottom: 12px;
+}
+.pdf-content-lines { margin-bottom: 16px; }
+.pdf-line {
+  height: 8px; background: #e0e0e0; border-radius: 2px;
+  margin-bottom: 6px;
+  &:nth-child(odd) { width: 90%; }
+  &:nth-child(even) { width: 75%; }
+}
+.pdf-signatures { margin-top: 24px; }
+.pdf-sig-line {
+  height: 8px; background: #e0e0e0; border-radius: 2px;
+  width: 85%; margin-bottom: 8px;
+}
+.btn-choose-ecp {
+  background: $green-light; color: $green; border: 1px solid $green;
+  border-radius: $radius-sm; padding: 8px 18px; cursor: pointer; font-size: 13px;
+  font-weight: 500; margin-bottom: 16px;
+  &:hover { background: $green; color: #fff; }
+}
+.reshenie-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.btn-sign {
+  background: $green; color: #fff; border: none; border-radius: $radius-sm;
+  padding: 8px 16px; cursor: pointer; font-size: 13px; font-weight: 500;
+  &:hover { background: $green-dark; }
+}
+.btn-sign-refuse {
+  background: #fff; color: $text-secondary; border: 1px solid $border;
+  border-radius: $radius-sm; padding: 8px 14px; cursor: pointer; font-size: 12px;
+  &:hover { background: $green-light; }
+}
+
+// ── Data tables ────────────────────────────────────────────────
+.form-section.no-pad { padding: 0; }
+.data-table-wrap { overflow-x: auto; }
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+
+  th {
+    background: #f8f9fb;
+    color: $text-secondary;
+    font-weight: 600;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid $border;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid $border;
+    color: $text-primary;
+    white-space: nowrap;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: $green-light; }
+
+  .rec-row td {
+    background: #fff8e1;
+    font-weight: 600;
+  }
+}
+
+.izmeneniya-cell { font-size: 12px; }
+.izm-old { color: #e53935; font-weight: 600; }
+.izm-new { color: $green-dark; font-weight: 600; }
+
+.btn-otvet-kgd {
+  background: $green; color: #fff; border: none; border-radius: $radius-sm;
+  padding: 4px 12px; cursor: pointer; font-size: 12px;
+  &:hover { background: $green-dark; }
+}
+
+// ── Empty tab ──────────────────────────────────────────────────
+.empty-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 0;
+  color: $text-muted;
+  p { margin-top: 16px; font-size: 14px; }
+}
+
+// ── Перерасчёт: шаги ──────────────────────────────────────────
+.peraschet-steps {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: $text-muted;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid $border;
+  background: #fff;
+  transition: all .2s;
+
+  &.active {
+    color: #e97000;
+    border-color: #e97000;
+    background: #fff8f0;
+    font-weight: 600;
+  }
+
+  &.done {
+    color: $green-dark;
+    border-color: $green;
+    background: $green-light;
+  }
+}
+
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: $border;
+  font-size: 11px;
+  font-weight: 700;
+
+  .active & { background: #e97000; color: #fff; }
+  .done &   { background: $green; color: #fff; }
+}
+
+.step-arrow {
+  color: $text-muted;
+  font-size: 14px;
+}
+
+// ── Перерасчёт: баннеры ───────────────────────────────────────
+.peraschet-banner {
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: $radius-sm;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: #7a5800;
+  margin-bottom: 16px;
+}
+
+.reshenie-needs-sign {
+  background: #fff3f3;
+  border: 1px solid #ffcdd2;
+  border-radius: $radius-sm;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: #c62828;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.reshenie-signed-ok {
+  background: $green-light;
+  border: 1px solid $green;
+  border-radius: $radius-sm;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: $green-dark;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+// ── Поле обязательное при перерасчёте ─────────────────────────
+.field-required-highlight {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border: 2px solid #e97000;
+    border-radius: $radius-sm;
+    pointer-events: none;
+  }
+}
+
+// ── Баннеры режима ─────────────────────────────────────────────
+.mode-banner {
+  padding: 10px 16px;
+  border-radius: $radius-sm;
+  font-size: 13px;
+  margin-bottom: 16px;
+
+  &.mode-view {
+    background: #e8f4fd;
+    border: 1px solid #90caf9;
+    color: #1565c0;
+  }
+
+  &.mode-peraschet {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    color: #7a5800;
+    font-weight: 500;
+  }
+}
+
+// ── Статус бейдж ───────────────────────────────────────────────
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &.status-new     { background: #e3f2fd; color: #1565c0; }
+  &.status-review  { background: #fff8e1; color: #e65100; }
+  &.status-ok      { background: $green-light; color: $green-dark; }
+  &.status-rec     { background: #f3e5f5; color: #6a1b9a; }
+  &.status-deny    { background: #ffebee; color: #b71c1c; }
+}
+
+// ── Документ решения ───────────────────────────────────────────
+.pdf-doc-content {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #1a1a1a;
+  font-family: 'Times New Roman', serif;
+}
+
+.pdf-doc-header {
+  text-align: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+}
+
+.pdf-doc-title {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.pdf-doc-subtitle {
+  font-size: 11px;
+  margin: 4px 0 0;
+  color: #444;
+}
+
+.pdf-doc-meta {
+  font-size: 10px;
+  color: #666;
+  margin: 4px 0 0;
+}
+
+.pdf-doc-body {
+  margin-bottom: 20px;
+  p { margin: 6px 0; text-align: justify; }
+  ol { margin: 8px 0; padding-left: 20px; }
+  li { margin: 4px 0; }
+}
+
+.pdf-doc-signatures {
+  margin-top: 24px;
+  border-top: 1px solid #ccc;
+  padding-top: 12px;
+}
+
+.pdf-sig-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 10px;
+  color: #333;
+}
+
+.pdf-sig-line-text {
+  color: #999;
+  border-bottom: 1px solid #ccc;
+  min-width: 120px;
+  text-align: center;
+}
+
+.pdf-doc-status {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 12px;
+  color: #2e7d32;
+  font-weight: 600;
+  padding: 8px;
+  background: #e8f5e9;
+  border-radius: 6px;
+}
+
+// ── Баннер процесса перерасчёта (над вкладкой Макет) ──────────
+.peraschet-process-banner {
+  font-size: 13px;
+  color: $text-secondary;
+  padding: 4px 0 12px 2px;
+}
