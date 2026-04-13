@@ -42,10 +42,7 @@ export interface EmdClient {
 @Injectable({ providedIn: 'root' })
 export class JournalEmdService {
 
-  // Заглушка — JSON файл в public/data/
-  // Когда появится API — меняем только эту строку:
-  // private apiUrl = 'https://your-api.com/api/emd';
-  private apiUrl = '/data/emd.json';
+  private apiUrl = 'http://localhost:8080/api/emd';
 
   constructor(private http: HttpClient) {}
 

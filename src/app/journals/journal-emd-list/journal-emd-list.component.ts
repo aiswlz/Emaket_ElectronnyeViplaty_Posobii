@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { JournalEmdListService } from './journal-emd-list.component.service';
 
 export interface EmdListRecord {
   dateObr: string;
@@ -51,7 +52,8 @@ export class JournalEmdListComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+     private emdService: JournalEmdListService 
   ) {}
 
   get totalPages(): number {
@@ -67,78 +69,40 @@ export class JournalEmdListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.http.get<EmdListRecord[]>('/data/emd-list.json').subscribe({
-      next: (data) => {
-        // Читаем из нового формата emd-makets
-        const newMakets = JSON.parse(localStorage.getItem('emd-makets') || '[]');
-        const fromNew: EmdListRecord[] = newMakets.map((m: any) => ({
-          dateObr:       m.dateObr || m.maketDateObr || m.createdAt?.split(',')[0] || '-',
-          dateStatus:    m.updatedAt    || m.createdAt || '-',
-          status:        m.status       || 'Новое',
-          kodOtd:        '001',
-          iin:           m.iin,
-          fio:           (() => {
-            // Ищем ФИО клиента
-            const clients = JSON.parse(localStorage.getItem('emd-clients') || '[]');
-            const oldClients = JSON.parse(localStorage.getItem('emd-new-clients') || '[]');
-            const c = clients.find((c: any) => c.iin === m.iin)
-                   || oldClients.find((c: any) => c.iin === m.iin);
-            return c?.fio || m.iin;
-          })(),
-          dateBirth:     (() => {
-            const clients = JSON.parse(localStorage.getItem('emd-clients') || '[]');
-            const oldClients = JSON.parse(localStorage.getItem('emd-new-clients') || '[]');
-            const c = clients.find((c: any) => c.iin === m.iin)
-                   || oldClients.find((c: any) => c.iin === m.iin);
-            return c?.dob || '-';
-          })(),
-          istochnik:     m.istochnik    || '-',
-          dateNazn:      m.maketDateNazn|| '-',
-          dateOkon:      m.maketDateOkon|| '-',
-          srokOkazaniya: '-',
-          viplata:       m.maketIdCbd   || '-',
-          naznRazmer:    m.maketNaznSumma ? m.maketNaznSumma + ' т' : '-',
-          dateRiska:     '-',
-          specialist:    '-',
-          podpisant:     '-',
-        }));
+  this.emdService.getAll().subscribe({
+    next: (data) => {
+      const newMakets = JSON.parse(localStorage.getItem('emd-makets') || '[]');
+      const fromNew: EmdListRecord[] = newMakets.map((m: any) => ({
+        dateObr:       m.dateObr || '-',
+        dateStatus:    m.updatedAt || '-',
+        status:        m.status || 'Новое',
+        kodOtd:        '001',
+        iin:           m.iin,
+        fio:           m.iin,
+        dateBirth:     '-',
+        istochnik:     m.istochnik || '-',
+        dateNazn:      m.maketDateNazn || '-',
+        dateOkon:      m.maketDateOkon || '-',
+        srokOkazaniya: '-',
+        viplata:       '-',
+        naznRazmer:    m.maketNaznSumma ? m.maketNaznSumma + ' т' : '-',
+        dateRiska:     '-',
+        specialist:    '-',
+        podpisant:     '-',
+      }));
 
-        // Fallback: старый формат emd-new-records (не дублируем)
-        const oldRecords = JSON.parse(localStorage.getItem('emd-new-records') || '[]');
-        const fromOld: EmdListRecord[] = oldRecords
-          .filter((r: any) => !newMakets.find((m: any) => m.nomerZayavleniya === r.nomerZayavleniya))
-          .map((r: any) => ({
-            dateObr: r.dateObr || '-', dateStatus: r.dateStatus || '-',
-            status: r.status || 'Новое', kodOtd: r.kodOtd || '001',
-            iin: r.iin, fio: r.fio || '-', dateBirth: r.dateBirth || '-',
-            istochnik: r.istochnik || '-', dateNazn: '-', dateOkon: '-',
-            srokOkazaniya: '-', viplata: '-', naznRazmer: '-',
-            dateRiska: '-', specialist: '-', podpisant: '-',
-          }));
-
-        this.allRecords = [...fromNew, ...fromOld, ...data];
-        this.isLoading  = false;
-        this.applyFilter();
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        // Если JSON не загрузился — только localStorage
-        const newMakets = JSON.parse(localStorage.getItem('emd-makets') || '[]');
-        this.allRecords = newMakets.map((m: any) => ({
-          dateObr: m.dateObr || m.maketDateObr || m.createdAt?.split(',')[0] || '-', dateStatus: m.updatedAt || '-',
-          status: m.status || 'Новое', kodOtd: '001', iin: m.iin,
-          fio: m.iin, dateBirth: '-', istochnik: m.istochnik || '-',
-          dateNazn: m.maketDateNazn || '-', dateOkon: m.maketDateOkon || '-',
-          srokOkazaniya: '-', viplata: '-',
-          naznRazmer: m.maketNaznSumma ? m.maketNaznSumma + ' т' : '-',
-          dateRiska: '-', specialist: '-', podpisant: '-',
-        }));
-        this.isLoading = false;
-        this.applyFilter();
-        this.cdr.detectChanges();
-      }
-    });
-  }
+      this.allRecords = [...fromNew, ...data];
+      this.isLoading  = false;
+      this.applyFilter();
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('Ошибка загрузки:', err);
+      this.isLoading = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   filterFio = '';
 

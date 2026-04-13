@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { JournalZayavleniyService } from './journal-zayavleniy.service';
+import { JournalZayavleniyService } from './journal-zayavleniy.component.service';
 
 export interface ZayavlenieRecord {
   nomer: string;
@@ -11,14 +11,16 @@ export interface ZayavlenieRecord {
   dateObr: string;
   kodOtd: string;
   nomerDela: string;
-  iin: string;
+  iin: number;        // ← было string
   fio: string;
   dateBirth: string;
-  osnova: string;
+  osnova: number;     // ← было string
   vidViplaty: string;
-  specialist: string;
+  tipZayav: string;   // ← добавить
+  tipIstochnikaZayav: string; // ← добавить
+  specialist: number; // ← было string
   dateResh: string;
-  razmer: string;
+  razmer: number;     // ← было string
   dateNazn: string;
   vidNazn: string;
 }
@@ -91,62 +93,62 @@ export class JournalZayavleniyComponent implements OnInit {
     });
   }
 
-  applyFilter() {
-    let result = [...this.allRecords];
+ applyFilter() {
+  let result = [...this.allRecords];
 
-    // Фильтр по ФИО или ИИН
-    if (this.filterFio.trim()) {
-      const q = this.filterFio.trim().toLowerCase();
-      result = result.filter(r =>
-        r.fio.toLowerCase().includes(q) || r.iin.includes(q)
-      );
-    }
-
-    // Фильтр по отделению (код отделения)
-    if (this.filterOtdelenie) {
-      result = result.filter(r => r.kodOtd === this.filterOtdelenie);
-    }
-
-    // Фильтр по основанию
-    if (this.filterOsnova) {
-      result = result.filter(r =>
-        r.osnova.toLowerCase().includes(this.filterOsnova.toLowerCase())
-      );
-    }
-
-    // Фильтр по типу назначения
-    if (this.filterTip) {
-      result = result.filter(r =>
-        r.vidNazn.toLowerCase().includes(this.filterTip.toLowerCase())
-      );
-    }
-
-    // Фильтр по дате заявления (dateReg >= filterDateFrom)
-    if (this.filterDateFrom.trim()) {
-      const from = this.parseDate(this.filterDateFrom.trim());
-      if (from) {
-        result = result.filter(r => {
-          const d = this.parseDate(r.dateReg);
-          return d ? d >= from : true;
-        });
-      }
-    }
-
-    // Фильтр по дате статуса (dateResh >= filterDateStatus)
-    if (this.filterDateStatus.trim() && this.filterDateStatus !== '-') {
-      const from = this.parseDate(this.filterDateStatus.trim());
-      if (from) {
-        result = result.filter(r => {
-          const d = this.parseDate(r.dateResh);
-          return d ? d >= from : true;
-        });
-      }
-    }
-
-    this.filteredRecords = result;
-    this.currentPage = 1;
-    this.updatePage();
+  // Фильтр по ФИО или ИИН
+  if (this.filterFio.trim()) {
+    const q = this.filterFio.trim().toLowerCase();
+    result = result.filter(r =>
+      r.fio.toLowerCase().includes(q) || r.iin.toString().includes(q)
+    );
   }
+
+  // Фильтр по отделению
+  if (this.filterOtdelenie) {
+    result = result.filter(r => r.kodOtd === this.filterOtdelenie);
+  }
+
+  // Фильтр по основанию
+  if (this.filterOsnova) {
+    result = result.filter(r =>
+      r.osnova?.toString().includes(this.filterOsnova)
+    );
+  }
+
+  // Фильтр по типу назначения
+  if (this.filterTip) {
+    result = result.filter(r =>
+      r.vidNazn?.toLowerCase().includes(this.filterTip.toLowerCase())
+    );
+  }
+
+  // Фильтр по дате заявления
+  if (this.filterDateFrom.trim()) {
+    const from = this.parseDate(this.filterDateFrom.trim());
+    if (from) {
+      result = result.filter(r => {
+        const d = this.parseDate(r.dateReg);
+        return d ? d >= from : true;
+      });
+    }
+  }
+
+  // Фильтр по дате статуса
+  if (this.filterDateStatus.trim() && this.filterDateStatus !== '-') {
+    const from = this.parseDate(this.filterDateStatus.trim());
+    if (from) {
+      result = result.filter(r => {
+        const d = this.parseDate(r.dateResh);
+        return d ? d >= from : true;
+      });
+    }
+  }
+
+  this.filteredRecords = result;
+  this.currentPage = 1;
+  this.updatePage();
+}
 
   resetFilter() {
     this.filterDateFrom   = '';

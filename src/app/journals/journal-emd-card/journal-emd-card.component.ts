@@ -3,10 +3,9 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { JournalEmdService, EmdClient } from './journal-emd.service';
-import { EmdMaketRecord } from '../zayavlenie-form/zayavlenie-form.component';
+import { HttpClient } from '@angular/common/http';
+import { JournalEmdService, EmdClient } from './journal-emd.component.service';
 
-// Единый тип макета для карточки
 export interface CardMaket {
   id: string;
   osnova: string;
@@ -28,16 +27,11 @@ export interface CardMaket {
   };
 }
 
-// История карточки клиента
 export interface CardHistoryRow {
   date: string;
   action: string;
   details: string;
   user: string;
-}
-
-function loadMakets(): EmdMaketRecord[] {
-  return JSON.parse(localStorage.getItem('emd-makets') || '[]');
 }
 
 @Component({
@@ -59,38 +53,44 @@ export class JournalEmdCardComponent implements OnInit {
     private emdService: JournalEmdService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
     const iin = this.route.snapshot.paramMap.get('id');
-    this.emdService.getAll().subscribe({
-      next: (data) => {
-        // Ищем клиента в JSON
-        this.client = data.find(c => c.iin === iin) || null;
 
-        // Если не нашли — ищем в localStorage (emd-clients — новый формат)
-        if (!this.client) {
-          const savedClients = JSON.parse(localStorage.getItem('emd-clients') || '[]');
-          const found = savedClients.find((c: any) => c.iin === iin);
-          if (found) {
-            this.client = {
-              id: 0, iin: found.iin, fio: found.fio, dob: found.dob,
-              address: found.address, udostoverenie: found.udostoverenie,
-              pensionAge2025: '-', pensionAge2026: '-',
-              makets: [], history: [], requests: [], scan: []
-            };
-          }
+    this.emdService.getAll().subscribe({
+      next: (data: any[]) => {
+        // Ищем клиента по ИИН из API
+        const found = data.find((c: any) => c.iin?.toString() === iin);
+
+        if (found) {
+          this.client = {
+            id:             found.id,
+            iin:            found.iin?.toString() || '',
+            fio:            found.fio || '',
+            dob:            found.dateBirth || '',
+            address:        '',
+            udostoverenie:  '',
+            pensionAge2025: '',
+            pensionAge2026: '',
+            makets:         [],
+            history:        [],
+            requests:       [],
+            scan:           []
+          };
         }
 
-        // Fallback: старый формат emd-new-clients
+        // Если не нашли в API — ищем в localStorage
         if (!this.client) {
-          const oldClients = JSON.parse(localStorage.getItem('emd-new-clients') || '[]');
-          const found = oldClients.find((c: any) => c.iin === iin);
-          if (found) {
+          const savedClients = JSON.parse(localStorage.getItem('emd-clients') || '[]');
+          const lsFound = savedClients.find((c: any) => c.iin === iin);
+          if (lsFound) {
             this.client = {
-              id: 0, iin: found.iin, fio: found.fio, dob: found.dob,
-              address: found.address, udostoverenie: found.udostoverenie,
+              id: 0, iin: lsFound.iin, fio: lsFound.fio,
+              dob: lsFound.dob, address: lsFound.address,
+              udostoverenie: lsFound.udostoverenie,
               pensionAge2025: '-', pensionAge2026: '-',
               makets: [], history: [], requests: [], scan: []
             };
@@ -99,7 +99,6 @@ export class JournalEmdCardComponent implements OnInit {
 
         if (this.client) {
           this._loadMaketsForClient(iin!);
-          this._buildHistory(iin!);
         }
 
         this.isLoading = false;
@@ -113,168 +112,72 @@ export class JournalEmdCardComponent implements OnInit {
   }
 
   private _loadMaketsForClient(iin: string) {
-    const result: CardMaket[] = [];
-
-    // 1. Из нового формата emd-makets
-    const newMakets = loadMakets().filter(m => m.iin === iin);
-    for (const m of newMakets) {
-      result.push({
-        id:               m.id,
-        osnova:           m.osnova,
-        dateReg:          m.dateObr || m.createdAt?.split(',')[0] || '-',
-        tip:              m.vidZayavleniya || 'Новое назначение',
-        recordId:         m.maketIdEmaket || '-',
-        fio:              m.maketNazvaniePolya ? this.client?.fio || '-' : '-',
-        nomerZayavleniya: m.nomerZayavleniya,
-        otdelenie:        '001',
-        expanded:         false,
-        status:           m.status,
-        detail: {
-          summa:     m.maketNaznSumma ? String(m.maketNaznSumma) : '-',
-          viplata:   m.maketIdCbd || '-',
-          dateObr:   m.dateObr || '-',
-          dateNazn:  m.maketDateNazn || '-',
-          nomerDela: m.maketIdEmaket || '-',
-          status:    m.status,
+    this.http.get<any[]>(`http://localhost:8080/api/forma/all-by-iin/${iin}`)
+      .subscribe({
+        next: (dataList: any[]) => {
+          this.makets = dataList.map(data => ({
+            id:               String(data.id || Date.now()),
+            osnova:           data.osnova || '-',
+            dateReg:          data.dateObr || '-',
+            tip:              data.vidZayavleniya || 'Новое назначение',
+            recordId:         data.maketId || '-',
+            fio:              this.client?.fio || '-',
+            nomerZayavleniya: data.nomerZayavleniya || '-',
+            otdelenie:        data.brid || '001',
+            expanded:         false,
+            status:           String(data.status || 'Новое'),
+            detail: {
+              summa:     data.maketNaznSumma ? String(data.maketNaznSumma) : '-',
+              viplata:   data.sposobViplaty || '-',
+              dateObr:   data.dateObr || '-',
+              dateNazn:  data.maketDateNazn || '-',
+              nomerDela: data.nomerDela || '-',
+              status:    String(data.status || '-'),
+            }
+          }));
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.makets = [];
+          this.cdr.detectChanges();
         }
       });
-    }
-
-    // 2. Fallback: старый формат emd-new-records
-    const oldRecords = JSON.parse(localStorage.getItem('emd-new-records') || '[]')
-      .filter((r: any) => r.iin === iin);
-
-    for (const z of oldRecords) {
-      // Не дублируем если уже есть в новом формате
-      const already = result.find(r => r.nomerZayavleniya === z.nomerZayavleniya);
-      if (!already) {
-        result.push({
-          id:               String(z.id || Date.now()),
-          osnova:           z.osnova || '-',
-          dateReg:          z.dateObr || '-',
-          tip:              z.vidZayavleniya || 'Новое назначение',
-          recordId:         '-',
-          fio:              z.fio || '-',
-          nomerZayavleniya: z.nomerZayavleniya || '-',
-          otdelenie:        z.kodOtd || '001',
-          expanded:         false,
-          status:           z.status || 'Новое',
-          detail: {
-            summa:     '-',
-            viplata:   '-',
-            dateObr:   z.dateObr || '-',
-            dateNazn:  '-',
-            nomerDela: '-',
-            status:    z.status || 'Новое',
-          }
-        });
-      }
-    }
-
-    // 3. Статичные данные из JSON (уже в this.client.makets)
-    for (const m of (this.client?.makets || [])) {
-      const already = result.find(r => r.nomerZayavleniya === m.nomerZayavleniya);
-      if (!already) {
-        result.push({
-          id:               String(m.id),
-          osnova:           m.osnova,
-          dateReg:          m.dateReg,
-          tip:              m.tip,
-          recordId:         m.recordId,
-          fio:              m.fio,
-          nomerZayavleniya: m.nomerZayavleniya,
-          otdelenie:        m.otdelenie,
-          expanded:         false,
-          status:           m.detail?.status || '-',
-          detail: {
-            summa:     m.detail?.summa || '-',
-            viplata:   m.detail?.viplata || '-',
-            dateObr:   m.detail?.dateObr || '-',
-            dateNazn:  m.detail?.dateNazn || '-',
-            nomerDela: m.detail?.nomerDela || '-',
-            status:    m.detail?.status || '-',
-          }
-        });
-      }
-    }
-
-    this.makets = result;
-  }
-
-  private _buildHistory(iin: string) {
-    const rows: CardHistoryRow[] = [];
-
-    // Из новых макетов — берём историю перерасчётов
-    const newMakets = loadMakets().filter(m => m.iin === iin);
-    for (const m of newMakets) {
-      // Регистрация заявления
-      rows.push({
-        date:    m.createdAt || '-',
-        action:  'Регистрация заявления',
-        details: `Основание: ${m.osnova} | Сумма: ${m.maketNaznSumma ? m.maketNaznSumma + ' ₸' : '-'}`,
-        user:    'USER',
-      });
-      // Перерасчёты
-      for (const p of m.peraschetHistory || []) {
-        rows.push({
-          date:    p.date,
-          action:  'Перерасчёт',
-          details: `Сумма: ${p.summaBefore} ₸ → ${p.summaAfter} ₸ | До: ${p.dateOkon}`,
-          user:    'USER',
-        });
-      }
-      // Изменение статуса
-      if (m.updatedAt !== m.createdAt) {
-        rows.push({
-          date:    m.updatedAt || '-',
-          action:  'Изменение статуса',
-          details: `Статус: ${m.status}`,
-          user:    'USER',
-        });
-      }
-    }
-
-    // Сортируем по дате (новые сверху)
-    this.historyRows = rows.sort((a, b) => b.date.localeCompare(a.date));
-    // Показываем бейдж если есть записи
-    if (this.historyRows.length > 0) {
-      this.historyUnread = true;
-    }
   }
 
   // ── Редактирование клиента ─────────────────────────────────────
-  isEditing    = false;
-  editFio      = '';
-  editDob      = '';
-  editAddress  = '';
-  editUdost    = '';
+  isEditing     = false;
+  editFio       = '';
+  editDob       = '';
+  editAddress   = '';
+  editUdost     = '';
   editPension2025 = '';
   editPension2026 = '';
 
   startEdit() {
-    this.isEditing      = true;
-    this.editFio        = this.client?.fio          || '';
-    this.editDob        = this.client?.dob          || '';
-    this.editAddress    = this.client?.address      || '';
-    this.editUdost      = this.client?.udostoverenie|| '';
-    this.editPension2025= this.client?.pensionAge2025|| '';
-    this.editPension2026= this.client?.pensionAge2026|| '';
+    this.isEditing       = true;
+    this.editFio         = this.client?.fio           || '';
+    this.editDob         = this.client?.dob           || '';
+    this.editAddress     = this.client?.address       || '';
+    this.editUdost       = this.client?.udostoverenie || '';
+    this.editPension2025 = this.client?.pensionAge2025 || '';
+    this.editPension2026 = this.client?.pensionAge2026 || '';
   }
 
   saveEdit() {
     if (!this.client) return;
-    this.client.fio           = this.editFio;
-    this.client.dob           = this.editDob;
-    this.client.address       = this.editAddress;
-    this.client.udostoverenie = this.editUdost;
-    this.client.pensionAge2025= this.editPension2025;
-    this.client.pensionAge2026= this.editPension2026;
+    this.client.fio            = this.editFio;
+    this.client.dob            = this.editDob;
+    this.client.address        = this.editAddress;
+    this.client.udostoverenie  = this.editUdost;
+    this.client.pensionAge2025 = this.editPension2025;
+    this.client.pensionAge2026 = this.editPension2026;
 
-    // Обновляем в emd-clients
     const clients = JSON.parse(localStorage.getItem('emd-clients') || '[]');
     const idx = clients.findIndex((c: any) => c.iin === this.client?.iin);
-    const updated = { iin: this.client.iin, fio: this.editFio, dob: this.editDob,
-      address: this.editAddress, udostoverenie: this.editUdost, kemVidano: '' };
+    const updated = {
+      iin: this.client.iin, fio: this.editFio, dob: this.editDob,
+      address: this.editAddress, udostoverenie: this.editUdost, kemVidano: ''
+    };
     if (idx !== -1) { clients[idx] = updated; } else { clients.push(updated); }
     localStorage.setItem('emd-clients', JSON.stringify(clients));
 
@@ -291,15 +194,7 @@ export class JournalEmdCardComponent implements OnInit {
 
   deleteMaket(maket: CardMaket) {
     if (!confirm('Удалить заявление?')) return;
-    // Удаляем из emd-makets
-    const makets = loadMakets().filter(m => m.id !== maket.id);
-    localStorage.setItem('emd-makets', JSON.stringify(makets));
-    // Удаляем из старого формата
-    const old = JSON.parse(localStorage.getItem('emd-new-records') || '[]')
-      .filter((r: any) => !(r.iin === this.client?.iin && r.nomerZayavleniya === maket.nomerZayavleniya));
-    localStorage.setItem('emd-new-records', JSON.stringify(old));
     this.makets = this.makets.filter(m => m !== maket);
-    this._buildHistory(this.client?.iin || '');
     this.cdr.detectChanges();
   }
 
@@ -315,7 +210,6 @@ export class JournalEmdCardComponent implements OnInit {
 
   cancel() { this.router.navigate(['/journals/emd/']); }
 
-  // Лейбл статуса
   statusClass(status: string): string {
     const map: Record<string, string> = {
       'Новое':           'badge-new',

@@ -6,10 +6,7 @@ import { ElectronicAppRecord } from './journal-electronic-applications';
 @Injectable({ providedIn: 'root' })
 export class JournalElectronicApplicationsService {
 
-  // Заглушка — читаем локальный JSON
-  // Когда появится API — меняем только эту строку:
-  // private apiUrl = 'https://your-api.com/api/electronic-apps';
-  private apiUrl = '/data/electronic-apps.json';
+private apiUrl = 'http://localhost:8080/api/zayavki';
 
   constructor(private http: HttpClient) {}
 
