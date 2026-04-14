@@ -606,10 +606,32 @@ export class ZayavlenieFormComponent implements OnInit {
       this._saveMaketToStorage();
     }
 
+    // Сохраняем перерасчёт в БД
+    const maketPayload = {
+      zdocId:           this._zdocId || null,
+      nomerZayavleniya: this.nomerZayavleniya || null,
+      brid:             '001',
+      sicid:            null,
+      idOsn:            null,
+      naznSumma:        summaAfter,
+      sposobViplaty:    this.sposobViplaty || null,
+      dateNazn:         this._toIsoDate(this.maketDateNazn),
+      dateOkon:         this._toIsoDate(this.maketDateOkon),
+      iin:              Number(this.iin) || null,
+      isPereschet:      true,
+    };
+    this.formaService.saveMaketToDB(maketPayload).subscribe({
+      next: () => console.log('[signReshenie] Перерасчёт сохранён в БД'),
+      error: (e) => console.error('[signReshenie] Ошибка сохранения в БД', e),
+    });
+
     this.maketNaznSumma = summaAfter; this.isPereschet = false;
     this.peraschetStep = 'idle'; this.reshenieNeedsSign = false;
     this._maketSnapshot = null; this._recRows = [];
     alert('Решение подписано! Перерасчёт завершён.');
+    setTimeout(() => {
+      this.router.navigate(['/journals/emd', this.clientId || this.iin]);
+    }, 500);
     this.cdr.detectChanges();
   }
 
