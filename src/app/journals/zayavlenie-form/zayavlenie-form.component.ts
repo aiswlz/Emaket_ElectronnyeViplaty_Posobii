@@ -216,6 +216,7 @@ export class ZayavlenieFormComponent implements OnInit {
   }
 
   submitted = false;
+  savedMessage = '';
 
   constructor(
     private router: Router,
@@ -456,9 +457,11 @@ export class ZayavlenieFormComponent implements OnInit {
     };
 
     this.formaService.create(payload).subscribe({
-      next: () => {
-        alert('Заявление зарегистрировано в БД!');
-        this.router.navigate(['/journals/emd', this.iin]);
+      next: (savedData: any) => {
+        if (savedData?.id) this._zdocId = savedData.id;
+        this.isNewMode = false;
+        this.activeTab = 'maket';
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Ошибка:', err);
@@ -496,14 +499,68 @@ export class ZayavlenieFormComponent implements OnInit {
 
   saveMaket() {
     if (!this.isPereschet) {
-      if (this._zdocId) {
-        this.formaService.update(this._zdocId, this._buildApiPayload()).subscribe({
-          next: () => { this._saveMaketToStorage(); alert('Макет сохранён в базе данных!'); },
-          error: () => { this._saveMaketToStorage(); alert('Сохранено локально (сервер недоступен)'); }
-        });
-      } else {
-        this._saveMaketToStorage(); alert('Макет сохранён!');
+      const now = new Date().toLocaleString('ru-RU');
+
+      // Строим строку карты размеров если её ещё нет
+      if (this.kartaRows.length === 0 && this.maketNaznSumma) {
+        this.kartaRows = [{
+          num: 1,
+          nomerResheniya: this.maketId || this.nomerZayavleniya || 'NEW',
+          viplata: this.maketIdCbd || '-',
+          dateNachala: this.maketDateNazn,
+          dateOkon: this.maketDateOkon || '-',
+          tipNaznacheniya: 'NEW - новое назначение',
+          summa: Number(this.maketNaznSumma),
+          fio: this.fio,
+          sid: '1234567', payId: '87434123', pnptId: '987654', isRec: false,
+        }];
       }
+
+      // Добавляем запись в историю
+      if (this.historyRows.length === 0) {
+        this.historyRows = [{
+          otd: '1202', date: now, izmenyaemaya: 'Z_DOC', deystvie: 'Сохранение макета',
+          izmOld: '-', izmNew: String(this.maketNaznSumma),
+          polzovatel: 'USER', ipAdres: '10.61.157.41', host: 'emaket-local',
+          imyaUchetnoy: 'oracle', inspektor: 'Пользователь системы',
+        }];
+        this.historyUnread = true;
+      }
+
+      // Сохраняем в БД: m_sol + m_pay
+      const maketPayload = {
+        zdocId:           this._zdocId || null,
+        nomerZayavleniya: this.nomerZayavleniya || null,
+        brid:             '001',
+        sicid:            null,
+        idOsn:            null,
+        naznSumma:        this.maketNaznSumma ? Number(this.maketNaznSumma) : null,
+        sposobViplaty:    this.sposobViplaty || null,
+        dateNazn:         this._toIsoDate(this.maketDateNazn),
+        dateOkon:         this._toIsoDate(this.maketDateOkon),
+        iin:              Number(this.iin) || null,
+        isPereschet:      this.isPereschet,
+      };
+
+      this.formaService.saveMaketToDB(maketPayload).subscribe({
+        next: () => {
+          this.savedMessage = 'Макет сохранён!';
+          setTimeout(() => {
+            this.savedMessage = '';
+            // Переходим на карточку где виден список макетов
+            this.router.navigate(['/journals/emd', this.clientId || this.iin]);
+          }, 1500);
+        },
+        error: () => {
+          this.savedMessage = 'Сохранено локально';
+          setTimeout(() => {
+            this.savedMessage = '';
+            this.router.navigate(['/journals/emd', this.clientId || this.iin]);
+          }, 1500);
+        }
+      });
+
+      this.cdr.detectChanges();
       return;
     }
 

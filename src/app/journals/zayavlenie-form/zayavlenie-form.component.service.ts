@@ -5,7 +5,8 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class ZayavlenieFormService {
 
-  private apiUrl = 'http://localhost:8080/api/forma';
+  private apiUrl     = 'http://localhost:8080/api/forma';
+  private maketUrl   = 'http://localhost:8080/api/maket';
 
   constructor(private http: HttpClient) {}
 
@@ -23,5 +24,10 @@ export class ZayavlenieFormService {
   }
   create(data: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, data);
+  }
+
+  // Сохраняет макет → создаёт/обновляет m_sol + m_pay в БД
+  saveMaketToDB(data: any): Observable<any> {
+    return this.http.post<any>(this.maketUrl, data);
   }
 }

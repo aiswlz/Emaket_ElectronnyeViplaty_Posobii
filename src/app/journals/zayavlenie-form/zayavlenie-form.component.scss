@@ -346,6 +346,11 @@ input.error {
 .maket-status-text {
   font-size: 13px; color: $text-secondary;
 }
+.saved-msg {
+  font-size: 13px; color: #2e7d32; font-weight: 500;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .maket-summa-box {
   margin-top: 16px;
   background: $green-light;

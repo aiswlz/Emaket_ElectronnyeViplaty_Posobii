@@ -21,8 +21,8 @@
           <button class="btn-register" (click)="save()">Зарегистрировать</button>
         </ng-container>
 
-        <!-- СУЩЕСТВУЮЩЕЕ заявление -->
-        <ng-container *ngIf="!isNewMode">
+        <!-- Перерасчёт — только для существующего макета (открытого из карточки) -->
+        <ng-container *ngIf="maketId">
           <button *ngIf="!isPereschet" class="btn-peraschet" (click)="togglePereschet()">Перерасчёт</button>
           <button *ngIf="isPereschet"  class="btn-cancel-peraschet" (click)="togglePereschet()">Отменить перерасчёт</button>
         </ng-container>
@@ -311,6 +311,7 @@
       <div class="maket-top-bar">
         <button class="btn-save-maket" (click)="saveMaket()">Сохранить макет</button>
         <span class="maket-status-text" *ngIf="isPereschet">Процесс перрасчета ЭМД</span>
+        <span class="saved-msg" *ngIf="savedMessage">✓ {{ savedMessage }}</span>
       </div>
 
       <h3 class="section-title">Данные для расчёта</h3>

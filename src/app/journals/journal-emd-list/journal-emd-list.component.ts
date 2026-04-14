@@ -71,27 +71,27 @@ export class JournalEmdListComponent implements OnInit {
   ngOnInit() {
   this.emdService.getAll().subscribe({
     next: (data) => {
-      const newMakets = JSON.parse(localStorage.getItem('emd-makets') || '[]');
-      const fromNew: EmdListRecord[] = newMakets.map((m: any) => ({
-        dateObr:       m.dateObr || '-',
-        dateStatus:    m.updatedAt || '-',
-        status:        m.status || 'Новое',
-        kodOtd:        '001',
-        iin:           m.iin,
-        fio:           m.iin,
-        dateBirth:     '-',
+      // Данные только из БД, форматируем даты (убираем время)
+      const fromApi: EmdListRecord[] = (data as any[]).map((m: any) => ({
+        dateObr:       this._fmt(m.dateObr),
+        dateStatus:    this._fmt(m.dateStatus),
+        status:        m.status ? String(m.status) : 'Новое',
+        kodOtd:        m.kodOtd || '-',
+        iin:           m.iin ? String(m.iin) : '-',
+        fio:           m.fio || '-',
+        dateBirth:     this._fmt(m.dateBirth),
         istochnik:     m.istochnik || '-',
-        dateNazn:      m.maketDateNazn || '-',
-        dateOkon:      m.maketDateOkon || '-',
-        srokOkazaniya: '-',
-        viplata:       '-',
-        naznRazmer:    m.maketNaznSumma ? m.maketNaznSumma + ' т' : '-',
+        dateNazn:      this._fmt(m.dateNazn),
+        dateOkon:      this._fmt(m.dateOkon),
+        srokOkazaniya: this._fmt(m.srokOkazaniya),
+        viplata:       m.viplata ? String(m.viplata) + ' т' : '-',
+        naznRazmer:    m.naznRazmer ? String(m.naznRazmer) + ' т' : '-',
         dateRiska:     '-',
-        specialist:    '-',
+        specialist:    m.specialist ? String(m.specialist) : '-',
         podpisant:     '-',
       }));
 
-      this.allRecords = [...fromNew, ...data];
+      this.allRecords = fromApi;
       this.isLoading  = false;
       this.applyFilter();
       this.cdr.detectChanges();
@@ -178,7 +178,20 @@ export class JournalEmdListComponent implements OnInit {
   openCard(iin: string) {
     this.router.navigate(['/journals/emd', iin]);
   }
-  addClient() {
-    this.router.navigate(['/journals/emd/new/zayavlenie']);
+
+  // Форматирует дату из ISO (2026-04-14) или LocalDate → дд.мм.гггг
+  // Обрезает время если оно есть
+  private _fmt(val: any): string {
+    if (!val) return '-';
+    const s = String(val);
+    // Уже в формате дд.мм.гггг
+    if (/^\d{2}\.\d{2}\.\d{4}$/.test(s)) return s;
+    // ISO формат: 2026-04-14 или 2026-04-14T12:34:56
+    if (s.includes('-')) {
+      const datePart = s.split('T')[0].split(' ')[0];
+      const parts = datePart.split('-');
+      if (parts.length === 3) return `${parts[2]}.${parts[1]}.${parts[0]}`;
+    }
+    return s;
   }
 }

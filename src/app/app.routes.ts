@@ -50,12 +50,6 @@ export const routes: Routes = [
             .then(m => m.JournalEmdListComponent)
       },
       {
-        path: 'journals/emd/new/zayavlenie',
-        loadComponent: () =>
-          import('./journals/zayavlenie-form/zayavlenie-form.component')
-            .then(m => m.ZayavlenieFormComponent)
-      },
-      {
         path: 'journals/emd/:id',
         loadComponent: () =>
           import('./journals/journal-emd-card/journal-emd-card.component')
