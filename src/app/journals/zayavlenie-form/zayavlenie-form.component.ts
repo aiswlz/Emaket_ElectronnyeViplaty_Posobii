@@ -235,6 +235,23 @@ export class ZayavlenieFormComponent implements OnInit {
     return null;
   }
 
+  // ── Конвертация названия основания в числовой код ──────────────
+  private readonly OSNOVA_CODE_MAP: Record<string, number> = {
+    'Соц. выплаты из ГФСС - по беременности и родам': 103,
+    'Пенсия: базовая':                                 104,
+    'Пенсия: солидарная':                              105,
+    'Пособие по инвалидности':                         106,
+    'Пособие по потере кормильца':                     107,
+    'Дети - многодетные':                              108,
+  };
+
+  private _osnovaToCode(osnova: string): number | null {
+    // Если уже число — вернуть как есть
+    const num = Number(osnova);
+    if (!isNaN(num) && num > 0) return num;
+    return this.OSNOVA_CODE_MAP[osnova] ?? null;
+  }
+
   ngOnInit() {
     const id      = this.route.snapshot.paramMap.get('id') || '';
     const maketId = this.route.snapshot.paramMap.get('maketId');
@@ -247,66 +264,129 @@ export class ZayavlenieFormComponent implements OnInit {
     }
 
     if (id) {
-      this.formaService.getByIin(id).subscribe({
-        next: (data: any) => {
-          if (data) {
-            this._zdocId        = data.id || null;
-            this.iin            = data.iin?.toString()    || '';
-            this.fio            = data.fio                || '';
-            this.dateBirth      = data.dateBirth          || '';
-            this.dateObr        = data.dateObr            || '';
-            this.datePriem      = data.datePrivem         || '';
-            this.yazykZayavl    = data.yazykZayavl        || 'Русский';
-            this.domTel         = data.domTel             || '';
-            this.mobTel         = data.mobTel             || '';
-            this.istochnik      = data.istochnik          || 'Цон';
-            this.osnova         = data.osnova?.toString() || '';
-            this.vidZayavleniya = data.vidZayavleniya     || 'Новое назначение';
-            this.pribyl         = data.pribyl             || false;
-            this.stranaPrib     = data.stranaPrib         || '';
-            this.sposobViplaty  = data.sposobViplaty      || '';
-            this.maketDateNazn  = data.maketDateNazn      || '';
-            this.maketDateOkon  = data.maketDateOkon      || '';
-            this.maketNaznSumma = data.maketNaznSumma     || 0;
-            this.nomerZayavleniya = data.nomerZayavleniya || this._generateNomer();
-            this.isNewMode = false;
-          }
-          this._generateKgdRows();
-          if (maketId) this._loadExistingMaket(maketId, id);
-          if (this.isNewMode) {
+      if (this.isNewMode) {
+        // Новое заявление — загружаем ТОЛЬКО данные клиента (ФИО, ИИН, телефон)
+        // Не загружаем данные существующего заявления чтобы форма была чистой
+        this.formaService.getClientByIin(id).subscribe({
+          next: (client: any) => {
+            if (client) {
+              this.iin       = client.iin?.toString() || '';
+              this.fio       = client.fio             || '';
+              this.dateBirth = client.dateBirth       || '';
+              this.mobTel    = client.mobTel          || '';
+            }
+            this._generateKgdRows();
             const today = new Date().toLocaleDateString('ru-RU');
             if (!this.dateObr) this.dateObr = today;
             this.maketDateObr = today;
             if (!this.maketDateNazn) this.maketDateNazn = today;
+            this.cdr.detectChanges();
+          },
+          error: () => {
+            this._generateKgdRows();
+            this.cdr.detectChanges();
           }
-          this.cdr.detectChanges();
-        },
-        error: () => {
-          // Нет заявления в z_doc — загружаем данные клиента из m_eg
-          this.formaService.getClientByIin(id).subscribe({
-            next: (client: any) => {
-              if (client) {
-                this.iin       = client.iin?.toString() || '';
-                this.fio       = client.fio             || '';
-                this.dateBirth = client.dateBirth       || '';
-                this.mobTel    = client.mobTel          || '';
+        });
+      } else {
+        // Открытие существующего заявления — загружаем по конкретному ID
+        const zdocId = Number(maketId);
+        if (!isNaN(zdocId) && zdocId > 0) {
+          this.formaService.getById(zdocId).subscribe({
+            next: (data: any) => {
+              if (data) {
+                this._zdocId        = data.id || null;
+                this.iin            = data.iin?.toString()    || '';
+                this.fio            = data.fio                || '';
+                this.dateBirth      = data.dateBirth          || '';
+                this.dateObr        = data.dateObr            || '';
+                this.datePriem      = data.datePrivem         || '';
+                this.yazykZayavl    = data.yazykZayavl        || 'Русский';
+                this.domTel         = data.domTel             || '';
+                this.mobTel         = data.mobTel             || '';
+                this.istochnik      = data.istochnik          || 'Цон';
+                this.osnova         = data.osnova?.toString() || '';
+                // Конвертируем код БД в русский текст для отображения
+                this.vidZayavleniya = data.vidZayavleniya === 'REC' ? 'Перерасчёт'
+                                    : data.vidZayavleniya === 'NEW' ? 'Новое назначение'
+                                    : (data.vidZayavleniya || 'Новое назначение');
+                this.pribyl         = data.pribyl             || false;
+                this.stranaPrib     = data.stranaPrib         || '';
+                this.sposobViplaty  = data.sposobViplaty      || '';
+                this.maketDateNazn  = data.maketDateNazn      || '';
+                this.maketDateOkon  = data.maketDateOkon      || '';
+                this.maketNaznSumma = data.maketNaznSumma     || 0;
+                this.nomerZayavleniya = data.nomerZayavleniya || this._generateNomer();
               }
               this._generateKgdRows();
-              if (maketId) this._loadExistingMaket(maketId, id);
-              const today = new Date().toLocaleDateString('ru-RU');
-              if (!this.dateObr) this.dateObr = today;
-              this.maketDateObr = today;
-              if (!this.maketDateNazn) this.maketDateNazn = today;
+              this._loadExistingMaket(maketId!, id);
               this.cdr.detectChanges();
             },
             error: () => {
-              this._generateKgdRows();
-              this.cdr.detectChanges();
+              // Fallback: загружаем через ИИН если по ID не нашли
+              this._loadByIinFallback(id, maketId!);
             }
           });
+        } else {
+          this._loadByIinFallback(id, maketId!);
         }
-      });
+      }
     }
+  }
+
+  private _loadByIinFallback(id: string, maketId: string) {
+    this.formaService.getByIin(id).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this._zdocId        = data.id || null;
+          this.iin            = data.iin?.toString()    || '';
+          this.fio            = data.fio                || '';
+          this.dateBirth      = data.dateBirth          || '';
+          this.dateObr        = data.dateObr            || '';
+          this.datePriem      = data.datePrivem         || '';
+          this.yazykZayavl    = data.yazykZayavl        || 'Русский';
+          this.domTel         = data.domTel             || '';
+          this.mobTel         = data.mobTel             || '';
+          this.istochnik      = data.istochnik          || 'Цон';
+          this.osnova         = data.osnova?.toString() || '';
+          this.vidZayavleniya = data.vidZayavleniya === 'REC' ? 'Перерасчёт'
+                              : data.vidZayavleniya === 'NEW' ? 'Новое назначение'
+                              : (data.vidZayavleniya || 'Новое назначение');
+          this.pribyl         = data.pribyl             || false;
+          this.stranaPrib     = data.stranaPrib         || '';
+          this.sposobViplaty  = data.sposobViplaty      || '';
+          this.maketDateNazn  = data.maketDateNazn      || '';
+          this.maketDateOkon  = data.maketDateOkon      || '';
+          this.maketNaznSumma = data.maketNaznSumma     || 0;
+          this.nomerZayavleniya = data.nomerZayavleniya || this._generateNomer();
+        }
+        this._generateKgdRows();
+        this._loadExistingMaket(maketId, id);
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.formaService.getClientByIin(id).subscribe({
+          next: (client: any) => {
+            if (client) {
+              this.iin       = client.iin?.toString() || '';
+              this.fio       = client.fio             || '';
+              this.dateBirth = client.dateBirth       || '';
+              this.mobTel    = client.mobTel          || '';
+            }
+            this._generateKgdRows();
+            this._loadExistingMaket(maketId, id);
+            const today = new Date().toLocaleDateString('ru-RU');
+            if (!this.dateObr) this.dateObr = today;
+            this.maketDateObr = today;
+            if (!this.maketDateNazn) this.maketDateNazn = today;
+            this.cdr.detectChanges();
+          },
+          error: () => {
+            this._generateKgdRows();
+            this.cdr.detectChanges();
+          }
+        });
+      }
+    });
   }
 
   private _generateNomer(): string {
@@ -453,7 +533,8 @@ export class ZayavlenieFormComponent implements OnInit {
       domTel:           this.domTel         || null,
       mobTel:           this.mobTel         || null,
       istochnik:        this.istochnik      || null,
-      vidZayavleniya:   this.vidZayavleniya || null,
+      vidZayavleniya:   'NEW',
+      idOsn:            this._osnovaToCode(this.osnova),
     };
 
     this.formaService.create(payload).subscribe({
@@ -483,7 +564,9 @@ export class ZayavlenieFormComponent implements OnInit {
       maketStranaInvalidnosti: this.maketStranaInvalidnosti, maketDateUstanov: this.maketDateUstanov,
       maketDateOkonDo: this.maketDateOkonDo, maketGruppaInvalid: this.maketGruppaInvalid,
       maketPrichinaInvalid: this.maketPrichinaInvalid, maketNaznSumma: this.maketNaznSumma,
+      vidZayavleniya: this.vidZayavleniya,
     } as any;
+    this.vidZayavleniya = 'Перерасчёт';
     this.isPereschet = true; this.peraschetStep = 'editing';
     this.activeTab = 'maket'; this.cdr.detectChanges();
   }
@@ -533,13 +616,13 @@ export class ZayavlenieFormComponent implements OnInit {
         nomerZayavleniya: this.nomerZayavleniya || null,
         brid:             '001',
         sicid:            null,
-        idOsn:            null,
+        idOsn:            this._osnovaToCode(this.osnova),
         naznSumma:        this.maketNaznSumma ? Number(this.maketNaznSumma) : null,
         sposobViplaty:    this.sposobViplaty || null,
         dateNazn:         this._toIsoDate(this.maketDateNazn),
         dateOkon:         this._toIsoDate(this.maketDateOkon),
         iin:              Number(this.iin) || null,
-        isPereschet:      this.isPereschet,
+        isPereschet:      false,
       };
 
       this.formaService.saveMaketToDB(maketPayload).subscribe({
@@ -612,7 +695,7 @@ export class ZayavlenieFormComponent implements OnInit {
       nomerZayavleniya: this.nomerZayavleniya || null,
       brid:             '001',
       sicid:            null,
-      idOsn:            null,
+      idOsn:            this._osnovaToCode(this.osnova),
       naznSumma:        summaAfter,
       sposobViplaty:    this.sposobViplaty || null,
       dateNazn:         this._toIsoDate(this.maketDateNazn),

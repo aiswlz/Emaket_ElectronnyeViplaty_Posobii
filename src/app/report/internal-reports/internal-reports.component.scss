@@ -125,6 +125,51 @@ $red:            #ef4444;
   &.folder svg { color: #f59e0b; }
 }
 
+// Стрелка папки — строго фиксированный размер
+.folder-arrow {
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  flex-shrink: 0;
+  margin-left: auto;
+  color: $text-muted;
+  transition: transform 0.2s ease;
+
+  &.open { transform: rotate(180deg); }
+}
+
+.loading-state {
+  padding: 24px;
+  text-align: center;
+  color: $text-muted;
+  font-size: 13px;
+}
+
+// Стрелка папки — строго фиксированный размер
+.folder-arrow {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  margin-left: auto;
+  color: #9ca3af;
+  transition: transform 0.2s ease;
+
+  &.open {
+    transform: rotate(180deg);
+  }
+}
+
+.folder-item {
+  cursor: pointer;
+}
+
+.loading-state {
+  padding: 20px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
 .report-name {
   font-size: 13px;
   color: $text-primary;
@@ -217,8 +262,9 @@ $red:            #ef4444;
 
   svg { width: 16px; height: 16px; }
 
-  &.error svg { color: $red; }
-  &.ok    svg { color: $green; }
+  &.error   svg { color: $red; }
+  &.ok      svg { color: $green; }
+  &.pending svg { color: $text-muted; animation: spin 1.5s linear infinite; }
 }
 
 .status-text {
@@ -227,6 +273,7 @@ $red:            #ef4444;
 
   &.red        { color: $red; }
   &.green-text { color: $green; }
+  &.gray-text  { color: $text-muted; }
 }
 
 .btn-delete-icon {
