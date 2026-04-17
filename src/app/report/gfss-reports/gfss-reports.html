@@ -1,0 +1,250 @@
+<div class="page-wrap">
+  <div class="breadcrumb">
+    <span class="bc-link">Отчеты</span>
+    <span class="bc-sep">/</span>
+    <span>Социальные выплаты из ГФСС</span>
+  </div>
+
+  <div class="reports-layout">
+
+    <!-- Левая панель: дерево отчётов -->
+    <div class="reports-list-card">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" placeholder="Наименование отчета" [(ngModel)]="searchQuery" />
+      </div>
+
+      <div class="report-items" *ngIf="!isLoadingTree">
+        <ng-container *ngTemplateOutlet="treeTemplate; context: { nodes: filteredTree, level: 0 }"></ng-container>
+      </div>
+
+      <div class="loading-state" *ngIf="isLoadingTree">Загрузка...</div>
+    </div>
+
+    <!-- Правая панель: статус отчётов -->
+    <div class="status-card">
+      <div class="status-header">
+        <span class="status-title">Статус отчета</span>
+        <div class="status-dot"></div>
+      </div>
+
+      <div class="status-table-wrap">
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Имя отчета</th>
+              <th>Дата создания</th>
+              <th>Статус</th>
+              <th>№</th>
+              <th>Действие</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="statusRows.length === 0">
+              <td colspan="6" class="empty-state">Нет сформированных отчетов</td>
+            </tr>
+            <tr
+              *ngFor="let s of statusRows; let i = index"
+              [class.row-alt]="i % 2 === 1"
+              (click)="s.statusType === 'ok' && openReportModal(s)"
+              [class.clickable-row]="s.statusType === 'ok'"
+              [class.not-clickable]="s.statusType !== 'ok'">
+              <td>
+                <div class="status-icon" [class.error]="s.statusType === 'error'" [class.ok]="s.statusType === 'ok'" [class.pending]="s.statusType === 'pending'">
+                  <svg *ngIf="s.statusType === 'error'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  <svg *ngIf="s.statusType === 'ok'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/>
+                  </svg>
+                  <svg *ngIf="s.statusType === 'pending'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                </div>
+              </td>
+              <td>{{ s.name }}</td>
+              <td class="date-col">{{ s.date }}</td>
+              <td>
+                <span class="status-text"
+                  [class.red]="s.statusType === 'error'"
+                  [class.green-text]="s.statusType === 'ok'"
+                  [class.gray-text]="s.statusType === 'pending'">
+                  {{ s.statusLabel }}
+                </span>
+              </td>
+              <td>{{ s.number }}</td>
+              <td>
+                <button class="btn-delete-icon" (click)="deleteRow($event, i)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14H6L5 6"/>
+                    <path d="M10 11v6m4-6v6"/>
+                    <path d="M9 6V4h6v2"/>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Рекурсивный шаблон дерева -->
+<!-- Было: node.actionType === 1 для папки -->
+<!-- Было: node.actionType === 2 для отчёта -->
+
+<!-- Стало: папка если есть children, отчёт если нет -->
+
+<ng-template #treeTemplate let-nodes="nodes" let-level="level">
+  <div *ngFor="let node of nodes">
+
+    <!-- Папка — если есть дочерние элементы -->
+    <div *ngIf="node.children && node.children.length > 0"
+      class="report-item folder-item"
+      [class.active]="selectedReport?.id === node.id"
+      [style.padding-left.px]="16 + level * 16"
+      (click)="onNodeClick(node)">
+      <div class="report-icon folder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+        </svg>
+      </div>
+      <span class="report-name">{{ node.nameRus }}</span>
+      <svg class="folder-arrow" [class.open]="node.expanded" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </div>
+    <!-- Дочерние узлы папки -->
+    <div *ngIf="node.children && node.children.length > 0 && node.expanded">
+      <ng-container *ngTemplateOutlet="treeTemplate; context: { nodes: node.children, level: level + 1 }"></ng-container>
+    </div>
+
+    <!-- Отчёт — если нет дочерних элементов -->
+    <div *ngIf="!node.children || node.children.length === 0"
+      class="report-item"
+      [class.active]="selectedReport?.id === node.id"
+      [style.padding-left.px]="16 + level * 16"
+      (click)="onNodeClick(node)">
+      <div class="report-icon file">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+      </div>
+      <span class="report-name">{{ node.nameRus }}</span>
+    </div>
+
+  </div>
+</ng-template>
+
+<!-- МОДАЛ 1: Фильтры отчёта (lev1) -->
+<div class="modal-overlay" *ngIf="showDateModal" (click)="closeDateModal()">
+  <div class="modal-box date-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">{{ pendingReport?.nameRus }}</h3>
+      <button class="modal-close" (click)="closeDateModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <p class="modal-subtitle">Выберите параметры формирования отчета</p>
+      <!-- HTML маска из lev1 рендерится сюда -->
+      <div id="lev1-container" class="lev1-form"></div>
+      <p class="date-error" *ngIf="dateError">{{ dateError }}</p>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeDateModal()">Отмена</button>
+      <button class="btn-generate" (click)="generateReport()" [disabled]="isGenerating">
+        <span *ngIf="!isGenerating">Сформировать</span>
+        <span *ngIf="isGenerating" class="spinner-wrap">
+          <span class="spinner"></span> Формируется...
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛ 2: Просмотр отчёта -->
+<div class="modal-overlay" *ngIf="showReportModal" (click)="closeReportModal()">
+  <div class="modal-box report-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">{{ activeReport?.name }}</h3>
+      <button class="modal-close" (click)="closeReportModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body report-body" *ngIf="activeReport">
+      <div class="report-meta">
+        <p>С <a class="meta-link">{{ activeReport.dateFrom }}</a> по <a class="meta-link">{{ activeReport.dateTo }}</a></p>
+        <p>Дата формирования отчета: <a class="meta-link">{{ activeReport.generatedAt }}</a></p>
+      </div>
+      <div class="report-table-wrap">
+        <table class="report-table">
+          <thead>
+            <tr><th *ngFor="let col of activeReport.columns">{{ col }}</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of activeReport.rows; let i = index" [class.row-alt]="i % 2 === 1">
+              <td *ngFor="let cell of row">{{ cell }}</td>
+            </tr>
+            <tr *ngIf="activeReport!.rows?.length === 0">
+              <td [attr.colspan]="activeReport!.columns?.length" class="empty-state">Нет данных</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="report-footer-meta">
+        <p>Дата завершения формирования отчета: <a class="meta-link">{{ activeReport.completedAt }}</a></p>
+        <p>Время формирования отчета: <a class="meta-link">{{ activeReport.duration }}</a></p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-export" (click)="exportReport()">Экспортировать</button>
+      <input type="file" #fileInput style="display:none" (change)="attachFile($event)" multiple />
+      <button class="btn-icon-action" title="Прикрепить файл" (click)="fileInput.click()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+        </svg>
+      </button>
+      <button class="btn-icon-action" title="Печать" (click)="printReport()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 6 2 18 2 18 9"/>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+          <rect x="6" y="14" width="12" height="8"/>
+        </svg>
+      </button>
+      <div class="attached-files" *ngIf="activeReport?.attachments?.length">
+        <span class="attached-badge" *ngFor="let f of activeReport!.attachments!">
+          {{ f.name }}
+          <button class="badge-remove" (click)="removeAttachment(f.name)">×</button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-wrap" *ngIf="toast" [class.toast-success]="toast.type === 'success'" [class.toast-error]="toast.type === 'error'">
+  <div class="toast-icon">
+    <svg *ngIf="toast.type === 'success'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/>
+    </svg>
+    <svg *ngIf="toast.type === 'error'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+  </div>
+  <span>{{ toast.message }}</span>
+</div>

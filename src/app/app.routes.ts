@@ -41,6 +41,12 @@ export const routes: Routes = [
           import('./report/internal-reports/internal-reports.component')
             .then(m => m.InternalReportsComponent)
       },
+      {
+        path: 'reports/gfss',
+        loadComponent: () =>
+          import('./report/gfss-reports/gfss-reports')
+            .then(m => m.GfssReportsComponent)
+      },
 
       // ── Журналы ─────────────────────────────────────────
       {

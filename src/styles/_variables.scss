@@ -21,3 +21,77 @@ $radius-sm: 8px;
 * {
   font-family: 'Segoe UI', sans-serif;
 }
+
+// ─── Стили для lev1 HTML масок в модалах отчётов ─────────────────────────────
+.lev1-form {
+  padding: 8px 0 4px;
+
+  table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    width: 100%;
+  }
+
+  td {
+    padding: 0 12px 0 0;
+    font-size: 13px;
+    color: #374151;
+    vertical-align: middle;
+    white-space: nowrap;
+
+    &:first-child {
+      font-weight: 500;
+      color: #6b7280;
+      min-width: 140px;
+    }
+  }
+
+  input {
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #111827;
+    width: 200px;
+    outline: none;
+    background: #f9fafb;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+
+    &:focus {
+      border-color: #3aaa73;
+      box-shadow: 0 0 0 3px rgba(58, 170, 115, 0.12);
+      background: #fff;
+    }
+  }
+
+  select {
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 8px 32px 8px 12px;
+    font-size: 13px;
+    color: #111827;
+    min-width: 220px;
+    max-width: 320px;
+    outline: none;
+    background: #f9fafb url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+
+    &:focus {
+      border-color: #3aaa73;
+      box-shadow: 0 0 0 3px rgba(58, 170, 115, 0.12);
+      background-color: #fff;
+    }
+  }
+
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #3aaa73;
+    cursor: pointer;
+  }
+}
