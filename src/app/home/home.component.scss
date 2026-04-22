@@ -4,14 +4,14 @@
   padding: 20px 24px;
 }
 
-// в”Ђв”Ђв”Ђ Breadcrumb в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ─── Breadcrumb ──────────────────────────────────────────────
 .breadcrumb {
   font-size: 12.5px;
   color: $text-muted;
   margin-bottom: 20px;
 }
 
-// в”Ђв”Ђв”Ђ Top Row в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ─── Top Row ─────────────────────────────────────────────────
 .top-row {
   display: flex;
   gap: 16px;
@@ -19,7 +19,6 @@
   align-items: stretch;
 }
 
-// Banner
 .banner-card {
   flex: 1.2;
   background: linear-gradient(135deg, $green 0%, #2d8a5e 100%);
@@ -68,7 +67,8 @@
   display: flex;
   gap: 6px;
   .dot {
-    width: 6px; height: 6px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: rgba(255,255,255,0.4);
     &.active { background: #fff; width: 18px; border-radius: 3px; }
@@ -84,7 +84,6 @@
   svg { width: 80px; height: 80px; }
 }
 
-// Donut card
 .stat-donut-card {
   flex: 1;
   background: $card-bg;
@@ -130,7 +129,13 @@
 
 .donut-svg { width: 80px; height: 80px; flex-shrink: 0; }
 
-.donut-legend { font-size: 12px; color: $text-secondary; display: flex; flex-direction: column; gap: 6px; }
+.donut-legend {
+  font-size: 12px;
+  color: $text-secondary;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 
 .legend-item {
   display: flex;
@@ -139,12 +144,12 @@
 }
 
 .legend-dot {
-  width: 8px; height: 8px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-// Bar card
 .stat-bar-card {
   flex: 1;
   background: $card-bg;
@@ -178,10 +183,7 @@
   min-height: 4px;
 }
 
-.bar-labels {
-  display: flex;
-  gap: 8px;
-}
+.bar-labels { display: flex; gap: 8px; }
 
 .bar-label {
   flex: 1;
@@ -190,7 +192,7 @@
   color: $text-muted;
 }
 
-// в”Ђв”Ђв”Ђ Mid Row в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ─── Mid Row ─────────────────────────────────────────────────
 .mid-row {
   display: flex;
   gap: 16px;
@@ -212,6 +214,7 @@
   margin-bottom: 16px;
 }
 
+// ─── Быстрые функции — ИСПРАВЛЕННЫЙ стиль ────────────────────
 .quick-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -232,10 +235,32 @@
   color: $text-secondary;
   text-align: center;
   transition: all 0.15s;
-  svg { width: 22px; height: 22px; color: $green; }
-  &:hover { background: $green-light; border-color: $green; color: $green; }
+  background: #fff;
+
+  // ← КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: жёстко ограничиваем размер SVG
+  svg {
+    width: 22px !important;
+    height: 22px !important;
+    max-width: 22px;
+    max-height: 22px;
+    flex-shrink: 0;
+    color: $green;
+  }
+
+  &:hover {
+    background: $green-light;
+    border-color: $green;
+    color: $green;
+    svg { color: $green; }
+  }
 }
 
+// Третий элемент (Соц. выплата) — выровнять по левому краю как у первых двух
+.quick-item:nth-child(3):last-child {
+  grid-column: 1;
+}
+
+// ─── Виджеты ─────────────────────────────────────────────────
 .widgets-grid {
   display: flex;
   flex-direction: column;
@@ -252,18 +277,26 @@
 }
 
 .widget-icon {
-  width: 36px; height: 36px;
+  width: 36px;
+  height: 36px;
   border-radius: $radius-sm;
   background: $green-light;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  svg { width: 18px; height: 18px; color: $green; }
+  svg {
+    width: 18px;
+    height: 18px;
+    color: $green;
+  }
 }
 
 .widget-title { font-size: 13px; font-weight: 500; color: $text-primary; }
 .widget-sub { font-size: 11.5px; color: $text-muted; margin-top: 2px; }
+.widget-info { display: flex; flex-direction: column; }
 
-// в”Ђв”Ђв”Ђ Bottom Row в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ─── Bottom Row ───────────────────────────────────────────────
 .bot-row {
   display: flex;
   gap: 16px;
@@ -276,6 +309,45 @@
   border: 1px solid $border;
   padding: 20px;
   overflow: hidden;
+}
+
+.makets-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 0;
+  color: $text-muted;
+  font-size: 13px;
+}
+
+.loading-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid $green-light;
+  border-top-color: $green;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.makets-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 32px 0;
+  color: $text-muted;
+  font-size: 13px;
+  opacity: 0.6;
+
+  svg {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 table.data-table {
@@ -294,6 +366,7 @@ table.data-table {
 
   tbody tr {
     border-bottom: 1px solid $border;
+    transition: background 0.1s;
     &:last-child { border-bottom: none; }
     &:hover { background: $green-light; }
     td { padding: 9px 10px; color: $text-primary; }
@@ -301,13 +374,26 @@ table.data-table {
 }
 
 .row-link {
-  width: 28px; height: 28px;
+  width: 28px;
+  height: 28px;
   border-radius: $radius-sm;
   border: 1px solid $border;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  svg { width: 14px; height: 14px; color: $text-muted; }
-  &:hover { background: $green-light; border-color: $green; svg { color: $green; } }
+
+  svg {
+    width: 14px;
+    height: 14px;
+    color: $text-muted;
+  }
+
+  &:hover {
+    background: $green-light;
+    border-color: $green;
+    svg { color: $green; }
+  }
 }
 
 .reports-card {
@@ -330,12 +416,20 @@ table.data-table {
 }
 
 .report-icon {
-  width: 32px; height: 32px;
+  width: 32px;
+  height: 32px;
   border-radius: $radius-sm;
   background: $green-light;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  svg { width: 16px; height: 16px; color: $green; }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: $green;
+  }
 }
 
 .report-name {
@@ -343,4 +437,155 @@ table.data-table {
   color: $text-primary;
   line-height: 1.4;
   transition: color 0.12s;
+}
+/* ====================== DRAG & DROP + ПЛАВНЫЕ АНИМАЦИИ ====================== */
+
+.draggable-card {
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: $radius;
+}
+
+.draggable-card.cdk-drag-preview {
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
+  transform: scale(1.03) rotate(1deg);
+  z-index: 1000;
+}
+
+.draggable-card.cdk-drag-placeholder {
+  background: rgba(58, 170, 115, 0.08);
+  border: 2px dashed #3aaa73;
+  border-radius: $radius;
+  transition: all 0.2s ease;
+}
+
+.card-content {
+  height: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.draggable-card:hover .card-content {
+  box-shadow: 0 10px 25px -5px rgba(58, 170, 115, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Pin button */
+.pin-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  background: rgba(255,255,255,0.85);
+  border: 1px solid $border;
+  border-radius: 50%;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.35;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+.pin-btn:hover {
+  opacity: 1;
+  background: #fff;
+  transform: scale(1.1);
+}
+
+.pin-btn.pinned {
+  opacity: 1;
+  color: #f59e0b;
+  background: #fffbeb;
+  border-color: #fcd34d;
+}
+
+/* Улучшенная анимация для быстрого грида */
+.quick-item {
+  transition: all 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Плавное появление при загрузке */
+.card-content {
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
+/* ====================== CARD CONTROLS ====================== */
+
+.card-controls {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 30;
+}
+
+.draggable-card:hover .card-controls {
+  opacity: 1;
+}
+
+.drag-handle {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  color: #9ca3af;
+  cursor: grab;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.drag-handle:hover {
+  background: rgba(156, 163, 175, 0.15);
+  color: #6b7280;
+}
+
+.pin-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 50%;
+  font-size: 18px;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  line-height: 1;
+}
+
+.pin-btn:hover {
+  background: #f8fafc;
+  color: #6b7280;
+  border-color: #d1d5db;
+  transform: scale(1.08);
+}
+
+.pin-btn.pinned {
+  color: #3aaa73;
+  background: #f0fdf4;
+  border-color: #3aaa73;
 }

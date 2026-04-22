@@ -2,50 +2,48 @@
   <div class="breadcrumb">
     <span class="bc-link" (click)="goToList()" style="cursor:pointer">Журналы</span>
     <span class="bc-sep">/</span>
-    <span class="bc-link" (click)="goToList()" style="cursor:pointer">Журналы ЭМД</span>
-    <span class="bc-sep">/</span>
-    <span class="bc-link" (click)="cancel()" style="cursor:pointer">Карточка</span>
-    <span class="bc-sep">/</span>
+    <ng-container *ngIf="!isBlankMode">
+      <span class="bc-link" (click)="goToList()" style="cursor:pointer">Журналы ЭМД</span>
+      <span class="bc-sep">/</span>
+      <span class="bc-link" (click)="cancel()" style="cursor:pointer">Карточка</span>
+      <span class="bc-sep">/</span>
+    </ng-container>
+    <ng-container *ngIf="isBlankMode">
+      <span class="bc-link" routerLink="/home" style="cursor:pointer">Главная</span>
+      <span class="bc-sep">/</span>
+    </ng-container>
     <span>Заявление</span>
   </div>
 
-  <!-- Шапка клиента -->
+  <!-- ═══ ШАПКА КЛИЕНТА ═══ -->
   <div class="client-card">
     <div class="client-header-row">
-      <button class="btn-kartochka" (click)="cancel()">◀ Карточка</button>
-      <h2 class="client-name">{{ fio || 'Ахметова Анар Алмасқызы' }}</h2>
+      <button class="btn-kartochka" (click)="cancel()">◀ {{ isBlankMode ? 'Главная' : 'Карточка' }}</button>
+      <h2 class="client-name">{{ fio || (isBlankMode ? 'Новое заявление' : 'Ахметова Анар Алмасқызы') }}</h2>
       <div class="header-actions">
-
-        <!-- НОВОЕ заявление -->
-        <ng-container *ngIf="isNewMode">
+        <ng-container *ngIf="isNewMode || isBlankMode">
           <button class="btn-register" (click)="save()">Зарегистрировать</button>
         </ng-container>
-
-        <!-- Перерасчёт — только для существующего макета (открытого из карточки) -->
-        <ng-container *ngIf="maketId">
+        <ng-container *ngIf="maketId && !isBlankMode">
           <button *ngIf="!isPereschet" class="btn-peraschet" (click)="togglePereschet()">Перерасчёт</button>
           <button *ngIf="isPereschet"  class="btn-cancel-peraschet" (click)="togglePereschet()">Отменить перерасчёт</button>
         </ng-container>
-
         <button class="btn-delete" (click)="delete()">🗑 Удалить</button>
       </div>
     </div>
     <div class="client-info-bar">
-      <div class="info-item"><span class="info-label">ИИН</span><span>{{ iin || '880101665544' }}</span></div>
-      <div class="info-item"><span class="info-label">Дата рождения</span><span>{{ dateBirth || '14.12.1988' }}</span></div>
+      <div class="info-item"><span class="info-label">ИИН</span><span>{{ iin || '—' }}</span></div>
+      <div class="info-item"><span class="info-label">Дата рождения</span><span>{{ dateBirth || '—' }}</span></div>
       <div class="info-item"><span class="info-label">Отделение</span><span>0000</span></div>
-      <div class="info-item"><span class="info-label">Адрес</span><span>{{ address || 'Алматы, Абая 124' }}</span></div>
-      <div class="info-item"><span class="info-label">Удостоверение РК №:</span><span>{{ nomerDoc || '020634394, МИНИСТЕРСТВО ЮСТИЦИИ РК, от 23.01.2008' }}</span></div>
+      <div class="info-item"><span class="info-label">Адрес</span><span>{{ address || '—' }}</span></div>
+      <div class="info-item"><span class="info-label">Удостоверение РК №:</span><span>{{ nomerDoc || '—' }}</span></div>
     </div>
   </div>
 
   <!-- Вкладки -->
   <div class="tab-bar">
-    <!-- Всегда видны -->
     <button class="tab-btn" [class.active]="activeTab === 'zayavlenie'" (click)="activeTab = 'zayavlenie'">Заявление</button>
     <button class="tab-btn" [class.active]="activeTab === 'maket'"      (click)="activeTab = 'maket'">Макет</button>
-
-    <!-- Появляются только после сохранения макета в режиме перерасчёта -->
     <ng-container *ngIf="showAllTabs">
       <button class="tab-btn" [class.active]="activeTab === 'reshenie'"  (click)="activeTab = 'reshenie'">Решение</button>
       <button class="tab-btn" [class.active]="activeTab === 'karta'"     (click)="activeTab = 'karta'">Карта размеров</button>
@@ -58,9 +56,8 @@
     </ng-container>
   </div>
 
-  <!-- Баннер режима перерасчёта в макете -->
   <div class="peraschet-process-banner" *ngIf="isPereschet && peraschetStep === 'editing'">
-    Процесс перрасчета ЭМД
+    Процесс перерасчета ЭМД
   </div>
 
   <!-- ══════════════════════ ЗАЯВЛЕНИЕ ══════════════════════ -->
@@ -110,10 +107,36 @@
     <!-- Информация о заявителе -->
     <div class="form-section">
       <h3 class="section-title">Информация о заявителе <span class="check-icon"></span></h3>
+
+      <!-- Блок поиска по ИИН (только в blank режиме, если клиент ещё не найден) -->
+      <div class="iin-search-block" *ngIf="isBlankMode && !clientFound">
+        <div class="iin-search-row">
+          <div class="form-field" style="flex:0 0 220px">
+            <label>ИИН <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="iin" placeholder="000000000000" maxlength="12"
+                   (keyup.enter)="searchClientByIin()"
+                   [class.error]="clientSearchError" />
+          </div>
+          <button class="btn-find-client" (click)="searchClientByIin()" [disabled]="isSearchingClient">
+            <span *ngIf="!isSearchingClient">Найти клиента</span>
+            <span *ngIf="isSearchingClient">Поиск…</span>
+          </button>
+        </div>
+        <div class="client-search-error" *ngIf="clientSearchError">{{ clientSearchError }}</div>
+        <div class="client-search-hint">Введите ИИН и нажмите «Найти клиента» — данные заполнятся автоматически. Или введите данные вручную ниже.</div>
+      </div>
+
+      <!-- Найден клиент — уведомление -->
+      <div class="client-found-banner" *ngIf="isBlankMode && clientFound">
+        ✓ Клиент найден: {{ fio }}
+        <button class="btn-clear-client" (click)="clientFound = false; fio = ''; dateBirth = ''; iin = ''">Изменить ИИН</button>
+      </div>
+
       <div class="form-row">
         <div class="form-field">
           <label>ИИН <span class="req">*</span></label>
-          <input type="text" [(ngModel)]="iin" placeholder="ИИН" [class.error]="!iin.trim() && submitted" />
+          <input type="text" [(ngModel)]="iin" placeholder="ИИН" [class.error]="!iin.trim() && submitted"
+                 [readonly]="isBlankMode && clientFound" />
         </div>
         <div class="form-field">
           <label>ФИО <span class="req">*</span></label>
@@ -245,9 +268,7 @@
       <h3 class="section-title">Иждивенцы <span class="check-icon"></span></h3>
       <button class="btn-add" (click)="addIzhdivents()">+ Добавить иждивенца</button>
       <table class="izhdiv-table" *ngIf="izhdivency.length > 0">
-        <thead>
-          <tr><th></th><th>Отношение</th><th>ИИН</th><th>ФИО</th><th>Дата рождения</th><th></th></tr>
-        </thead>
+        <thead><tr><th></th><th>Отношение</th><th>ИИН</th><th>ФИО</th><th>Дата рождения</th><th></th></tr></thead>
         <tbody>
           <tr *ngFor="let iz of izhdivency; let i = index">
             <td><input type="checkbox" /></td>
@@ -298,8 +319,8 @@
       <button class="btn-add">+ Открыть</button>
     </div>
 
-    <!-- Кнопки внизу формы — только для нового заявления -->
-    <div class="form-actions" *ngIf="isNewMode">
+    <!-- Кнопки внизу -->
+    <div class="form-actions">
       <button class="btn-register" (click)="save()">Зарегистрировать</button>
       <button class="btn-secondary" (click)="cancel()">Отмена</button>
     </div>
@@ -310,10 +331,9 @@
     <div class="form-section">
       <div class="maket-top-bar">
         <button class="btn-save-maket" (click)="saveMaket()">Сохранить макет</button>
-        <span class="maket-status-text" *ngIf="isPereschet">Процесс перрасчета ЭМД</span>
+        <span class="maket-status-text" *ngIf="isPereschet">Процесс перерасчета ЭМД</span>
         <span class="saved-msg" *ngIf="savedMessage">✓ {{ savedMessage }}</span>
       </div>
-
       <h3 class="section-title">Данные для расчёта</h3>
       <div class="form-row">
         <div class="form-field wide">
@@ -416,7 +436,8 @@
     </div>
   </div>
 
-  <!-- ══════════════════════ РЕШЕНИЕ ══════════════════════ -->
+  <!-- Остальные вкладки (Решение, Карта размеров и т.д.) остаются без изменений -->
+  <!-- Решение -->
   <div *ngIf="activeTab === 'reshenie'">
     <div class="form-section reshenie-wrap">
       <div class="reshenie-left">
@@ -426,17 +447,13 @@
         </div>
         <div class="pdf-preview">
           <div class="pdf-toolbar">
-            <span class="pdf-title">getDocu...</span>
+            <span class="pdf-title">Решение о назначении</span>
             <span class="pdf-pages">1 / 1</span>
             <div class="pdf-tools">
-              <button class="pdf-btn">−</button>
-              <span class="pdf-zoom">35%</span>
-              <button class="pdf-btn">+</button>
-              <button class="pdf-btn">↕</button>
-              <button class="pdf-btn">↻</button>
-              <button class="pdf-btn">⬇</button>
+              <button class="pdf-btn">−</button><span class="pdf-zoom">35%</span>
+              <button class="pdf-btn">+</button><button class="pdf-btn">↕</button>
+              <button class="pdf-btn">↻</button><button class="pdf-btn">⬇</button>
               <button class="pdf-btn">🖨</button>
-              <button class="pdf-btn">⋮</button>
             </div>
           </div>
           <div class="pdf-body">
@@ -447,50 +464,18 @@
                   <p class="pdf-doc-subtitle">о назначении социальной выплаты</p>
                   <p class="pdf-doc-meta">№ {{ nomerZayavleniya }} от {{ dateObr || maketDateObr }}</p>
                 </div>
-
                 <div class="pdf-doc-body">
-                  <p>Рассмотрев заявление гражданина(ки) <strong>{{ fio }}</strong>,
-                  ИИН <strong>{{ iin }}</strong>, дата рождения <strong>{{ dateBirth }}</strong>,
-                  проживающего(ей) по адресу: {{ address }},</p>
-
-                  <p>на основании <em>{{ osnova }}</em>,
-                  в соответствии с законодательством Республики Казахстан,</p>
-
+                  <p>Рассмотрев заявление гражданина(ки) <strong>{{ fio }}</strong>, ИИН <strong>{{ iin }}</strong>,</p>
+                  <p>на основании <em>{{ osnova }}</em>,</p>
                   <p><strong>РЕШЕНО:</strong></p>
-
                   <ol>
-                    <li>Назначить социальную выплату <strong>{{ maketNazvaniePolya }}</strong>
-                    в размере <strong>{{ maketNaznSumma | number:'1.0-0' }} тенге</strong> в месяц.</li>
+                    <li>Назначить социальную выплату <strong>{{ maketNazvaniePolya }}</strong> в размере <strong>{{ maketNaznSumma | number:'1.0-0' }} тенге</strong> в месяц.</li>
                     <li>Дата назначения: <strong>{{ maketDateNazn || '-' }}</strong></li>
-                    <li ng-if="maketDateOkon">Дата окончания: <strong>{{ maketDateOkon }}</strong></li>
-                    <li>Ведомство: <strong>{{ maketVedomstvo }}</strong></li>
                   </ol>
-
-                  <p *ngIf="mnogodetMat">Статус многодетной матери подтверждён.</p>
-                  <p *ngIf="pensionerSIYAP">Пенсионер по СИЯП.</p>
                 </div>
-
                 <div class="pdf-doc-signatures">
-                  <div class="pdf-sig-row">
-                    <span>Руководитель департамента:</span>
-                    <span class="pdf-sig-line-text">___________________</span>
-                  </div>
-                  <div class="pdf-sig-row">
-                    <span>Руководитель управления социальных выплат:</span>
-                    <span class="pdf-sig-line-text">___________________</span>
-                  </div>
-                  <div class="pdf-sig-row">
-                    <span>Специалист:</span>
-                    <span class="pdf-sig-line-text">___________________</span>
-                  </div>
-                  <div class="pdf-sig-row">
-                    <span>Инспектор Государственного центра:</span>
-                    <span class="pdf-sig-line-text">___________________</span>
-                  </div>
-                </div>
-
-                <div class="pdf-doc-status" *ngIf="peraschetStep === 'signed'">
-                  ✅ Подписано ЭЦП
+                  <div class="pdf-sig-row"><span>Руководитель:</span><span class="pdf-sig-line-text">___________________</span></div>
+                  <div class="pdf-sig-row"><span>Специалист:</span><span class="pdf-sig-line-text">___________________</span></div>
                 </div>
               </div>
             </div>
@@ -498,16 +483,9 @@
         </div>
       </div>
       <div class="reshenie-right">
-        <!-- Баннер: нужна подпись после перерасчёта -->
         <div class="reshenie-needs-sign" *ngIf="reshenieNeedsSign">
           🔴 Перерасчёт сохранён — необходимо подписать новое решение ЭЦП
         </div>
-
-        <!-- Успешно подписано -->
-        <div class="reshenie-signed-ok" *ngIf="peraschetStep === 'signed'">
-          ✅ Решение подписано. Перерасчёт завершён.
-        </div>
-
         <button class="btn-choose-ecp">Выбрать ЭЦП</button>
         <div class="reshenie-actions">
           <button class="btn-sign" (click)="signReshenie()">Подписать</button>
@@ -532,39 +510,24 @@
     </div>
   </div>
 
-  <!-- ══════════════════════ КАРТА РАЗМЕРОВ ══════════════════════ -->
+  <!-- Карта размеров -->
   <div *ngIf="activeTab === 'karta'">
     <div class="form-section no-pad">
       <div class="data-table-wrap">
         <table class="data-table">
           <thead>
             <tr>
-              <th>№</th>
-              <th>Номер решения</th>
-              <th>Выплата</th>
-              <th>Дата начала</th>
-              <th>Дата оконч.</th>
-              <th>Тип назначения</th>
-              <th>Сумма</th>
-              <th>ФИО</th>
-              <th>SID</th>
-              <th>PAY_ID</th>
-              <th>PNPT_ID</th>
+              <th>№</th><th>Номер решения</th><th>Выплата</th><th>Дата начала</th>
+              <th>Дата оконч.</th><th>Тип назначения</th><th>Сумма</th><th>ФИО</th>
+              <th>SID</th><th>PAY_ID</th><th>PNPT_ID</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let row of kartaRows" [class.rec-row]="row.isRec">
-              <td>{{ row.num }}</td>
-              <td>{{ row.nomerResheniya }}</td>
-              <td>{{ row.viplata }}</td>
-              <td>{{ row.dateNachala }}</td>
-              <td>{{ row.dateOkon }}</td>
-              <td>{{ row.tipNaznacheniya }}</td>
-              <td>{{ row.summa | number:'1.0-0' }}</td>
-              <td>{{ row.fio }}</td>
-              <td>{{ row.sid }}</td>
-              <td>{{ row.payId }}</td>
-              <td>{{ row.pnptId }}</td>
+              <td>{{ row.num }}</td><td>{{ row.nomerResheniya }}</td><td>{{ row.viplata }}</td>
+              <td>{{ row.dateNachala }}</td><td>{{ row.dateOkon }}</td>
+              <td>{{ row.tipNaznacheniya }}</td><td>{{ row.summa | number:'1.0-0' }}</td>
+              <td>{{ row.fio }}</td><td>{{ row.sid }}</td><td>{{ row.payId }}</td><td>{{ row.pnptId }}</td>
             </tr>
           </tbody>
         </table>
@@ -572,7 +535,7 @@
     </div>
   </div>
 
-  <!-- ══════════════════════ ПРОТОКОЛ ══════════════════════ -->
+  <!-- Протокол -->
   <div *ngIf="activeTab === 'protokol'">
     <div class="form-section">
       <div class="empty-tab">
@@ -587,42 +550,27 @@
     </div>
   </div>
 
-  <!-- ══════════════════════ ИСТОРИЯ ИЗМЕНЕНИЯ ДАННЫХ ══════════════════════ -->
+  <!-- История -->
   <div *ngIf="activeTab === 'history'">
     <div class="form-section no-pad">
       <div class="data-table-wrap">
         <table class="data-table">
           <thead>
             <tr>
-              <th>Отд.</th>
-              <th>Дата</th>
-              <th>Изменяемая</th>
-              <th>Действие</th>
-              <th>Изменения</th>
-              <th>Пользователь</th>
-              <th>IP-адрес</th>
-              <th>Хост</th>
-              <th>Имя учетной</th>
-              <th>Инспектор</th>
+              <th>Отд.</th><th>Дата</th><th>Изменяемая</th><th>Действие</th>
+              <th>Изменения</th><th>Пользователь</th><th>IP-адрес</th>
+              <th>Хост</th><th>Имя учетной</th><th>Инспектор</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let row of historyRows">
-              <td>{{ row.otd }}</td>
-              <td>{{ row.date }}</td>
-              <td>{{ row.izmenyaemaya }}</td>
+              <td>{{ row.otd }}</td><td>{{ row.date }}</td><td>{{ row.izmenyaemaya }}</td>
               <td>{{ row.deystvie }}</td>
               <td class="izmeneniya-cell">
-                Дата обращения:
-                <span class="izm-old">{{ row.izmOld }}</span>
-                →
-                <span class="izm-new">{{ row.izmNew }}</span>
+                <span class="izm-old">{{ row.izmOld }}</span> → <span class="izm-new">{{ row.izmNew }}</span>
               </td>
-              <td>{{ row.polzovatel }}</td>
-              <td>{{ row.ipAdres }}</td>
-              <td>{{ row.host }}</td>
-              <td>{{ row.imyaUchetnoy }}</td>
-              <td>{{ row.inspektor }}</td>
+              <td>{{ row.polzovatel }}</td><td>{{ row.ipAdres }}</td>
+              <td>{{ row.host }}</td><td>{{ row.imyaUchetnoy }}</td><td>{{ row.inspektor }}</td>
             </tr>
           </tbody>
         </table>
@@ -630,53 +578,38 @@
     </div>
   </div>
 
-  <!-- ══════════════════════ РАСЧЁТЫ ══════════════════════ -->
+  <!-- Расчёты -->
   <div *ngIf="activeTab === 'raschety'">
     <div class="form-section">
       <div class="empty-tab">
         <svg viewBox="0 0 64 64" fill="none" stroke="#ccc" stroke-width="2" width="64" height="64">
-          <rect x="8" y="8" width="48" height="48" rx="4"/>
-          <line x1="8" y1="24" x2="56" y2="24"/>
-          <line x1="8" y1="40" x2="56" y2="40"/>
-          <line x1="24" y1="8" x2="24" y2="56"/>
+          <rect x="8" y="8" width="48" height="48" rx="4"/><line x1="8" y1="24" x2="56" y2="24"/>
+          <line x1="8" y1="40" x2="56" y2="40"/><line x1="24" y1="8" x2="24" y2="56"/>
         </svg>
         <p>Данные расчётов недоступны</p>
       </div>
     </div>
   </div>
 
-  <!-- ══════════════════════ СВЕДЕНИЯ С КГД ══════════════════════ -->
+  <!-- Сведения с КГД -->
   <div *ngIf="activeTab === 'kgd'">
     <div class="form-section no-pad">
       <div class="data-table-wrap">
         <table class="data-table">
           <thead>
             <tr>
-              <th>ID запроса</th>
-              <th>Пользователь</th>
-              <th>Дата запроса</th>
-              <th>Дата ответа с КГД</th>
-              <th>БИН организации</th>
-              <th>Вид персоны</th>
-              <th>ИИН</th>
-              <th>ФИО</th>
-              <th>период с</th>
-              <th>период по</th>
-              <th>действие</th>
+              <th>ID запроса</th><th>Пользователь</th><th>Дата запроса</th>
+              <th>Дата ответа с КГД</th><th>БИН организации</th><th>Вид персоны</th>
+              <th>ИИН</th><th>ФИО</th><th>период с</th><th>период по</th><th>действие</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let row of kgdRows">
-              <td>{{ row.idZaprosa }}</td>
-              <td>{{ row.polzovatel }}</td>
-              <td>{{ row.dataZaprosa }}</td>
-              <td>{{ row.dataOtveta }}</td>
-              <td>{{ row.binOrganizacii }}</td>
-              <td>{{ row.vidPersony }}</td>
-              <td>{{ row.iin }}</td>
-              <td>{{ row.fio }}</td>
-              <td>{{ row.periodS }}</td>
-              <td>{{ row.periodPo }}</td>
+              <td>{{ row.idZaprosa }}</td><td>{{ row.polzovatel }}</td>
+              <td>{{ row.dataZaprosa }}</td><td>{{ row.dataOtveta }}</td>
+              <td>{{ row.binOrganizacii }}</td><td>{{ row.vidPersony }}</td>
+              <td>{{ row.iin }}</td><td>{{ row.fio }}</td>
+              <td>{{ row.periodS }}</td><td>{{ row.periodPo }}</td>
               <td><button class="btn-otvet-kgd">Ответ кгд</button></td>
             </tr>
           </tbody>

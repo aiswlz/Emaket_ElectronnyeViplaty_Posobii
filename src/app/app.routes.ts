@@ -61,6 +61,12 @@ export const routes: Routes = [
           import('./journals/journal-emd-card/journal-emd-card.component')
             .then(m => m.JournalEmdCardComponent)
       },
+       {
+        path: 'journals/zayavlenie/new',
+        loadComponent: () =>
+          import('./journals/zayavlenie-form/zayavlenie-form.component')
+            .then(m => m.ZayavlenieFormComponent)
+      },
       {
         path: 'journals/emd/:id/zayavlenie',
         loadComponent: () =>
