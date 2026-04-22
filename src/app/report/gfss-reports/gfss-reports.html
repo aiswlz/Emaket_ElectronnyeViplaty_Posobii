@@ -53,7 +53,10 @@
               [class.clickable-row]="s.statusType === 'ok'"
               [class.not-clickable]="s.statusType !== 'ok'">
               <td>
-                <div class="status-icon" [class.error]="s.statusType === 'error'" [class.ok]="s.statusType === 'ok'" [class.pending]="s.statusType === 'pending'">
+                <div class="status-icon"
+                  [class.error]="s.statusType === 'error'"
+                  [class.ok]="s.statusType === 'ok'"
+                  [class.pending]="s.statusType === 'pending'">
                   <svg *ngIf="s.statusType === 'error'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                   </svg>
@@ -96,15 +99,10 @@
 </div>
 
 <!-- Рекурсивный шаблон дерева -->
-<!-- Было: node.actionType === 1 для папки -->
-<!-- Было: node.actionType === 2 для отчёта -->
-
-<!-- Стало: папка если есть children, отчёт если нет -->
-
 <ng-template #treeTemplate let-nodes="nodes" let-level="level">
   <div *ngFor="let node of nodes">
 
-    <!-- Папка — если есть дочерние элементы -->
+    <!-- Папка -->
     <div *ngIf="node.children && node.children.length > 0"
       class="report-item folder-item"
       [class.active]="selectedReport?.id === node.id"
@@ -120,12 +118,11 @@
         <polyline points="6 9 12 15 18 9"/>
       </svg>
     </div>
-    <!-- Дочерние узлы папки -->
     <div *ngIf="node.children && node.children.length > 0 && node.expanded">
       <ng-container *ngTemplateOutlet="treeTemplate; context: { nodes: node.children, level: level + 1 }"></ng-container>
     </div>
 
-    <!-- Отчёт — если нет дочерних элементов -->
+    <!-- Отчёт -->
     <div *ngIf="!node.children || node.children.length === 0"
       class="report-item"
       [class.active]="selectedReport?.id === node.id"
@@ -143,7 +140,7 @@
   </div>
 </ng-template>
 
-<!-- МОДАЛ 1: Фильтры отчёта (lev1) -->
+<!-- МОДАЛ 1: Параметры отчёта (lev1) -->
 <div class="modal-overlay" *ngIf="showDateModal" (click)="closeDateModal()">
   <div class="modal-box date-modal" (click)="$event.stopPropagation()">
     <div class="modal-header">
@@ -158,7 +155,7 @@
 
     <div class="modal-body">
       <p class="modal-subtitle">Выберите параметры формирования отчета</p>
-      <!-- HTML маска из lev1 рендерится сюда -->
+      <!-- lev1 маска рендерится сюда -->
       <div id="lev1-container" class="lev1-form"></div>
       <p class="date-error" *ngIf="dateError">{{ dateError }}</p>
     </div>
@@ -175,44 +172,34 @@
   </div>
 </div>
 
-<!-- МОДАЛ 2: Просмотр отчёта -->
+<!-- МОДАЛ 2: Просмотр HTML отчёта -->
 <div class="modal-overlay" *ngIf="showReportModal" (click)="closeReportModal()">
   <div class="modal-box report-modal" (click)="$event.stopPropagation()">
+
     <div class="modal-header">
       <h3 class="modal-title">{{ activeReport?.name }}</h3>
       <button class="modal-close" (click)="closeReportModal()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
         </svg>
       </button>
     </div>
+
     <div class="modal-body report-body" *ngIf="activeReport">
+      <!-- Мета-информация -->
       <div class="report-meta">
-        <p>С <a class="meta-link">{{ activeReport.dateFrom }}</a> по <a class="meta-link">{{ activeReport.dateTo }}</a></p>
-        <p>Дата формирования отчета: <a class="meta-link">{{ activeReport.generatedAt }}</a></p>
+        <p>Дата формирования: <span class="meta-link">{{ activeReport.generatedAt }}</span></p>
+        <p>Время формирования: <span class="meta-link">{{ activeReport.duration }}</span></p>
       </div>
-      <div class="report-table-wrap">
-        <table class="report-table">
-          <thead>
-            <tr><th *ngFor="let col of activeReport.columns">{{ col }}</th></tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let row of activeReport.rows; let i = index" [class.row-alt]="i % 2 === 1">
-              <td *ngFor="let cell of row">{{ cell }}</td>
-            </tr>
-            <tr *ngIf="activeReport!.rows?.length === 0">
-              <td [attr.colspan]="activeReport!.columns?.length" class="empty-state">Нет данных</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="report-footer-meta">
-        <p>Дата завершения формирования отчета: <a class="meta-link">{{ activeReport.completedAt }}</a></p>
-        <p>Время формирования отчета: <a class="meta-link">{{ activeReport.duration }}</a></p>
-      </div>
+
+      <!-- HTML отчёт от бэкенда -->
+      <div class="report-html-wrap" [innerHTML]="activeReportHtml"></div>
     </div>
+
     <div class="modal-footer">
-      <button class="btn-export" (click)="exportReport()">Экспортировать</button>
+      <button class="btn-export" (click)="exportReport()">Экспорт в CSV</button>
+
       <input type="file" #fileInput style="display:none" (change)="attachFile($event)" multiple />
       <button class="btn-icon-action" title="Прикрепить файл" (click)="fileInput.click()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -226,6 +213,7 @@
           <rect x="6" y="14" width="12" height="8"/>
         </svg>
       </button>
+
       <div class="attached-files" *ngIf="activeReport?.attachments?.length">
         <span class="attached-badge" *ngFor="let f of activeReport!.attachments!">
           {{ f.name }}
@@ -233,18 +221,19 @@
         </span>
       </div>
     </div>
+
   </div>
 </div>
 
 <!-- Toast -->
-<div class="toast-wrap" *ngIf="toast" [class.toast-success]="toast.type === 'success'" [class.toast-error]="toast.type === 'error'">
-  <div class="toast-icon">
-    <svg *ngIf="toast.type === 'success'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/>
-    </svg>
-    <svg *ngIf="toast.type === 'error'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-    </svg>
-  </div>
+<div class="toast-wrap" *ngIf="toast"
+  [class.toast-success]="toast.type === 'success'"
+  [class.toast-error]="toast.type === 'error'">
+  <svg *ngIf="toast.type === 'success'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/>
+  </svg>
+  <svg *ngIf="toast.type === 'error'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+  </svg>
   <span>{{ toast.message }}</span>
 </div>

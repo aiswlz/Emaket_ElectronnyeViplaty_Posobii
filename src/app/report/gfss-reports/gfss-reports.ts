@@ -1,9 +1,8 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef,  NgZone, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { GfssReportsService, DAction, OrderRequest } from './gfss-reports.service';
 
 export interface StatusRow {
@@ -13,13 +12,11 @@ export interface StatusRow {
   statusLabel: string;
   statusType: 'pending' | 'ok' | 'error';
   number: string;
-  dateFrom?: string;
-  dateTo?: string;
   generatedAt?: string;
   completedAt?: string;
   duration?: string;
-  columns?: string[];
-  rows?: string[][];
+  // ← теперь храним HTML вместо columns/rows
+  htmlReport?: string;
   attachments?: { name: string; size: string }[];
 }
 
@@ -29,32 +26,26 @@ export interface StatusRow {
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './gfss-reports.html',
   styleUrl: './gfss-reports.scss',
-  encapsulation: ViewEncapsulation.None 
+  encapsulation: ViewEncapsulation.None
 })
 export class GfssReportsComponent implements OnInit, OnDestroy {
   searchQuery = '';
   selectedReport: DAction | null = null;
 
-  // ─── Дерево отчётов ──────────────────────────────────
   treeNodes: DAction[] = [];
   isLoadingTree = true;
 
-  // ─── Модал с датами ──────────────────────────────────
   showDateModal = false;
   pendingReport: DAction | null = null;
-  dateFrom = '';
-  dateTo   = '';
   dateError = '';
   isGenerating = false;
 
-  // ─── Toast ───────────────────────────────────────────
   toast: { message: string; type: 'success' | 'error' } | null = null;
 
-  // ─── Модал с результатом отчёта ──────────────────────
   showReportModal = false;
   activeReport: StatusRow | null = null;
+  activeReportHtml: SafeHtml | null = null;
 
-  // ─── Таблица статусов ────────────────────────────────
   statusRows: StatusRow[] = [];
 
   private reportCounter = 100;
@@ -64,7 +55,8 @@ export class GfssReportsComponent implements OnInit, OnDestroy {
   constructor(
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone,
-    private reportService: GfssReportsService
+    private reportService: GfssReportsService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -76,12 +68,12 @@ export class GfssReportsComponent implements OnInit, OnDestroy {
     this.pollingTimers.forEach(t => clearInterval(t));
   }
 
-  // ─── Загрузка дерева отчётов из API ──────────────────
+  // ─── Дерево ───────────────────────────────────────────────────────────────
+
   loadTree(): void {
     this.isLoadingTree = true;
     this.reportService.getActions().subscribe({
       next: (actions: any[]) => {
-        // Маппинг — на случай если бэк возвращает snake_case
         const mapped: DAction[] = actions.map(a => ({
           id:         a.id,
           actionType: a.actionType ?? a.action_type ?? 3,
@@ -97,7 +89,6 @@ export class GfssReportsComponent implements OnInit, OnDestroy {
           lev1Kz:     a.lev1Kz    ?? a.lev1_kz      ?? null,
           ord:        a.ord        ?? 0,
         }));
-
         this.treeNodes = this._buildTree(mapped, null);
         this.isLoadingTree = false;
         this.cdr.detectChanges();
@@ -109,7 +100,6 @@ export class GfssReportsComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ─── Строим дерево из плоского списка ────────────────
   private _buildTree(all: DAction[], parentId: number | null): DAction[] {
     return all
       .filter(a => a.parentId === parentId)
@@ -121,11 +111,9 @@ export class GfssReportsComponent implements OnInit, OnDestroy {
       }));
   }
 
-  // ─── Фильтрация дерева по поиску ─────────────────────
   get filteredTree(): DAction[] {
     if (!this.searchQuery.trim()) return this.treeNodes;
-    const q = this.searchQuery.toLowerCase();
-    return this._filterTree(this.treeNodes, q);
+    return this._filterTree(this.treeNodes, this.searchQuery.toLowerCase());
   }
 
   private _filterTree(nodes: DAction[], q: string): DAction[] {
@@ -143,7 +131,6 @@ export class GfssReportsComponent implements OnInit, OnDestroy {
     return result;
   }
 
-  // ─── Клик по узлу дерева ─────────────────────────────
   onNodeClick(node: DAction): void {
     if (node.children && node.children.length > 0) {
       node.expanded = !node.expanded;
@@ -152,36 +139,39 @@ export class GfssReportsComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ─── Открыть модал с датами ──────────────────────────
-  openDateModal(item: DAction): void {
-    this.pendingReport  = item;
-    this.selectedReport = item;
-    this.dateError      = '';
-    this.showDateModal  = true;
+  // ─── Модал с параметрами ──────────────────────────────────────────────────
 
-    // Рендерим lev1 после открытия модала
+  openDateModal(item: DAction): void {
+    this.pendingReport = item;
+    this.selectedReport = item;
+    this.dateError = '';
+    this.showDateModal = true;
+
     setTimeout(() => {
       const container = document.getElementById('lev1-container');
-      if (container && item.lev1) {
+      if (!container) return;
+
+      if (item.lev1) {
+        // Рендерим lev1 маску из БД (select, input и т.д.)
         container.innerHTML = item.lev1;
-      } else if (container) {
-        // Если lev1 нет — стандартная форма с датами
+      } else {
+        // Нет маски — показываем стандартный диапазон дат
         container.innerHTML = `
           <table>
             <tr>
-              <td>с</td>
-              <td><input name="bdat" type="date" size="10"></td>
+              <td style="padding-right:12px">Дата с</td>
+              <td><input name="bdat" type="date" style="border:1px solid #ddd;border-radius:6px;padding:6px 10px;font-size:13px"></td>
             </tr>
-            <tr>
-              <td>по</td>
-              <td><input name="edat" type="date" size="10"></td>
+            <tr style="margin-top:8px">
+              <td style="padding-right:12px">Дата по</td>
+              <td><input name="edat" type="date" style="border:1px solid #ddd;border-radius:6px;padding:6px 10px;font-size:13px"></td>
             </tr>
           </table>`;
       }
     }, 50);
   }
 
-  // Собираем все input/select из lev1 формы
+  /** Собирает все input/select из lev1 формы в строку "key=val&key2=val2" */
   private collectParams(): string {
     const container = document.getElementById('lev1-container');
     if (!container) return '';
@@ -199,15 +189,18 @@ export class GfssReportsComponent implements OnInit, OnDestroy {
     this.pendingReport = null;
   }
 
-  // ─── Сформировать отчёт ──────────────────────────────
+  // ─── Формирование отчёта ──────────────────────────────────────────────────
+
   generateReport(): void {
     this.dateError    = '';
     this.isGenerating = true;
 
+    const params = this.collectParams();
+
     const req: OrderRequest = {
       idReport: this.pendingReport!.id,
       empId:    1,
-      params: this.collectParams(),
+      params,
       begDate:  '',
       endDate:  '',
     };
@@ -220,8 +213,6 @@ export class GfssReportsComponent implements OnInit, OnDestroy {
       statusLabel: 'Формируется...',
       statusType:  'pending',
       number:      String(++this.reportCounter),
-      dateFrom:    this._formatDate(this.dateFrom),
-      dateTo:      this._formatDate(this.dateTo),
       generatedAt: this._formatDateTime(now),
     };
     this.statusRows.unshift(tempRow);
@@ -231,7 +222,7 @@ export class GfssReportsComponent implements OnInit, OnDestroy {
       next: (order) => {
         this.ngZone.run(() => {
           tempRow.orderId = order.id;
-          if (order.status === 1) {
+          if (order.status === 1 || order.status === 2) {
             this._applyOrderResult(tempRow, order);
           } else {
             this._startPolling(tempRow);
@@ -254,7 +245,6 @@ export class GfssReportsComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ─── Поллинг статуса ─────────────────────────────────
   private _startPolling(row: StatusRow): void {
     const timer = setInterval(() => {
       this.reportService.getOrder(row.orderId).subscribe({
@@ -273,52 +263,83 @@ export class GfssReportsComponent implements OnInit, OnDestroy {
     this.pollingTimers.push(timer);
   }
 
-  // ─── Применить результат заказа ──────────────────────
+  /**
+   * Применяет результат заказа к строке статуса.
+   *
+   * Бэк возвращает report в виде: {"result":1,"html":"<table>..."}
+   * Мы извлекаем html и сохраняем в row.htmlReport
+   */
   private _applyOrderResult(row: StatusRow, order: any): void {
-    const completedAt = new Date();
-    row.completedAt = this._formatDateTime(completedAt);
+    row.completedAt = this._formatDateTime(new Date());
     row.duration    = '2 секунды';
 
-    if (order.status === 2 || order.err) {
-      row.statusLabel = 'Ошибка формирования';
+    // Статус 2 — нет данных или ошибка
+    if (order.status === 2) {
+      const noData = order.err?.includes('отсутствуют');
+      row.statusLabel = noData ? 'Отчет не сформирован' : 'Ошибка формирования';
       row.statusType  = 'error';
-      this.showToast(`Ошибка формирования отчёта "${row.name}"`, 'error');
+      this.showToast(
+        noData
+          ? 'Данные за выбранный период отсутствуют'
+          : `Ошибка формирования отчёта "${row.name}"`,
+        'error'
+      );
       return;
     }
 
-    try {
-      if (order.report) {
+    // Статус успех — извлекаем HTML из поля report
+    if (order.report) {
+      try {
         const parsed = JSON.parse(order.report);
-        row.columns = parsed.columns ?? [];
-        row.rows    = parsed.rows    ?? [];
+
+        if (parsed.html) {
+          // Наш формат: {"result":1,"html":"..."}
+          row.htmlReport  = parsed.html;
+          row.statusLabel = 'Отчет сформирован';
+          row.statusType  = 'ok';
+          this.showToast(`Отчёт "${row.name}" успешно сформирован`, 'success');
+          return;
+        }
+
+        if (parsed.columns && parsed.rows) {
+          // Старый формат с массивами — конвертируем в HTML таблицу
+          row.htmlReport  = this._buildHtmlTable(parsed.columns, parsed.rows, row.name);
+          row.statusLabel = parsed.rows.length > 0 ? 'Отчет сформирован' : 'Данные не найдены';
+          row.statusType  = parsed.rows.length > 0 ? 'ok' : 'error';
+          this.showToast(
+            parsed.rows.length > 0 ? `Отчёт "${row.name}" сформирован` : 'Данные не найдены',
+            parsed.rows.length > 0 ? 'success' : 'error'
+          );
+          return;
+        }
+      } catch {
+        // Если парсинг не удался — показываем как есть
+        row.htmlReport  = `<pre>${order.report}</pre>`;
+        row.statusLabel = 'Отчет сформирован';
+        row.statusType  = 'ok';
+        return;
       }
-    } catch {
-      row.columns = [];
-      row.rows    = [];
     }
 
-    const hasData = (row.rows?.length ?? 0) > 0;
-    row.statusLabel = hasData ? 'Отчет сформирован' : 'Отчет не сформирован';
-    row.statusType  = hasData ? 'ok' : 'error';
-
-    this.showToast(
-      hasData
-        ? `Отчет "${row.name}" успешно сформирован`
-        : `За выбранный период данных не найдено`,
-      hasData ? 'success' : 'error'
-    );
+    // Нет данных
+    row.statusLabel = 'Данные не найдены';
+    row.statusType  = 'error';
+    this.showToast('За выбранный период данных не найдено', 'error');
   }
 
-  // ─── Открыть модал с результатом ─────────────────────
+  // ─── Просмотр отчёта ──────────────────────────────────────────────────────
+
   openReportModal(row: StatusRow): void {
-    if (!row.columns || !row.rows) return;
-    this.activeReport    = row;
-    this.showReportModal = true;
+    if (!row.htmlReport) return;
+    this.activeReport     = row;
+    this.activeReportHtml = this.sanitizer.bypassSecurityTrustHtml(row.htmlReport);
+    this.showReportModal  = true;
   }
 
   closeReportModal(): void {
-    this.showReportModal = false;
-    this.activeReport    = null;
+    this.showReportModal  = false;
+    this.activeReport     = null;
+    this.activeReportHtml = null;
   }
 
   deleteRow(event: Event, index: number): void {
@@ -327,69 +348,25 @@ export class GfssReportsComponent implements OnInit, OnDestroy {
     this.saveToStorage();
   }
 
-  // ─── Экспорт в Excel ─────────────────────────────────
-  async exportReport(): Promise<void> {
-    if (!this.activeReport) return;
-    const report  = this.activeReport;
-    const columns = report.columns ?? [];
-    const rows    = report.rows    ?? [];
+  // ─── Печать ───────────────────────────────────────────────────────────────
 
-    const workbook  = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Отчет');
-
-    const titleRow = worksheet.addRow([report.name]);
-    titleRow.getCell(1).font = { bold: true, size: 13 };
-    worksheet.addRow([`Период: с ${report.dateFrom} по ${report.dateTo}`]);
-    worksheet.addRow([`Дата формирования: ${report.generatedAt}`]);
-    worksheet.addRow([]);
-
-    const headerRow = worksheet.addRow(columns);
-    headerRow.eachCell(cell => {
-      cell.font      = { bold: true, color: { argb: 'FFFFFFFF' } };
-      cell.fill      = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF3AAA73' } };
-      cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-      cell.border    = { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } };
-    });
-    headerRow.height = 40;
-
-    rows.forEach((rowData, i) => {
-      const row = worksheet.addRow(rowData);
-      row.eachCell(cell => {
-        cell.fill      = { type: 'pattern', pattern: 'solid', fgColor: { argb: i % 2 === 0 ? 'FFFFFFFF' : 'FFF9FAFB' } };
-        cell.alignment = { vertical: 'middle' };
-        cell.border    = { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } };
-      });
-      row.height = 22;
-    });
-    worksheet.columns.forEach(col => { col.width = 24; });
-
-    const buffer   = await workbook.xlsx.writeBuffer();
-    const blob     = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const fileName = `${report.name}_${report.dateFrom}_${report.dateTo}.xlsx`.replace(/[/\\:*?"<>|]/g, '_');
-    saveAs(blob, fileName);
-  }
-
-  // ─── Печать ──────────────────────────────────────────
   printReport(): void {
-    if (!this.activeReport) return;
-    const report    = this.activeReport;
-    const columns   = report.columns ?? [];
-    const rows      = report.rows    ?? [];
-    const tableRows = rows.map(row =>
-      `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`
-    ).join('');
-    const html = `<html><head><title>${report.name}</title>
-      <style>body{font-family:Arial,sans-serif;font-size:12px;padding:20px}
-      h2{font-size:15px;margin-bottom:4px}p{margin:2px 0;color:#555;font-size:12px}
-      table{width:100%;border-collapse:collapse;margin-top:14px}
-      th{background:#3aaa73;color:#fff;padding:7px 8px;text-align:left;font-size:11px}
-      td{padding:6px 8px;border-bottom:1px solid #e5e8ec;font-size:11px}
-      tr:nth-child(even) td{background:#f9fafb}</style></head><body>
-      <h2>${report.name}</h2>
-      <p>Период: с ${report.dateFrom} по ${report.dateTo}</p>
-      <p>Дата формирования: ${report.generatedAt}</p>
-      <table><thead><tr>${columns.map(c => `<th>${c}</th>`).join('')}</tr></thead>
-      <tbody>${tableRows}</tbody></table></body></html>`;
+    if (!this.activeReport?.htmlReport) return;
+    const html = `
+      <html><head><title>${this.activeReport.name}</title>
+      <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; padding: 20px; }
+        h2   { font-size: 15px; margin-bottom: 8px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        th { background: #3aaa73; color: #fff; padding: 7px 8px; text-align: left; }
+        td { padding: 6px 8px; border-bottom: 1px solid #e5e8ec; }
+        tr:nth-child(even) td { background: #f9fafb; }
+      </style></head>
+      <body>
+        <h2>${this.activeReport.name}</h2>
+        <p>Дата формирования: ${this.activeReport.generatedAt}</p>
+        ${this.activeReport.htmlReport}
+      </body></html>`;
     const win = window.open('', '_blank', 'width=900,height=700');
     if (win) {
       win.document.write(html);
@@ -399,18 +376,53 @@ export class GfssReportsComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ─── Прикрепить файл ─────────────────────────────────
+  // ─── Экспорт в Excel (из HTML таблицы) ───────────────────────────────────
+
+  exportReport(): void {
+    if (!this.activeReport?.htmlReport) return;
+
+    // Парсим HTML таблицу в массивы
+    const parser = new DOMParser();
+    const doc    = parser.parseFromString(this.activeReport.htmlReport, 'text/html');
+    const table  = doc.querySelector('table');
+    if (!table) { this.showToast('Нет данных для экспорта', 'error'); return; }
+
+    const headers: string[] = [];
+    const rows: string[][]  = [];
+
+    table.querySelectorAll('thead tr th').forEach(th => headers.push(th.textContent?.trim() ?? ''));
+    table.querySelectorAll('tbody tr').forEach(tr => {
+      const row: string[] = [];
+      tr.querySelectorAll('td').forEach(td => row.push(td.textContent?.trim() ?? ''));
+      if (row.length > 0) rows.push(row);
+    });
+
+    // Генерируем CSV (простой экспорт без ExcelJS зависимости)
+    const sep  = ';';
+    const bom  = '\uFEFF';
+    const csv  = bom + [headers, ...rows].map(r => r.map(c => `"${c.replace(/"/g, '""')}"`).join(sep)).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href     = url;
+    link.download = `${this.activeReport.name}_${this.activeReport.generatedAt?.replace(/[: ]/g, '_') ?? 'export'}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+
+    this.showToast('Экспорт выполнен', 'success');
+  }
+
+  // ─── Прикрепить файл ─────────────────────────────────────────────────────
+
   attachFile(event: Event): void {
     if (!this.activeReport) return;
     const input = event.target as HTMLInputElement;
     if (!input.files) return;
     if (!this.activeReport.attachments) this.activeReport.attachments = [];
     Array.from(input.files).forEach((file: File) => {
-      const size = file.size < 1024
-        ? `${file.size} Б`
-        : file.size < 1024 * 1024
-          ? `${(file.size / 1024).toFixed(1)} КБ`
-          : `${(file.size / 1024 / 1024).toFixed(1)} МБ`;
+      const size = file.size < 1024 ? `${file.size} Б`
+        : file.size < 1048576 ? `${(file.size / 1024).toFixed(1)} КБ`
+        : `${(file.size / 1048576).toFixed(1)} МБ`;
       this.activeReport!.attachments!.push({ name: file.name, size });
     });
     this.saveToStorage();
@@ -420,19 +432,19 @@ export class GfssReportsComponent implements OnInit, OnDestroy {
 
   removeAttachment(fileName: string): void {
     if (!this.activeReport?.attachments) return;
-    this.activeReport.attachments = this.activeReport.attachments.filter(
-      f => f.name !== fileName
-    );
+    this.activeReport.attachments = this.activeReport.attachments.filter(f => f.name !== fileName);
     this.saveToStorage();
   }
 
-  // ─── Toast ───────────────────────────────────────────
+  // ─── Toast ────────────────────────────────────────────────────────────────
+
   showToast(message: string, type: 'success' | 'error'): void {
     this.toast = { message, type };
     setTimeout(() => { this.toast = null; this.cdr.detectChanges(); }, 3500);
   }
 
-  // ─── LocalStorage ────────────────────────────────────
+  // ─── LocalStorage ─────────────────────────────────────────────────────────
+
   private loadFromStorage(): void {
     try {
       const saved = localStorage.getItem(this.STORAGE_KEY);
@@ -446,14 +458,20 @@ export class GfssReportsComponent implements OnInit, OnDestroy {
     } catch {}
   }
 
-  // ─── Helpers ─────────────────────────────────────────
+  // ─── Helpers ──────────────────────────────────────────────────────────────
+
+  private _buildHtmlTable(columns: string[], rows: string[][], title: string): string {
+    const ths  = columns.map(c => `<th>${c}</th>`).join('');
+    const trs  = rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('');
+    return `<p><b>${title}</b></p>
+      <table border="1" cellpadding="4" cellspacing="0" style="border-collapse:collapse;width:100%">
+        <thead><tr style="background:#d0e4f7">${ths}</tr></thead>
+        <tbody>${trs}</tbody>
+      </table>`;
+  }
+
   private _formatDateTime(d: Date): string {
     const p = (n: number) => String(n).padStart(2, '0');
     return `${p(d.getDate())}.${p(d.getMonth() + 1)}.${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
-  }
-
-  private _formatDate(iso: string): string {
-    const [y, m, day] = iso.split('-');
-    return `${day}.${m}.${y}`;
   }
 }
