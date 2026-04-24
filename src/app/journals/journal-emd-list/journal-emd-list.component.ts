@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { JournalEmdListService } from './journal-emd-list.component.service';
 
 export interface EmdListRecord {
+  zdocId: string;
   dateObr: string;
   dateStatus: string;
   status: string;
@@ -68,11 +69,13 @@ export class JournalEmdListComponent implements OnInit {
     return range;
   }
 
+
   ngOnInit() {
   this.emdService.getAll().subscribe({
     next: (data) => {
       // Данные только из БД, форматируем даты (убираем время)
       const fromApi: EmdListRecord[] = (data as any[]).map((m: any) => ({
+        zdocId:        m.zdocId ? String(m.zdocId) : '',
         dateObr:       this._fmt(m.dateObr),
         dateStatus:    this._fmt(m.dateStatus),
         status:        m.status ? String(m.status) : 'Новое',
@@ -163,6 +166,34 @@ export class JournalEmdListComponent implements OnInit {
     this.currentPage      = 1;
     this.updatePage();
   }
+  
+  deleteRecord(event: Event, record: EmdListRecord) {
+    event.stopPropagation(); // не открывать карточку
+    if (!confirm(`Удалить заявление клиента ${record.fio}?`)) return;
+
+    const zdocId = Number(record.zdocId);
+    if (!zdocId) {
+        alert('ID заявления не найден');
+        return;
+    }
+
+    this.http.delete(
+        `http://localhost:8080/api/forma/${zdocId}`,
+        { responseType: 'text' }
+    ).subscribe({
+        next: () => {
+            // Убираем из всех списков
+            this.allRecords      = this.allRecords.filter(r => r !== record);
+            this.filteredRecords = this.filteredRecords.filter(r => r !== record);
+            this.updatePage();
+            this.cdr.detectChanges();
+        },
+        error: (err) => {
+            const msg = typeof err?.error === 'string' ? err.error : 'Ошибка удаления';
+            alert(msg);
+        }
+    });
+}
 
   updatePage() {
     const start = (this.currentPage - 1) * this.pageSize;

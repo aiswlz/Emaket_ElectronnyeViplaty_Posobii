@@ -68,7 +68,7 @@ export class JournalEmdCardComponent implements OnInit {
   ngOnInit() {
     const iin = this.route.snapshot.paramMap.get('id');
     if (!iin) return;
-    // Сброс данных при каждом открытии карточки
+
     this.makets = [];
     this.historyRows = [];
     this.historyUnread = false;
@@ -110,7 +110,9 @@ export class JournalEmdCardComponent implements OnInit {
             id:               String(data.id || Date.now()),
             osnova:           this.OSNOVA_MAP[data.osnova] || 'Не указано',
             dateReg:          this._formatDate(data.dateObr),
-            tip:              data.vidZayavleniya === 'REC' ? 'Перерасчёт' : data.vidZayavleniya === 'NEW' ? 'Новое назначение' : (data.vidZayavleniya || 'Новое назначение'),
+            tip:              data.vidZayavleniya === 'REC' ? 'Перерасчёт'
+                            : data.vidZayavleniya === 'NEW' ? 'Новое назначение'
+                            : (data.vidZayavleniya || 'Новое назначение'),
             recordId:         data.maketId ? String(data.maketId) : String(data.id || '-'),
             fio:              this.client?.fio || '-',
             nomerZayavleniya: data.nomerZayavleniya || '-',
@@ -164,30 +166,30 @@ export class JournalEmdCardComponent implements OnInit {
   }
 
   // ── Редактирование клиента ─────────────────────────────────────
-  isEditing     = false;
-  editFio       = '';
-  editDob       = '';
-  editAddress   = '';
-  editUdost     = '';
+  isEditing       = false;
+  editFio         = '';
+  editDob         = '';
+  editAddress     = '';
+  editUdost       = '';
   editPension2025 = '';
   editPension2026 = '';
 
   startEdit() {
     this.isEditing       = true;
-    this.editFio         = this.client?.fio           || '';
-    this.editDob         = this.client?.dob           || '';
-    this.editAddress     = this.client?.address       || '';
-    this.editUdost       = this.client?.udostoverenie || '';
+    this.editFio         = this.client?.fio            || '';
+    this.editDob         = this.client?.dob            || '';
+    this.editAddress     = this.client?.address        || '';
+    this.editUdost       = this.client?.udostoverenie  || '';
     this.editPension2025 = this.client?.pensionAge2025 || '';
     this.editPension2026 = this.client?.pensionAge2026 || '';
   }
 
   saveEdit() {
     if (!this.client) return;
-    this.client.fio           = this.editFio;
-    this.client.dob           = this.editDob;
-    this.client.address       = this.editAddress;
-    this.client.udostoverenie = this.editUdost;
+    this.client.fio            = this.editFio;
+    this.client.dob            = this.editDob;
+    this.client.address        = this.editAddress;
+    this.client.udostoverenie  = this.editUdost;
     this.client.pensionAge2025 = this.editPension2025;
     this.client.pensionAge2026 = this.editPension2026;
     this.isEditing = false;
@@ -201,11 +203,36 @@ export class JournalEmdCardComponent implements OnInit {
     maket.expanded = !maket.expanded;
   }
 
+  // Удаление макета — DELETE в БД
   deleteMaket(maket: CardMaket) {
-    if (!confirm('Удалить заявление?')) return;
-    this.makets = this.makets.filter(m => m !== maket);
-    this.cdr.detectChanges();
-  }
+    if (!confirm('Удалить заявление? Данные будут удалены из базы данных.')) return;
+
+    const zdocId = Number(maket.id);
+
+    if (!zdocId || isNaN(zdocId)) {
+        this.makets = this.makets.filter(m => m !== maket);
+        this.cdr.detectChanges();
+        return;
+    }
+
+    this.http.delete(`http://localhost:8080/api/forma/${zdocId}`, 
+        { responseType: 'text' }  // ← важно! backend возвращает text
+    ).subscribe({
+        next: () => {
+            this.makets = this.makets.filter(m => m !== maket);
+            this.cdr.detectChanges();
+        },
+        error: (err) => {
+            console.error('Ошибка удаления:', err);
+            // Правильное извлечение текста ошибки
+            const msg = typeof err?.error === 'string' 
+                ? err.error 
+                : err?.message 
+                ?? 'Неизвестная ошибка';
+            alert('Не удалось удалить заявление: ' + msg);
+        }
+    });
+}
 
   openZayavlenie() {
     const iin = this.route.snapshot.paramMap.get('id');

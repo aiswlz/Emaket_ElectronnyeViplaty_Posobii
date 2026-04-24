@@ -13,11 +13,16 @@ import { AuthService } from '../core/auth.service';
 })
 export class LayoutComponent {
   openMenu: string | null = null;
+  sidebarCollapsed = false;
 
   constructor(private authService: AuthService) {}
 
   toggleMenu(menu: string): void {
     this.openMenu = this.openMenu === menu ? null : menu;
+  }
+  
+  toggleSidebar(): void {  // ← добавить
+    this.sidebarCollapsed = !this.sidebarCollapsed;
   }
 
   logout(): void {

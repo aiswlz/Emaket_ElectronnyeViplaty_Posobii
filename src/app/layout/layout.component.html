@@ -1,20 +1,30 @@
-<aside class="sidebar">
+<aside class="sidebar" [class.collapsed]="sidebarCollapsed">
+
   <div class="sidebar-logo">
-    <div class="logo-icon">
+    <button class="sidebar-toggle" (click)="toggleSidebar()" title="Свернуть меню">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+    <div class="logo-icon" *ngIf="!sidebarCollapsed">
       <img src="/logo-icon.png" alt="e-maket">
     </div>
-    <div class="logo-text-block">
+    <div class="logo-text-block" *ngIf="!sidebarCollapsed">
       <span class="logo-title">e-maket</span>
       <span class="logo-subtitle">Электронное назначение пенсионных выплат и пособий</span>
     </div>
   </div>
 
   <nav class="sidebar-nav">
-    <!-- ГЛАВНАЯ — одиночный пункт без подменю -->
+
+    <!-- ГЛАВНАЯ -->
     <a class="nav-item nav-item-single"
        routerLink="/home"
        routerLinkActive="active-parent"
-       [routerLinkActiveOptions]="{exact: true}">
+       [routerLinkActiveOptions]="{exact: true}"
+       [title]="sidebarCollapsed ? 'Главная' : ''">
       <div class="nav-icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
              stroke-linecap="round" stroke-linejoin="round">
@@ -22,12 +32,13 @@
           <polyline points="9 22 9 12 15 12 15 22"/>
         </svg>
       </div>
-      <span>Главная</span>
+      <span *ngIf="!sidebarCollapsed">Главная</span>
     </a>
 
     <!-- ОТЧЕТЫ -->
-    <!-- UPDATED: добавлен (click) и [class.active-parent] -->
-    <a class="nav-item" (click)="toggleMenu('reports')" [class.active-parent]="openMenu === 'reports'">
+    <a class="nav-item" (click)="toggleMenu('reports')"
+       [class.active-parent]="openMenu === 'reports'"
+       [title]="sidebarCollapsed ? 'Отчеты' : ''">
       <div class="nav-icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
              stroke-linecap="round" stroke-linejoin="round">
@@ -37,14 +48,13 @@
           <line x1="16" y1="17" x2="8" y2="17"/>
         </svg>
       </div>
-      <span>Отчеты</span>
-      <svg class="chevron" [class.open]="openMenu === 'reports'" viewBox="0 0 24 24"
-           fill="none" stroke="currentColor" stroke-width="2">
+      <span *ngIf="!sidebarCollapsed">Отчеты</span>
+      <svg *ngIf="!sidebarCollapsed" class="chevron" [class.open]="openMenu === 'reports'"
+           viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polyline points="6 9 12 15 18 9"/>
       </svg>
     </a>
-
-    <div class="sidebar-sub-menu" *ngIf="openMenu === 'reports'">
+    <div class="sidebar-sub-menu" *ngIf="openMenu === 'reports' && !sidebarCollapsed">
       <a class="sub-item" href="#">Солидарные выплаты</a>
       <a class="sub-item" routerLink="/reports/gfss" routerLinkActive="active">Социальные выплаты из ГФСС</a>
       <a class="sub-item" href="#">Отчеты Е-макет</a>
@@ -56,7 +66,9 @@
     </div>
 
     <!-- ЖУРНАЛЫ -->
-    <a class="nav-item" (click)="toggleMenu('journals')" [class.active-parent]="openMenu === 'journals'">
+    <a class="nav-item" (click)="toggleMenu('journals')"
+       [class.active-parent]="openMenu === 'journals'"
+       [title]="sidebarCollapsed ? 'Журналы' : ''">
       <div class="nav-icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
              stroke-linecap="round" stroke-linejoin="round">
@@ -67,14 +79,13 @@
           <polyline points="10 9 9 9 8 9"/>
         </svg>
       </div>
-      <span>Журналы</span>
-      <svg class="chevron" [class.open]="openMenu === 'journals'" viewBox="0 0 24 24"
-           fill="none" stroke="currentColor" stroke-width="2">
+      <span *ngIf="!sidebarCollapsed">Журналы</span>
+      <svg *ngIf="!sidebarCollapsed" class="chevron" [class.open]="openMenu === 'journals'"
+           viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polyline points="6 9 12 15 18 9"/>
       </svg>
     </a>
-
-    <div class="sidebar-sub-menu" *ngIf="openMenu === 'journals'">
+    <div class="sidebar-sub-menu" *ngIf="openMenu === 'journals' && !sidebarCollapsed">
       <a class="sub-item" routerLink="/journals/zayavleniy" routerLinkActive="active">Журнал заявлений</a>
       <a class="sub-item" routerLink="/journals/emd" routerLinkActive="active">Журнал ЭМД</a>
       <a class="sub-item" routerLink="/journals/electronic-applications" routerLinkActive="active">Журнал электронных заявок и уведомлений</a>
@@ -86,7 +97,9 @@
     </div>
 
     <!-- РАЗНОЕ -->
-    <a class="nav-item" (click)="toggleMenu('raznoe')" [class.active-parent]="openMenu === 'raznoe'">
+    <a class="nav-item" (click)="toggleMenu('raznoe')"
+       [class.active-parent]="openMenu === 'raznoe'"
+       [title]="sidebarCollapsed ? 'Разное' : ''">
       <div class="nav-icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
              stroke-linecap="round" stroke-linejoin="round">
@@ -94,14 +107,13 @@
           <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
         </svg>
       </div>
-      <span>Разное</span>
-      <svg class="chevron" [class.open]="openMenu === 'raznoe'" viewBox="0 0 24 24"
-           fill="none" stroke="currentColor" stroke-width="2">
+      <span *ngIf="!sidebarCollapsed">Разное</span>
+      <svg *ngIf="!sidebarCollapsed" class="chevron" [class.open]="openMenu === 'raznoe'"
+           viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polyline points="6 9 12 15 18 9"/>
       </svg>
     </a>
-
-    <div class="sidebar-sub-menu" *ngIf="openMenu === 'raznoe'">
+    <div class="sidebar-sub-menu" *ngIf="openMenu === 'raznoe' && !sidebarCollapsed">
       <a class="sub-item" href="#">На приостановление по данным ГБДФЛ</a>
       <a class="sub-item" href="#">На приостановление выплат по 10% ОПФ</a>
       <a class="sub-item" href="#">Инфляция</a>
@@ -114,12 +126,13 @@
       <a class="sub-item" routerLink="/raznoe/sv-payers-registry" routerLinkActive="active">Реестр плательщиков СВ</a>
       <a class="sub-item" href="#">Снять контроль</a>
       <a class="sub-item" href="#">Календарь выходных и праздничных дней</a>
-      <a class="sub-item" href="#">Календарь внесения индекса потребительских цен</a>
       <a class="sub-item" href="#">Помощь</a>
     </div>
+
   </nav>
 </aside>
 
+<!-- ─── MAIN ─────────────────────────────────────────────────── -->
 <div class="main">
   <header class="topbar">
     <div class="search-wrap">
@@ -128,8 +141,8 @@
         <circle cx="11" cy="11" r="8"/>
         <line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
-      <input 
-        type="text" 
+      <input
+        type="text"
         placeholder="Поиск"
         autocomplete="off"
         autocorrect="off"
@@ -166,19 +179,17 @@
         <span class="notif-badge">123</span>
       </div>
 
-      <!-- UPDATED: профиль — исправлен SVG chevron (был ...троеточие) -->
+      <!-- Профиль -->
       <div class="user-section">
         <div class="user-btn" (click)="toggleMenu('profile')" [class.active-parent]="openMenu === 'profile'">
           <div class="user-avatar">А</div>
           <span class="user-name">{{ username }}</span>
-          <!-- UPDATED: заменён ... на реальный SVG -->
           <svg class="user-chevron" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" stroke-width="2">
             <polyline points="6 9 12 15 18 9"/>
           </svg>
         </div>
 
-        <!-- UPDATED: класс изменён с sub-menu на profile-dropdown -->
         <div class="profile-dropdown" *ngIf="openMenu === 'profile'">
           <a class="sub-item" routerLink="/profile" routerLinkActive="active">Профиль</a>
           <a class="sub-item" href="#">Настройки</a>
